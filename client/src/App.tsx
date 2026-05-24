@@ -8,6 +8,7 @@ import { IBLayout } from '@/components/ib/IBLayout';
 import { Toaster } from '@/components/ui/toaster';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { useUIStore } from '@/stores/ui.store';
+import { I18nDocumentSync } from '@/lib/i18n/useTranslation';
 
 // Demo page
 const DemoPage         = lazy(() => import('@/pages/Demo'));
@@ -15,20 +16,33 @@ const DemoPage         = lazy(() => import('@/pages/Demo'));
 // Admin pages
 const Login            = lazy(() => import('@/pages/Login'));
 const Dashboard        = lazy(() => import('@/pages/Dashboard'));
-const Clients          = lazy(() => import('@/pages/Clients'));
-const Payments         = lazy(() => import('@/pages/Payments'));
-const Journals         = lazy(() => import('@/pages/Journals'));
-const Trades           = lazy(() => import('@/pages/Trades'));
-const Reports          = lazy(() => import('@/pages/Reports'));
-const IBCommissions    = lazy(() => import('@/pages/IBCommissions'));
-const EOD              = lazy(() => import('@/pages/EOD'));
-const ChartOfAccounts  = lazy(() => import('@/pages/ChartOfAccounts'));
-const Users            = lazy(() => import('@/pages/Users'));
-const Settings         = lazy(() => import('@/pages/Settings'));
-const GeneralSettings  = lazy(() => import('@/pages/settings/GeneralSettings'));
-const SymbolSettings   = lazy(() => import('@/pages/settings/SymbolSettings'));
-const GatewaySettings  = lazy(() => import('@/pages/settings/GatewaySettings'));
-const Profile          = lazy(() => import('@/pages/Profile'));
+const Entries          = lazy(() => import('@/pages/Entries'));
+const Report           = lazy(() => import('@/pages/Report'));
+const Data             = lazy(() => import('@/pages/Data'));
+const Opening          = lazy(() => import('@/pages/Opening'));
+const Vouchers         = lazy(() => import('@/pages/Vouchers'));
+const Currency         = lazy(() => import('@/pages/Currency'));
+const Clients              = lazy(() => import('@/pages/Clients'));
+const IBManagement         = lazy(() => import('@/pages/IBManagement'));
+const Operations           = lazy(() => import('@/pages/Operations'));
+const Reconciliation       = lazy(() => import('@/pages/Reconciliation'));
+const Treasury             = lazy(() => import('@/pages/Treasury'));
+const AgingReport          = lazy(() => import('@/pages/AgingReport'));
+const OperationsAnalytics  = lazy(() => import('@/pages/OperationsAnalytics'));
+const Payments             = lazy(() => import('@/pages/Payments'));
+const Journals             = lazy(() => import('@/pages/Journals'));
+const Trades               = lazy(() => import('@/pages/Trades'));
+const Reports              = lazy(() => import('@/pages/Reports'));
+const IBCommissions        = lazy(() => import('@/pages/IBCommissions'));
+const EOD                  = lazy(() => import('@/pages/EOD'));
+const ChartOfAccounts      = lazy(() => import('@/pages/ChartOfAccounts'));
+const Users                = lazy(() => import('@/pages/Users'));
+const Settings             = lazy(() => import('@/pages/Settings'));
+const GeneralSettings      = lazy(() => import('@/pages/settings/GeneralSettings'));
+const SymbolSettings       = lazy(() => import('@/pages/settings/SymbolSettings'));
+const GatewaySettings      = lazy(() => import('@/pages/settings/GatewaySettings'));
+const OperationsSettings   = lazy(() => import('@/pages/settings/OperationsSettings'));
+const Profile              = lazy(() => import('@/pages/Profile'));
 
 // IB portal pages
 const IBLogin           = lazy(() => import('@/pages/ib/Login'));
@@ -62,6 +76,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeInitializer />
+        <I18nDocumentSync />
 <Suspense fallback={<div className="flex h-screen items-center justify-center"><PageLoader /></div>}>
           <Routes>
             {/* ── Demo access page ─────────────────────────────────────────── */}
@@ -71,21 +86,34 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/payments" element={<Payments />} />
-              <Route path="/journals" element={<Journals />} />
-              <Route path="/trades" element={<Trades />} />
-              <Route path="/reports" element={<Reports />} />
+              <Route path="/entries" element={<Entries />} />
+              <Route path="/report" element={<Report />} />
+              <Route path="/data" element={<Data />} />
+              <Route path="/opening" element={<Opening />} />
+              <Route path="/vouchers" element={<Vouchers />} />
+              <Route path="/currency" element={<Currency />} />
+              <Route path="/clients"        element={<Clients />} />
+              <Route path="/ib-mgmt"        element={<IBManagement />} />
+              <Route path="/operations"     element={<Operations />} />
+              <Route path="/reconciliation" element={<Reconciliation />} />
+              <Route path="/treasury"       element={<Treasury />} />
+              <Route path="/aging"          element={<AgingReport />} />
+              <Route path="/ops-analytics"  element={<OperationsAnalytics />} />
+              <Route path="/payments"       element={<Payments />} />
+              <Route path="/journals"       element={<Journals />} />
+              <Route path="/trades"         element={<Trades />} />
+              <Route path="/reports"        element={<Reports />} />
               <Route path="/ib-commissions" element={<IBCommissions />} />
-              <Route path="/eod" element={<EOD />} />
+              <Route path="/eod"            element={<EOD />} />
               <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />}>
+              <Route path="/users"          element={<Users />} />
+              <Route path="/profile"        element={<Profile />} />
+              <Route path="/settings"       element={<Settings />}>
                 <Route index element={<Navigate to="/settings/general" replace />} />
-                <Route path="general"  element={<GeneralSettings />} />
-                <Route path="symbols"  element={<SymbolSettings />} />
-                <Route path="gateways" element={<GatewaySettings />} />
+                <Route path="general"    element={<GeneralSettings />} />
+                <Route path="symbols"    element={<SymbolSettings />} />
+                <Route path="gateways"   element={<GatewaySettings />} />
+                <Route path="operations" element={<OperationsSettings />} />
               </Route>
             </Route>
 

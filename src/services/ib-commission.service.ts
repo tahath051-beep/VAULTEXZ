@@ -24,13 +24,14 @@ export async function calculateIBCommissions(
   let currentIbId: string | null = client.ib_id;
 
   while (currentIbId && results.length < 3) {
-    const { rows: [ib] } = await db.query<{
+    const resIb: any = await db.query<{
       id: string; level: number; parent_ib_id: string | null;
     }>(
       `SELECT id, level, parent_ib_id FROM ibs
        WHERE id = $1 AND tenant_id = $2 AND is_active = true`,
       [currentIbId, tenantId]
     );
+    const ib: { id: string; level: number; parent_ib_id: string | null } | undefined = resIb.rows[0];
 
     if (!ib) break;
 

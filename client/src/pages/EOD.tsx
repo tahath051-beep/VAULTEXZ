@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -48,15 +49,10 @@ export default function EOD() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">EOD Processing</h1>
-        <p className="text-muted-foreground">End-of-day journal run and lock</p>
-      </div>
+      <PageHeader title="EOD Processing" subtitle="End-of-day journal run and lock" />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle>Trigger EOD</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+        <SectionCard title="Trigger EOD" bodyClassName="space-y-4 p-6">
             <div className="space-y-1">
               <Label>EOD Date</Label>
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} max={today} />
@@ -68,12 +64,9 @@ export default function EOD() {
             {status?.status === 'LOCKED' && (
               <p className="text-sm text-muted-foreground">This date has been locked and cannot be re-processed.</p>
             )}
-          </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card>
-          <CardHeader><CardTitle>Current Status</CardTitle></CardHeader>
-          <CardContent>
+        <SectionCard title="Current Status" bodyClassName="p-6">
             {status ? (
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
@@ -112,8 +105,7 @@ export default function EOD() {
             ) : (
               <p className="text-sm text-muted-foreground">No EOD record for {date}.</p>
             )}
-          </CardContent>
-        </Card>
+        </SectionCard>
       </div>
     </div>
   );

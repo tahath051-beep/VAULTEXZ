@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -91,15 +92,14 @@ export default function ChartOfAccounts() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Chart of Accounts</h1>
-          <p className="text-muted-foreground">Account structure for double-entry bookkeeping</p>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Add Account</Button>
-          </DialogTrigger>
+      <PageHeader
+        title="Chart of Accounts"
+        subtitle="Account structure for double-entry bookkeeping"
+        actions={
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button><Plus className="h-4 w-4 mr-2" />Add Account</Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>New Account</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit((d) => create(d))} className="space-y-4">
@@ -146,8 +146,9 @@ export default function ChartOfAccounts() {
               </Button>
             </form>
           </DialogContent>
-        </Dialog>
-      </div>
+          </Dialog>
+        }
+      />
 
       {/* Type filter */}
       <div className="flex gap-3">
@@ -169,17 +170,22 @@ export default function ChartOfAccounts() {
         {activeTypes.map((type) => {
           const typeAccounts = grouped[type] ?? [];
           return (
-            <Card key={type} className="overflow-hidden">
-              <div className={`px-4 py-2.5 border-b font-semibold text-sm flex items-center justify-between ${typeColors[type]}`}>
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${typeBadgeColors[type]}`}>{type}</span>
-                  <span className="font-normal opacity-70">{typeAccounts.length} account{typeAccounts.length !== 1 ? 's' : ''}</span>
+            <SectionCard
+              key={type}
+              className="overflow-hidden"
+              padded={false}
+              title={
+                <div className={`flex items-center justify-between text-sm ${typeColors[type].split(' ').slice(0,2).join(' ')}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${typeBadgeColors[type]}`}>{type}</span>
+                    <span className="font-normal opacity-70">{typeAccounts.length} account{typeAccounts.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <span className="font-normal text-xs opacity-60">
+                    {typeAccounts.filter((a) => a.is_active).length} active
+                  </span>
                 </div>
-                <span className="font-normal text-xs opacity-60">
-                  {typeAccounts.filter((a) => a.is_active).length} active
-                </span>
-              </div>
-              <CardContent className="p-0">
+              }
+            >
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -239,17 +245,16 @@ export default function ChartOfAccounts() {
                     ))}
                   </TableBody>
                 </Table>
-              </CardContent>
-            </Card>
+            </SectionCard>
           );
         })}
 
         {activeTypes.length === 0 && (
-          <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
+          <SectionCard>
+            <div className="py-12 text-center text-muted-foreground">
               No accounts found
-            </CardContent>
-          </Card>
+            </div>
+          </SectionCard>
         )}
       </div>
     </div>

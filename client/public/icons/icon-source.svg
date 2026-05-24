@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="55%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="hi" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#hi)"/>
+
+  <!-- Subtle grid lines (workbook hint) -->
+  <g stroke="#ffffff" stroke-opacity="0.08" stroke-width="2">
+    <line x1="0"   y1="170" x2="512" y2="170"/>
+    <line x1="0"   y1="342" x2="512" y2="342"/>
+    <line x1="170" y1="0"   x2="170" y2="512"/>
+    <line x1="342" y1="0"   x2="342" y2="512"/>
+  </g>
+
+  <!-- FX wordmark -->
+  <g fill="#ffffff" font-family="Inter, -apple-system, system-ui, sans-serif" font-weight="800">
+    <text x="256" y="320" text-anchor="middle" font-size="220" letter-spacing="-8">FX</text>
+  </g>
+
+  <!-- Small upward trend mark -->
+  <g stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85">
+    <polyline points="120,400 200,360 280,400 370,310"/>
+    <polyline points="350,310 370,310 370,330" />
+  </g>
+</svg>

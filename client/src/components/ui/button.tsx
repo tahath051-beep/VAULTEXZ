@@ -4,22 +4,30 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-150 ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        default:
+          'bg-primary text-primary-foreground shadow-shadow-1 hover:bg-primary/95 hover:shadow-shadow-2 hover:-translate-y-px',
+        gradient:
+          'gradient-bg text-white glow-primary hover:opacity-95 hover:shadow-shadow-3 hover:-translate-y-px',
+        destructive:
+          'bg-destructive text-destructive-foreground shadow-shadow-1 hover:bg-destructive/90 hover:shadow-shadow-2',
+        outline:
+          'border border-border/70 bg-card hover:bg-accent hover:text-accent-foreground hover:border-primary/30 hover:shadow-shadow-1',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:shadow-shadow-1',
+        soft:  'bg-accent text-accent-foreground hover:bg-accent/70',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+        link:  'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
+        xs:  'h-7 rounded-lg px-2.5 text-[11px] font-semibold',
+        sm:  'h-9 rounded-lg px-3 text-xs',
+        lg:  'h-11 rounded-xl px-6 text-sm',
+        icon: 'h-10 w-10 rounded-xl',
       },
     },
     defaultVariants: { variant: 'default', size: 'default' },

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
@@ -34,30 +35,25 @@ function PnLTab() {
           { label: 'Total Expenses', value: data?.totalExpenses, color: 'text-red-600' },
           { label: 'Net P&L', value: data?.netPnL, color: Number(data?.netPnL) >= 0 ? 'text-green-600' : 'text-red-600' },
         ].map(({ label, value, color }) => (
-          <Card key={label}><CardHeader><CardTitle className="text-sm text-muted-foreground">{label}</CardTitle></CardHeader>
-            <CardContent><p className={`text-2xl font-bold ${color}`}>${fmt(value)}</p></CardContent>
-          </Card>
+          <div key={label} className="card-elevated rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
+            <p className={`text-2xl font-bold tabular-nums ${color}`}>${fmt(value)}</p>
+          </div>
         ))}
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader><CardTitle className="text-sm">Revenue</CardTitle></CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
-              <TableBody>{data?.revenue?.map((r) => (<TableRow key={r.account_id}><TableCell>{r.account_name}</TableCell><TableCell className="font-mono text-green-600">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-sm">Expenses</CardTitle></CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
-              <TableBody>{data?.expenses?.map((e) => (<TableRow key={e.account_id}><TableCell>{e.account_name}</TableCell><TableCell className="font-mono text-red-600">${fmt(e.balance)}</TableCell></TableRow>))}</TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <SectionCard title="Revenue" padded={false}>
+          <Table>
+            <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+            <TableBody>{data?.revenue?.map((r) => (<TableRow key={r.account_id}><TableCell>{r.account_name}</TableCell><TableCell className="font-mono text-green-600">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
+          </Table>
+        </SectionCard>
+        <SectionCard title="Expenses" padded={false}>
+          <Table>
+            <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+            <TableBody>{data?.expenses?.map((e) => (<TableRow key={e.account_id}><TableCell>{e.account_name}</TableCell><TableCell className="font-mono text-red-600">${fmt(e.balance)}</TableCell></TableRow>))}</TableBody>
+          </Table>
+        </SectionCard>
       </div>
     </div>
   );
@@ -74,22 +70,20 @@ function BalanceSheetTab() {
           { label: 'Total Liabilities', value: data?.totalLiabilities, color: 'text-orange-600' },
           { label: 'Total Equity', value: data?.totalEquity, color: 'text-purple-600' },
         ].map(({ label, value, color }) => (
-          <Card key={label}><CardHeader><CardTitle className="text-sm text-muted-foreground">{label}</CardTitle></CardHeader>
-            <CardContent><p className={`text-2xl font-bold ${color}`}>${fmt(value)}</p></CardContent>
-          </Card>
+          <div key={label} className="card-elevated rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
+            <p className={`text-2xl font-bold tabular-nums ${color}`}>${fmt(value)}</p>
+          </div>
         ))}
       </div>
       <div className="grid grid-cols-3 gap-4">
         {(['assets', 'liabilities', 'equity'] as const).map((key) => (
-          <Card key={key}>
-            <CardHeader><CardTitle className="text-sm capitalize">{key}</CardTitle></CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
-                <TableBody>{data?.[key]?.map((r) => (<TableRow key={r.account_id}><TableCell className="text-sm">{r.account_name}</TableCell><TableCell className="font-mono text-sm">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <SectionCard key={key} title={<span className="capitalize">{key}</span>} padded={false}>
+            <Table>
+              <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+              <TableBody>{data?.[key]?.map((r) => (<TableRow key={r.account_id}><TableCell className="text-sm">{r.account_name}</TableCell><TableCell className="font-mono text-sm">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
+            </Table>
+          </SectionCard>
         ))}
       </div>
     </div>
@@ -108,8 +102,7 @@ function LedgerTab() {
         <div className="space-y-1"><Label>From</Label><Input type="date" value={start} onChange={(e) => setStart(e.target.value)} /></div>
         <div className="space-y-1"><Label>To</Label><Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
       </div>
-      <Card>
-        <CardContent className="p-0">
+      <SectionCard padded={false}>
           <Table>
             <TableHeader><TableRow><TableHead>Client</TableHead><TableHead>MT5</TableHead><TableHead>Type</TableHead><TableHead>Amount</TableHead><TableHead>Balance After</TableHead><TableHead>Date</TableHead></TableRow></TableHeader>
             <TableBody>
@@ -126,8 +119,7 @@ function LedgerTab() {
             </TableBody>
           </Table>
           <Pagination offset={offset} limit={LIMIT} hasMore={(data?.entries?.length ?? 0) === LIMIT} onChange={setOffset} />
-        </CardContent>
-      </Card>
+      </SectionCard>
     </div>
   );
 }
@@ -143,8 +135,7 @@ function ReconciliationTab() {
         <div className="space-y-1"><Label>From</Label><Input type="date" value={start} onChange={(e) => setStart(e.target.value)} /></div>
         <div className="space-y-1"><Label>To</Label><Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
       </div>
-      <Card>
-        <CardContent className="p-0">
+      <SectionCard padded={false}>
           <Table>
             <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Status</TableHead><TableHead>Resolved By</TableHead><TableHead>Notes</TableHead></TableRow></TableHeader>
             <TableBody>
@@ -158,8 +149,7 @@ function ReconciliationTab() {
               )) : <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">No records</TableCell></TableRow>}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+      </SectionCard>
     </div>
   );
 }
@@ -167,10 +157,7 @@ function ReconciliationTab() {
 export default function Reports() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Reports</h1>
-        <p className="text-muted-foreground">Financial statements and ledger history</p>
-      </div>
+      <PageHeader title="Reports" subtitle="Financial statements and ledger history" />
       <Tabs defaultValue="pnl">
         <TabsList>
           <TabsTrigger value="pnl">P&L Statement</TabsTrigger>

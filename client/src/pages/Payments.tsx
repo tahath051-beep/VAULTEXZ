@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -119,22 +120,22 @@ export default function Payments() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Payments</h1>
-          <p className="text-muted-foreground">Deposits, withdrawals, and adjustments</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => openModal('WITHDRAWAL')}>
-            <ArrowUpCircle className="h-4 w-4 mr-2 text-red-500" />
-            New Withdrawal
-          </Button>
-          <Button onClick={() => openModal('DEPOSIT')}>
-            <ArrowDownCircle className="h-4 w-4 mr-2" />
-            New Deposit
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Payments"
+        subtitle="Deposits, withdrawals, and adjustments"
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => openModal('WITHDRAWAL')}>
+              <ArrowUpCircle className="h-4 w-4 mr-2 text-red-500" />
+              New Withdrawal
+            </Button>
+            <Button onClick={() => openModal('DEPOSIT')}>
+              <ArrowDownCircle className="h-4 w-4 mr-2" />
+              New Deposit
+            </Button>
+          </div>
+        }
+      />
 
       {/* Payment Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -223,7 +224,7 @@ export default function Payments() {
       </Dialog>
 
       {/* Table Card */}
-      <Card>
+      <SectionCard padded={false}>
         <div className="px-6 pt-4 pb-0">
           <Tabs value={statusTab} onValueChange={(v) => { setStatusTab(v); setOffset(0); }}>
             <TabsList>
@@ -234,7 +235,7 @@ export default function Payments() {
             </TabsList>
           </Tabs>
         </div>
-        <CardContent className="p-0 mt-2">
+        <div className="mt-2">
           <Table>
             <TableHeader>
               <TableRow>
@@ -318,8 +319,8 @@ export default function Payments() {
             hasMore={(data?.payments?.length ?? 0) === LIMIT}
             onChange={setOffset}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
     </div>
   );
 }

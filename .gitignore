@@ -1,0 +1,9 @@
+.vercel
+node_modules/
+.env
+.DS_Store
+db/.DS_Store
+src/.DS_Store
+.claude/
+client/.claude/
+package-lock.json

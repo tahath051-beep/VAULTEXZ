@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,12 +9,14 @@ import { toast } from '@/hooks/use-toast';
 import { useClientAuthStore } from '@/stores/clientAuth.store';
 import { clientLogin } from '@/api/clientPortal.api';
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 type LoginForm = { email: string; password: string };
 
 export default function ClientLogin() {
   const { token, setAuth } = useClientAuthStore();
   const navigate = useNavigate();
+  const { t, lang, toggleLang } = useTranslation();
 
   useEffect(() => {
     if (token) navigate('/client/dashboard', { replace: true });
@@ -33,57 +34,64 @@ export default function ClientLogin() {
   });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-background gradient-bg-soft flex flex-col items-center justify-center p-4">
+      {/* Language toggle */}
+      <button
+        onClick={toggleLang}
+        className="absolute top-5 end-5 inline-flex h-8 items-center gap-1 rounded-lg border border-border/70 bg-card px-2.5 text-[11px] font-bold text-foreground transition-all hover:bg-accent hover:border-primary/30 hover:shadow-shadow-1"
+      >
+        <span className="text-sm leading-none">{lang === 'en' ? '🇺🇸' : '🇸🇦'}</span>
+        <span>{lang === 'en' ? 'EN' : 'عر'}</span>
+      </button>
+
+      <div className="w-full max-w-md animate-slide-up">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary mb-4 shadow-lg">
-            <span className="text-primary-foreground font-bold text-xl">FX</span>
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl gradient-bg glow-primary mb-4 shadow-shadow-3">
+            <span className="text-white font-bold text-xl">FX</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">FX Accounting</h1>
-          <p className="text-primary font-medium mt-1">Client Portal</p>
+          <h1 className="text-2xl font-bold">{t('app.name')}</h1>
+          <p className="text-primary font-semibold mt-1">{t('client.portal')}</p>
         </div>
 
-        <Card>
-          <CardContent className="pt-6 pb-8 px-8">
-            <h2 className="text-xl font-semibold text-foreground mb-1">Welcome back</h2>
-            <p className="text-sm text-muted-foreground mb-6">Sign in to your client account</p>
+        <div className="card-elevated rounded-2xl px-8 py-8">
+          <h2 className="text-xl font-bold tracking-tight mb-1">Welcome back</h2>
+          <p className="text-sm text-muted-foreground mb-6">Sign in to your client account</p>
 
-            <form onSubmit={handleSubmit((d) => login(d))} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label>Email address</Label>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  {...register('email', { required: true })}
-                  className={errors.email ? 'border-destructive' : ''}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Password</Label>
-                <Input
-                  type="password"
-                  placeholder="••••••••"
-                  {...register('password', { required: true })}
-                  className={errors.password ? 'border-destructive' : ''}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending && <LoadingSpinner className="h-4 w-4 mr-2" />}
-                Sign In
-              </Button>
-            </form>
-
-            <div className="mt-6 p-3 bg-muted rounded-lg border border-border">
-              <p className="text-xs text-muted-foreground font-medium mb-1">Demo credentials</p>
-              <p className="text-xs text-foreground font-mono">client@demo.com / Demo@123456</p>
+          <form onSubmit={handleSubmit((d) => login(d))} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">{t('field.email')}</Label>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                {...register('email', { required: true })}
+                className={errors.email ? 'border-destructive' : ''}
+              />
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">{t('field.password')}</Label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                {...register('password', { required: true })}
+                className={errors.password ? 'border-destructive' : ''}
+              />
+            </div>
+            <Button type="submit" variant="gradient" className="w-full" disabled={isPending}>
+              {isPending && <LoadingSpinner className="h-4 w-4 mr-2" />}
+              {t('common.signIn')}
+            </Button>
+          </form>
+
+          <div className="mt-6 rounded-xl bg-muted/60 px-4 py-3">
+            <p className="text-xs text-muted-foreground font-medium mb-1">Demo credentials</p>
+            <p className="text-xs font-mono">client@demo.com / Demo@123456</p>
+          </div>
+        </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
           Admin?{' '}
-          <a href="/login" className="text-primary hover:underline">Go to Admin Panel</a>
+          <a href="/login" className="text-primary hover:underline font-medium">Go to Admin Panel</a>
         </p>
       </div>
     </div>

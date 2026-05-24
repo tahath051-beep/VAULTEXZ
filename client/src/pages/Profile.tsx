@@ -1,7 +1,8 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -9,7 +10,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { toast } from '@/hooks/use-toast';
 import { api } from '@/api/client';
 import { useAuthStore } from '@/stores/auth.store';
-import { User, KeyRound, Clock } from 'lucide-react';
+import { User, Clock } from 'lucide-react';
 import { fmtDateTime } from '@/lib/utils';
 
 interface UserProfile {
@@ -58,14 +59,10 @@ export default function Profile() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div>
-        <h1 className="text-2xl font-bold">My Profile</h1>
-        <p className="text-muted-foreground">Account information and security settings</p>
-      </div>
+      <PageHeader title="My Profile" subtitle="Account information and security settings" />
 
       {/* Profile Info */}
-      <Card>
-        <CardContent className="pt-6 space-y-5">
+      <SectionCard title="Profile" bodyClassName="pt-0 space-y-5 p-6">
           <div className="flex items-center gap-4">
             <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="h-7 w-7 text-primary" />
@@ -99,16 +96,10 @@ export default function Profile() {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {/* Change Password */}
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <KeyRound className="h-4 w-4 text-muted-foreground" />
-            <p className="font-semibold">Change Password</p>
-          </div>
+      <SectionCard title="Change Password" bodyClassName="space-y-4 p-6">
           <p className="text-sm text-muted-foreground">
             Demo password: <span className="font-mono">demo1234</span>
           </p>
@@ -141,8 +132,7 @@ export default function Profile() {
               Change Password
             </Button>
           </form>
-        </CardContent>
-      </Card>
+      </SectionCard>
     </div>
   );
 }

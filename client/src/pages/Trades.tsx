@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -83,19 +84,18 @@ export default function Trades() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Trades</h1>
-          <p className="text-muted-foreground">Closed trade history with journal status</p>
-        </div>
-        <Button variant="outline" onClick={exportXLSX}>
-          <Download className="h-4 w-4 mr-2" />Export Excel
-        </Button>
-      </div>
+      <PageHeader
+        title="Trades"
+        subtitle="Closed trade history with journal status"
+        actions={
+          <Button variant="outline" onClick={exportXLSX}>
+            <Download className="h-4 w-4 mr-2" />Export Excel
+          </Button>
+        }
+      />
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-3">
+      <SectionCard padded={false}>
+        <div className="flex flex-wrap items-center gap-3 p-5">
             <Input
               className="w-32"
               placeholder="Ticket #"
@@ -130,9 +130,8 @@ export default function Trades() {
             <Input type="date" className="w-40" value={startDate} onChange={(e) => { setStartDate(e.target.value); reset(); }} />
             <Input type="date" className="w-40" value={endDate} onChange={(e) => { setEndDate(e.target.value); reset(); }} />
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -233,8 +232,7 @@ export default function Trades() {
             hasMore={trades.length === LIMIT}
             onChange={setOffset}
           />
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {/* Trade Detail Dialog */}
       <Dialog open={!!selectedId} onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
