@@ -130,7 +130,6 @@ export default function Trades() {
             <Input type="date" className="w-40" value={startDate} onChange={(e) => { setStartDate(e.target.value); reset(); }} />
             <Input type="date" className="w-40" value={endDate} onChange={(e) => { setEndDate(e.target.value); reset(); }} />
           </div>
-        </div>
 
           <Table>
             <TableHeader>
