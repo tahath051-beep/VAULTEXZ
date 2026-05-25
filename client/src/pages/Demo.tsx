@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   ChevronRight, Sun, Moon, Sparkles,
@@ -7,6 +7,7 @@ import {
   LayoutGrid, Network, User,
 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PortalEntryScreen } from '@/components/shared/PortalEntryScreen';
 import { useClientAuthStore } from '@/stores/clientAuth.store';
 import { useIBAuthStore } from '@/stores/ibAuth.store';
 import { useUIStore } from '@/stores/ui.store';
@@ -15,6 +16,23 @@ import { clientLogin } from '@/api/clientPortal.api';
 import { ibLogin } from '@/api/ib.api';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+
+/* ── Scroll-reveal hook ────────────────────────────────────── */
+function useInView(threshold = 0.12) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
 
 /* ── Animated counter ──────────────────────────────────────── */
 function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
@@ -35,15 +53,25 @@ function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
 
 /* ── Feature card ──────────────────────────────────────────── */
 function FeatureCard({
-  icon: Icon, title, description, gradient,
+  icon: Icon, title, description, gradient, delay = 0,
 }: {
   icon: typeof BarChart3;
   title: string;
   description: string;
   gradient: string;
+  delay?: number;
 }) {
+  const { ref, visible } = useInView();
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_8px_32px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1">
+    <div
+      ref={ref}
+      className={cn(
+        'group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-6',
+        'transition-all duration-500 hover:border-primary/30 hover:shadow-[0_8px_32px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
       <div className={cn('mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl', gradient)}>
         <Icon className="h-6 w-6 text-white" />
       </div>
@@ -68,6 +96,7 @@ function PortalCard({
   onEnter,
   loading,
   href,
+  delay = 0,
 }: {
   icon: typeof User;
   iconBg: string;
@@ -80,13 +109,20 @@ function PortalCard({
   onEnter?: () => void;
   loading?: boolean;
   href?: string;
+  delay?: number;
 }) {
+  const { ref, visible } = useInView(0.08);
   return (
-    <div className={cn(
-      'relative flex flex-col overflow-hidden rounded-3xl border bg-card transition-all duration-300',
-      'hover:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.15)] hover:-translate-y-1',
-      accentColor,
-    )}>
+    <div
+      ref={ref}
+      className={cn(
+        'relative flex flex-col overflow-hidden rounded-3xl border bg-card',
+        'transition-all duration-500 hover:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.15)] hover:-translate-y-1',
+        accentColor,
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
       {/* Top accent strip */}
       <div className={cn('h-1 w-full', iconBg)} />
 
@@ -131,6 +167,153 @@ function PortalCard({
   );
 }
 
+/* ── Floating pill badge ───────────────────────────────────── */
+function FloatingPill({
+  label, style,
+}: { label: string; style: React.CSSProperties }) {
+  return (
+    <div
+      className="pointer-events-none absolute select-none rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/20 backdrop-blur-sm"
+      style={style}
+    >
+      {label}
+    </div>
+  );
+}
+
+/* ── Stat item (uses its own inView hook) ──────────────────── */
+function StatItem({ value, suffix, label, delay }: {
+  value: number; suffix: string; label: string; delay: number;
+}) {
+  const { ref, visible } = useInView();
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'text-center transition-all duration-500',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6',
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <p className="text-3xl font-extrabold tabular-nums text-foreground">
+        <Counter to={value} suffix={suffix} />
+      </p>
+      <p className="mt-1 text-[12px] text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
+/* ── Portal feature card (uses its own inView hook) ────────── */
+function PortalFeatureItem({ portal, delay }: {
+  portal: { icon: typeof LayoutGrid; color: string; bg: string; title: string; points: string[] };
+  delay: number;
+}) {
+  const { ref, visible } = useInView();
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'rounded-2xl border border-border/60 bg-card p-6 transition-all duration-500',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <div className={cn('mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl', portal.bg)}>
+        <portal.icon className={cn('h-6 w-6', portal.color)} />
+      </div>
+      <h3 className="mb-3 text-[15px] font-bold text-foreground">{portal.title}</h3>
+      <ul className="space-y-2">
+        {portal.points.map((pt) => (
+          <li key={pt} className="flex items-start gap-2 text-[13px] text-muted-foreground">
+            <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+            {pt}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ── Mini dashboard mockup ─────────────────────────────────── */
+function AppMockup() {
+  const { ref, visible } = useInView(0.1);
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'mx-auto mt-16 max-w-3xl transition-all duration-700',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12',
+      )}
+    >
+      {/* Browser chrome */}
+      <div className="rounded-2xl border border-border/60 bg-card shadow-[0_24px_80px_-16px_rgba(0,0,0,0.18)] overflow-hidden">
+        {/* Title bar */}
+        <div className="flex items-center gap-2 border-b border-border/50 bg-muted/40 px-4 py-2.5">
+          <div className="h-3 w-3 rounded-full bg-red-400/70" />
+          <div className="h-3 w-3 rounded-full bg-yellow-400/70" />
+          <div className="h-3 w-3 rounded-full bg-green-400/70" />
+          <div className="mx-auto flex w-48 items-center rounded-md bg-background/70 px-2 py-0.5">
+            <span className="text-[10px] text-muted-foreground">app.vaultex.com/dashboard</span>
+          </div>
+        </div>
+
+        {/* Mockup content */}
+        <div className="grid grid-cols-[64px_1fr] h-44">
+          {/* Sidebar strip */}
+          <div className="border-e border-border/40 bg-[hsl(222_47%_10%)] flex flex-col items-center gap-3 pt-4 pb-2">
+            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
+              <span className="text-[8px] font-bold text-white">FX</span>
+            </div>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className={cn('h-6 w-6 rounded-lg', i === 0 ? 'bg-blue-500/30' : 'bg-white/5')} />
+            ))}
+          </div>
+
+          {/* Main area */}
+          <div className="p-4 space-y-3">
+            {/* Stat row */}
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: 'Revenue', color: 'from-blue-500/20 to-blue-500/5', bar: 'bg-blue-500' },
+                { label: 'Clients', color: 'from-emerald-500/20 to-emerald-500/5', bar: 'bg-emerald-500' },
+                { label: 'Trades',  color: 'from-violet-500/20 to-violet-500/5', bar: 'bg-violet-500' },
+                { label: 'IB Comm', color: 'from-amber-500/20 to-amber-500/5',   bar: 'bg-amber-500'  },
+              ].map((s) => (
+                <div key={s.label} className={cn('rounded-xl bg-gradient-to-br p-2', s.color)}>
+                  <div className="h-1.5 w-8 rounded-full bg-muted/50 mb-1.5" />
+                  <div className={cn('h-1 rounded-full', s.bar)} style={{ width: `${40 + Math.random() * 40}%` }} />
+                </div>
+              ))}
+            </div>
+
+            {/* Chart placeholder */}
+            <div className="rounded-xl border border-border/40 bg-muted/20 p-2 h-16 flex items-end gap-1 overflow-hidden">
+              {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-sm bg-gradient-to-t from-blue-500/60 to-violet-500/30"
+                  style={{ height: `${h}%`, animationDelay: `${i * 0.05}s` }}
+                />
+              ))}
+            </div>
+
+            {/* Table placeholder */}
+            <div className="space-y-1">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/70" />
+                  <div className="h-1.5 flex-1 rounded-full bg-muted/60" />
+                  <div className="h-1.5 w-10 rounded-full bg-muted/40" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main page ─────────────────────────────────────────────── */
 export default function DemoPage() {
   const navigate = useNavigate();
@@ -141,26 +324,27 @@ export default function DemoPage() {
 
   const [clientLoading, setClientLoading] = useState(false);
   const [ibLoading, setIBLoading] = useState(false);
+  const [activeEntry, setActiveEntry] = useState<'client' | 'ib' | null>(null);
 
   const handleClientEnter = async () => {
-    if (clientUser) { navigate('/client/dashboard'); return; }
+    if (clientUser) { setActiveEntry('client'); return; }
     setClientLoading(true);
     try {
       const r = await clientLogin('client@demo.com', 'Demo@123456');
       setClientAuth(r.token, r.user);
-      navigate('/client/dashboard');
+      setActiveEntry('client');
     } catch {
       toast({ title: t('demo.loginFailed'), variant: 'destructive' });
     } finally { setClientLoading(false); }
   };
 
   const handleIBEnter = async () => {
-    if (ibUser) { navigate('/ib/dashboard'); return; }
+    if (ibUser) { setActiveEntry('ib'); return; }
     setIBLoading(true);
     try {
       const r = await ibLogin('ib@demo.com', 'Demo@123456');
       setIBAuth(r.token, r.user);
-      navigate('/ib/dashboard');
+      setActiveEntry('ib');
     } catch {
       toast({ title: t('demo.loginFailed'), variant: 'destructive' });
     } finally { setIBLoading(false); }
@@ -216,8 +400,26 @@ export default function DemoPage() {
     },
   ];
 
+  /* floating pill labels */
+  const floatingPills = [
+    { label: '⚡ Real-time',   style: { top: '12%',  left: '8%',   animationDuration: '9s',  animationDelay: '0s'   } },
+    { label: '🔒 Secure',      style: { top: '18%',  right: '10%', animationDuration: '11s', animationDelay: '-3s'  } },
+    { label: '🌐 Bilingual',   style: { top: '62%',  left: '6%',   animationDuration: '13s', animationDelay: '-1.5s'} },
+    { label: '📊 Analytics',   style: { top: '55%',  right: '7%',  animationDuration: '10s', animationDelay: '-4s'  } },
+    { label: '💱 Multi-FX',    style: { top: '80%',  left: '18%',  animationDuration: '14s', animationDelay: '-2s'  } },
+    { label: '🤖 Automated',   style: { top: '78%',  right: '15%', animationDuration: '8s',  animationDelay: '-5s'  } },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+
+      {/* Portal entry overlay */}
+      {activeEntry && (
+        <PortalEntryScreen
+          portal={activeEntry}
+          onComplete={() => navigate(activeEntry === 'client' ? '/client/dashboard' : '/ib/dashboard')}
+        />
+      )}
 
       {/* ── Sticky navbar ──────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
@@ -252,35 +454,72 @@ export default function DemoPage() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden px-4 pb-24 pt-20 sm:px-6 sm:pt-28">
-        {/* Background orbs */}
+      <section className="relative overflow-hidden px-4 pb-20 pt-20 sm:px-6 sm:pt-28">
+
+        {/* Animated background orbs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-32 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-600/20 to-violet-600/10 blur-3xl" />
-          <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-gradient-to-bl from-violet-500/15 to-transparent blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-gradient-to-tr from-emerald-500/10 to-transparent blur-3xl" />
+          {/* Primary orb — top center, drifts */}
+          <div
+            className="absolute -top-32 left-1/2 h-[680px] w-[680px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-600/25 to-violet-600/15 blur-3xl"
+            style={{ animation: 'drift 18s ease-in-out infinite' }}
+          />
+          {/* Top-right orb — floats opposite phase */}
+          <div
+            className="absolute -right-24 -top-16 h-96 w-96 rounded-full bg-gradient-to-bl from-violet-500/20 to-transparent blur-3xl"
+            style={{ animation: 'float-slow 12s ease-in-out infinite', animationDelay: '-4s' }}
+          />
+          {/* Bottom-left orb — slow pulse */}
+          <div
+            className="absolute -bottom-16 -left-16 h-80 w-80 rounded-full bg-gradient-to-tr from-emerald-500/15 to-transparent blur-3xl"
+            style={{ animation: 'float-slow 10s ease-in-out infinite', animationDelay: '-2s' }}
+          />
+          {/* Bottom-right pink depth orb */}
+          <div
+            className="absolute -bottom-8 right-0 h-64 w-64 rounded-full bg-gradient-to-tl from-pink-500/10 to-transparent blur-3xl"
+            style={{ animation: 'float-slow 14s ease-in-out infinite', animationDelay: '-6s' }}
+          />
+          {/* Center-left cyan depth orb */}
+          <div
+            className="absolute left-0 top-1/2 h-48 w-48 rounded-full bg-gradient-to-r from-cyan-500/8 to-transparent blur-3xl"
+            style={{ animation: 'float-slow 16s ease-in-out infinite', animationDelay: '-8s' }}
+          />
+
+          {/* Dot grid — subtle tech texture */}
+          <div className="absolute inset-0 dot-grid opacity-[0.03]" />
+        </div>
+
+        {/* Floating feature pills in hero background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {floatingPills.map((p) => (
+            <FloatingPill
+              key={p.label}
+              label={p.label}
+              style={{ ...p.style, animation: `float-x ${p.style.animationDuration} ease-in-out infinite` }}
+            />
+          ))}
         </div>
 
         <div className="relative mx-auto max-w-4xl text-center">
           {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[12px] font-semibold text-primary">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[12px] font-semibold text-primary animate-fade-in">
             <Sparkles className="h-3.5 w-3.5" />
             {t('demo.badge')}
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl animate-slide-up">
             {t('demo.hero.headline1')}{' '}
             <span className="bg-gradient-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
               {t('demo.hero.headline2')}
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-muted-foreground animate-fade-in" style={{ animationDelay: '0.15s' }}>
             {t('demo.hero.sub')}
           </p>
 
           {/* CTA buttons */}
-          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <a
               href="#portals"
               className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-7 py-3.5 text-[14px] font-bold text-white shadow-[0_4px_24px_hsl(217_91%_60%/0.4)] transition-all hover:shadow-[0_4px_32px_hsl(217_91%_60%/0.6)] hover:-translate-y-0.5"
@@ -298,7 +537,7 @@ export default function DemoPage() {
           </div>
 
           {/* Check list */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
             {checks.map((f) => (
               <span key={f} className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
@@ -307,18 +546,16 @@ export default function DemoPage() {
             ))}
           </div>
         </div>
+
+        {/* Mini app mockup */}
+        <AppMockup />
       </section>
 
       {/* ── Stats ──────────────────────────────────────────────── */}
       <section className="border-y border-border/40 bg-muted/30 px-4 py-12 sm:px-6">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-8 sm:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-3xl font-extrabold tabular-nums text-foreground">
-                <Counter to={s.value} suffix={s.suffix} />
-              </p>
-              <p className="mt-1 text-[12px] text-muted-foreground">{s.label}</p>
-            </div>
+          {stats.map((s, i) => (
+            <StatItem key={s.label} value={s.value} suffix={s.suffix} label={s.label} delay={i * 80} />
           ))}
         </div>
       </section>
@@ -331,8 +568,8 @@ export default function DemoPage() {
             <p className="mt-3 text-muted-foreground">{t('demo.features.sub')}</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <FeatureCard key={f.title} {...f} />
+            {features.map((f, i) => (
+              <FeatureCard key={f.title} {...f} delay={i * 60} />
             ))}
           </div>
         </div>
@@ -346,21 +583,8 @@ export default function DemoPage() {
             <p className="mt-3 text-muted-foreground">{t('demo.portals.sub')}</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-3">
-            {portals.map((p) => (
-              <div key={p.title} className="rounded-2xl border border-border/60 bg-card p-6">
-                <div className={cn('mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl', p.bg)}>
-                  <p.icon className={cn('h-6 w-6', p.color)} />
-                </div>
-                <h3 className="mb-3 text-[15px] font-bold text-foreground">{p.title}</h3>
-                <ul className="space-y-2">
-                  {p.points.map((pt) => (
-                    <li key={pt} className="flex items-start gap-2 text-[13px] text-muted-foreground">
-                      <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {portals.map((p, i) => (
+              <PortalFeatureItem key={p.title} portal={p} delay={i * 100} />
             ))}
           </div>
         </div>
@@ -386,6 +610,7 @@ export default function DemoPage() {
               buttonLabel={t('demo.adminCard.btn')}
               buttonClass="bg-gradient-to-r from-blue-600 to-violet-600 shadow-[0_4px_16px_hsl(217_91%_60%/0.35)]"
               href="/login"
+              delay={0}
             />
 
             {/* Client */}
@@ -400,6 +625,7 @@ export default function DemoPage() {
               buttonClass="bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_4px_16px_rgb(16_185_129/0.35)]"
               onEnter={handleClientEnter}
               loading={clientLoading}
+              delay={120}
             />
 
             {/* IB */}
@@ -414,7 +640,44 @@ export default function DemoPage() {
               buttonClass="bg-gradient-to-r from-amber-500 to-orange-600 shadow-[0_4px_16px_rgb(245_158_11/0.35)]"
               onEnter={handleIBEnter}
               loading={ibLoading}
+              delay={240}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Bottom CTA ─────────────────────────────────────────── */}
+      <section className="relative overflow-hidden px-4 py-20 sm:px-6">
+        {/* bg gradient */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-blue-600/8 via-violet-600/6 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.035]" />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[12px] font-semibold text-primary">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t('demo.cta.readyBadge')}
+          </div>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            {t('demo.cta.readyHeadline')}
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+            {t('demo.cta.readySub')}
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <a
+              href="#portals"
+              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-3.5 text-[14px] font-bold text-white shadow-[0_4px_24px_hsl(217_91%_60%/0.4)] transition-all hover:shadow-[0_4px_32px_hsl(217_91%_60%/0.6)] hover:-translate-y-0.5"
+            >
+              <ArrowRight className="h-4 w-4" />
+              {t('demo.cta.explore')}
+            </a>
+            <Link
+              to="/login"
+              className="flex items-center gap-2 rounded-2xl border border-border bg-card px-8 py-3.5 text-[14px] font-semibold text-foreground transition-all hover:bg-muted hover:border-primary/30"
+            >
+              <LayoutGrid className="h-4 w-4" />
+              {t('demo.cta.admin')}
+            </Link>
           </div>
         </div>
       </section>

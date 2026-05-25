@@ -215,6 +215,42 @@ html[lang="ar"] .font-mono {
   }
 }
 
+/* ── Portal entry animations ────────────────────────────────── */
+@keyframes portal-scale-in {
+  from { opacity: 0; transform: scale(0.4) rotate(-8deg); }
+  to   { opacity: 1; transform: scale(1)   rotate(0deg);  }
+}
+@keyframes portal-slide-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes portal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes portal-progress {
+  from { width: 0%;    }
+  to   { width: 100%;  }
+}
+@keyframes portal-fade-out {
+  from { opacity: 1; transform: scale(1);    }
+  to   { opacity: 0; transform: scale(1.04); }
+}
+@keyframes float-x {
+  0%, 100% { transform: translateY(0px)   translateX(0px);   }
+  33%       { transform: translateY(-14px) translateX(8px);   }
+  66%       { transform: translateY(-8px)  translateX(-6px);  }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-20px); }
+}
+@keyframes drift {
+  0%, 100% { transform: translateX(0px)  translateY(0px);  }
+  25%       { transform: translateX(12px) translateY(-8px); }
+  75%       { transform: translateX(-8px) translateY(6px);  }
+}
+
 /* ── Custom scrollbar ───────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }

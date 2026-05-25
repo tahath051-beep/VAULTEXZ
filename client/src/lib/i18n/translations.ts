@@ -962,10 +962,10 @@ export const translations = {
   'demo.hero.headline1':        { en: 'Your trading desk,',           ar: 'مكتبك للتداول،' },
   'demo.hero.headline2':        { en: 'fully automated',              ar: 'مؤتمت بالكامل' },
   'demo.hero.sub':              { en: 'Real-time reconciliation, multi-currency operations, IB commission tracking, and client management — all in one Arabic/English accounting PWA built for modern FX brokerages.', ar: 'مطابقة فورية وعمليات متعددة العملات وتتبع عمولات الوكلاء وإدارة العملاء — كل ذلك في تطبيق محاسبة عربي/إنجليزي متكامل لشركات الوساطة الحديثة.' },
-  'demo.cta.explore':           { en: 'Explore Live Demo',            ar: 'استكشف العرض التجريبي' },
+  'demo.cta.explore':           { en: 'Explore the Platform',          ar: 'استكشف المنصة' },
   'demo.cta.admin':             { en: 'Admin Panel',                  ar: 'لوحة الإدارة' },
   'demo.check.noSetup':         { en: 'No setup required',            ar: 'لا يحتاج إعداد' },
-  'demo.check.preloaded':       { en: 'Pre-loaded demo data',         ar: 'بيانات تجريبية محملة مسبقاً' },
+  'demo.check.preloaded':       { en: 'Ready-to-use sample data',     ar: 'بيانات نموذجية جاهزة للاستخدام' },
   'demo.check.arabic':          { en: 'Full Arabic RTL support',      ar: 'دعم كامل للعربية' },
   'demo.check.pwa':             { en: 'PWA — installable',            ar: 'تطبيق قابل للتثبيت' },
 
@@ -1039,6 +1039,11 @@ export const translations = {
   'demo.ibCard.desc':           { en: 'Monitor commissions, view referred clients, manage sub-IBs, and request payouts.', ar: 'راقب العمولات واعرض العملاء المُحالين وأدر الوكلاء الفرعيين واطلب صرف المبالغ.' },
   'demo.ibCard.btn':            { en: 'Enter as IB',                   ar: 'الدخول كوكيل' },
   'demo.ibCard.btnContinue':    { en: 'Continue as IB',                ar: 'متابعة كوكيل' },
+
+  // ── Demo bottom CTA ───────────────────────────────────────────────────────
+  'demo.cta.readyBadge':       { en: 'Ready to explore?',             ar: 'مستعد للاستكشاف؟' },
+  'demo.cta.readyHeadline':    { en: 'Step inside and see the difference', ar: 'ادخل وأرَ الفارق بنفسك' },
+  'demo.cta.readySub':         { en: 'Three fully functional portals. Real accounting logic. Built for FX brokerages that demand precision.', ar: 'ثلاث بوابات كاملة. منطق محاسبي حقيقي. مصمم لشركات الوساطة التي تتطلب الدقة.' },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

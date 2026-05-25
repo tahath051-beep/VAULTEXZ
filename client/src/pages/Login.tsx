@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { authLogin } from '@/api/auth.api';
 import { toast } from '@/hooks/use-toast';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PortalEntryScreen } from '@/components/shared/PortalEntryScreen';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 
 const schema = z.object({
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const [showEntry, setShowEntry] = useState(false);
   const { t, lang, toggleLang } = useTranslation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -35,7 +37,7 @@ export default function LoginPage() {
     try {
       const result = await authLogin(data);
       setAuth(result.token, result.user);
-      navigate('/');
+      setShowEntry(true);
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
@@ -53,6 +55,10 @@ export default function LoginPage() {
   ];
 
   return (
+    <>
+    {showEntry && (
+      <PortalEntryScreen portal="admin" onComplete={() => navigate('/')} />
+    )}
     <div className="grid min-h-screen lg:grid-cols-2 bg-background">
       {/* Brand panel */}
       <div className="relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between p-12 text-white">
@@ -175,5 +181,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
