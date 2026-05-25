@@ -1,170 +1,231 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { toast } from '@/hooks/use-toast';
-import { api } from '@/api/client';
-import { X, Plus } from 'lucide-react';
+import { SectionCard } from '@/components/shared/SectionCard';
+import { useSettingsStore } from '@/stores/settings.store';
+import { useAuthStore } from '@/stores/auth.store';
+import { useToast } from '@/hooks/use-toast';
+import { Lock, Unlock, Plus, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
-interface GeneralSettings {
-  broker_name: string;
-  timezone: string;
-  mt5_server: string;
-  withdrawal_approval_steps: number;
-  reconciliation_threshold: string;
-  eod_schedule_time: string;
-  report_delivery_emails: string[];
+const TIMEZONES = [
+  'UTC', 'US/Eastern', 'US/Pacific', 'Europe/London',
+  'Europe/Frankfurt', 'Asia/Dubai', 'Asia/Riyadh', 'Asia/Singapore', 'Asia/Tokyo',
+];
+
+const CURRENCIES = ['USD', 'EUR', 'GBP', 'AED', 'SAR', 'TRY'];
+
+/* ── Period Locking ────────────────────────────────────────── */
+function PeriodLockSection() {
+  const { lockedPeriods, lockPeriod, unlockPeriod } = useSettingsStore();
+  const user = useAuthStore((s) => s.user);
+  const { toast } = useToast();
+
+  const today = new Date();
+  const presets = [
+    { label: format(subMonths(today, 1), 'MMMM yyyy'), from: format(startOfMonth(subMonths(today, 1)), 'yyyy-MM-dd'), to: format(endOfMonth(subMonths(today, 1)), 'yyyy-MM-dd') },
+    { label: format(subMonths(today, 2), 'MMMM yyyy'), from: format(startOfMonth(subMonths(today, 2)), 'yyyy-MM-dd'), to: format(endOfMonth(subMonths(today, 2)), 'yyyy-MM-dd') },
+    { label: `Q${Math.ceil((today.getMonth() + 1) / 3) - 1} ${today.getFullYear()}`, from: '', to: '' },
+  ];
+
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo,   setCustomTo]   = useState('');
+  const [customLabel, setCustomLabel] = useState('');
+
+  const handleLockPreset = (p: typeof presets[0]) => {
+    if (!p.from) { toast({ title: 'Select a custom range instead', variant: 'destructive' }); return; }
+    const already = lockedPeriods.some((lp) => lp.from === p.from);
+    if (already) { toast({ title: 'Period already locked' }); return; }
+    lockPeriod(p.from, p.to, p.label, user?.email ?? 'admin');
+    toast({ title: `🔒 ${p.label} locked`, description: 'No entries can be backdated into this period.' });
+  };
+
+  const handleLockCustom = () => {
+    if (!customFrom || !customTo || !customLabel) { toast({ title: 'Fill all fields', variant: 'destructive' }); return; }
+    if (customFrom > customTo) { toast({ title: 'From date must be before To date', variant: 'destructive' }); return; }
+    lockPeriod(customFrom, customTo, customLabel, user?.email ?? 'admin');
+    toast({ title: `🔒 ${customLabel} locked` });
+    setCustomFrom(''); setCustomTo(''); setCustomLabel('');
+  };
+
+  return (
+    <SectionCard title="Period Locking" description="Lock accounting periods to prevent backdated entries.">
+      <div className="space-y-5">
+        {/* Quick lock presets */}
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Quick Lock</p>
+          <div className="flex flex-wrap gap-2">
+            {presets.filter((p) => p.from).map((p) => {
+              const isLocked = lockedPeriods.some((lp) => lp.from === p.from);
+              return (
+                <button
+                  key={p.label}
+                  onClick={() => isLocked ? undefined : handleLockPreset(p)}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors',
+                    isLocked
+                      ? 'border-destructive/30 bg-destructive/10 text-destructive cursor-default'
+                      : 'border-border hover:bg-accent hover:text-foreground cursor-pointer',
+                  )}
+                >
+                  {isLocked ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Custom range */}
+        <div className="rounded-xl border border-border p-4 space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Custom Range</p>
+          <div className="grid grid-cols-3 gap-3">
+            <div><Label className="text-xs">Label</Label><Input value={customLabel} onChange={(e) => setCustomLabel(e.target.value)} placeholder="e.g. Q1 2026" /></div>
+            <div><Label className="text-xs">From</Label><Input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} /></div>
+            <div><Label className="text-xs">To</Label><Input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} /></div>
+          </div>
+          <Button size="sm" variant="outline" onClick={handleLockCustom} className="gap-1.5">
+            <Lock className="h-3.5 w-3.5" /> Lock Period
+          </Button>
+        </div>
+
+        {/* Locked periods list */}
+        {lockedPeriods.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Locked Periods</p>
+            {lockedPeriods.map((p) => (
+              <div key={p.id} className="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-2.5">
+                <div className="flex items-center gap-3">
+                  <Lock className="h-3.5 w-3.5 text-destructive" />
+                  <div>
+                    <p className="text-sm font-semibold">{p.label}</p>
+                    <p className="text-xs text-muted-foreground">{p.from} → {p.to} · Locked by {p.lockedBy}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { unlockPeriod(p.id); toast({ title: `🔓 ${p.label} unlocked` }); }}
+                  className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  title="Unlock period"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {lockedPeriods.length === 0 && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CheckCircle2 className="h-4 w-4 text-success" />
+            No periods are locked. All dates are open for entries.
+          </div>
+        )}
+      </div>
+    </SectionCard>
+  );
 }
 
-const getGeneral = () =>
-  api.get<{ success: boolean; data: GeneralSettings }>('/settings/general').then((r) => r.data.data);
-
-const saveGeneral = (data: GeneralSettings) =>
-  api.patch<{ success: boolean; data: GeneralSettings }>('/settings/general', data).then((r) => r.data.data);
-
-const TIMEZONES = ['UTC', 'US/Eastern', 'US/Pacific', 'Europe/London', 'Europe/Frankfurt', 'Asia/Dubai', 'Asia/Singapore', 'Asia/Tokyo'];
-
+/* ── Main component ────────────────────────────────────────── */
 export default function GeneralSettings() {
-  const qc = useQueryClient();
+  const { general, updateGeneral } = useSettingsStore();
+  const { toast } = useToast();
+
+  const [form, setForm] = useState(general);
+  const [emailInput, setEmailInput] = useState('');
   const [emails, setEmails] = useState<string[]>([]);
-  const [newEmail, setNewEmail] = useState('');
-  const [approvalSteps, setApprovalSteps] = useState('1');
-  const [timezone, setTimezone] = useState('UTC');
 
-  const { data, isLoading } = useQuery({ queryKey: ['settings-general'], queryFn: getGeneral });
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<GeneralSettings>();
-
-  useEffect(() => {
-    if (data) {
-      reset(data);
-      setEmails(data.report_delivery_emails ?? []);
-      setApprovalSteps(String(data.withdrawal_approval_steps ?? 1));
-      setTimezone(data.timezone ?? 'UTC');
-    }
-  }, [data, reset]);
-
-  const { mutate: save, isPending: saving } = useMutation({
-    mutationFn: saveGeneral,
-    onSuccess: () => {
-      toast({ title: 'Settings saved' });
-      qc.invalidateQueries({ queryKey: ['settings-general'] });
-    },
-    onError: () => toast({ title: 'Failed to save settings', variant: 'destructive' }),
-  });
-
-  const onSubmit = (d: GeneralSettings) => {
-    save({ ...d, timezone, withdrawal_approval_steps: Number(approvalSteps), report_delivery_emails: emails });
+  const handleSave = () => {
+    updateGeneral(form);
+    toast({ title: '✓ Settings saved', description: 'General settings updated successfully.' });
   };
 
   const addEmail = () => {
-    const e = newEmail.trim();
-    if (!e || !e.includes('@') || emails.includes(e)) return;
-    setEmails([...emails, e]);
-    setNewEmail('');
+    if (!emailInput.includes('@')) { toast({ title: 'Invalid email', variant: 'destructive' }); return; }
+    if (!emails.includes(emailInput)) setEmails((e) => [...e, emailInput]);
+    setEmailInput('');
   };
 
-  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="space-y-6 max-w-2xl">
-
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Broker Info</p>
-            <div className="space-y-1">
-              <Label>Broker Name <span className="text-destructive">*</span></Label>
-              <Input {...register('broker_name', { required: true })} />
-              {errors.broker_name && <p className="text-xs text-destructive">Required</p>}
+    <div className="space-y-6 max-w-2xl">
+      {/* Broker Info */}
+      <SectionCard title="Broker Configuration" description="Core platform settings for your brokerage.">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Broker Name</Label>
+              <Input value={form.brokerName} onChange={(e) => setForm((f) => ({ ...f, brokerName: e.target.value }))} placeholder="Vaultex FX" />
             </div>
-            <div className="space-y-1">
-              <Label>Timezone</Label>
-              <Select value={timezone} onValueChange={setTimezone}>
+            <div>
+              <Label>Default Currency</Label>
+              <Select value={form.defaultCurrency} onValueChange={(v) => setForm((f) => ({ ...f, defaultCurrency: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}
-                </SelectContent>
+                <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">MT5 Configuration</p>
-            <div className="space-y-1">
-              <Label>MT5 Server Address</Label>
-              <Input placeholder="host:port" {...register('mt5_server')} />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Operations</p>
-            <div className="space-y-1">
-              <Label>Withdrawal Approval Steps</Label>
-              <Select value={approvalSteps} onValueChange={setApprovalSteps}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1-Step (Auto-approve)</SelectItem>
-                  <SelectItem value="2">2-Step (Requires review)</SelectItem>
-                </SelectContent>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Timezone</Label>
+              <Select value={form.timezone} onValueChange={(v) => setForm((f) => ({ ...f, timezone: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
-              <Label>Reconciliation Threshold ($)</Label>
-              <Input type="number" step="0.001" className="w-48" {...register('reconciliation_threshold')} />
-              <p className="text-xs text-muted-foreground">Differences below this amount are ignored</p>
+            <div>
+              <Label>EOD Schedule Time</Label>
+              <Input type="time" value={form.eodScheduleTime} onChange={(e) => setForm((f) => ({ ...f, eodScheduleTime: e.target.value }))} />
             </div>
-            <div className="space-y-1">
-              <Label>EOD Schedule Time (UTC)</Label>
-              <Input type="time" className="w-36" {...register('eod_schedule_time')} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Reconciliation Threshold (%)</Label>
+              <Input type="number" min="0" max="10" step="0.1" value={form.reconciliationThreshold} onChange={(e) => setForm((f) => ({ ...f, reconciliationThreshold: Number(e.target.value) }))} />
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-center gap-3 pt-5">
+              <button
+                role="switch"
+                aria-checked={form.requireDualApproval}
+                onClick={() => setForm((f) => ({ ...f, requireDualApproval: !f.requireDualApproval }))}
+                className={cn('relative inline-flex h-5 w-9 rounded-full border-2 border-transparent transition-colors', form.requireDualApproval ? 'bg-primary' : 'bg-muted')}
+              >
+                <span className={cn('inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', form.requireDualApproval ? 'translate-x-4' : 'translate-x-0')} />
+              </button>
+              <Label className="cursor-pointer" onClick={() => setForm((f) => ({ ...f, requireDualApproval: !f.requireDualApproval }))}>
+                Require Dual Approval
+              </Label>
+            </div>
+          </div>
 
-        <Card>
-          <CardContent className="pt-6 space-y-4">
-            <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Report Delivery Emails</p>
-            <div className="space-y-2">
-              {emails.map((e) => (
-                <div key={e} className="flex items-center gap-2">
-                  <span className="text-sm flex-1 font-mono">{e}</span>
-                  <Button type="button" size="sm" variant="ghost" className="h-7 w-7 p-0"
-                    onClick={() => setEmails(emails.filter((x) => x !== e))}>
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Add email address"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addEmail(); } }}
-                  className="flex-1"
-                />
-                <Button type="button" variant="outline" size="sm" onClick={addEmail}>
-                  <Plus className="h-4 w-4 mr-1" />Add
-                </Button>
+          {/* Report delivery emails */}
+          <div>
+            <Label>Report Delivery Emails</Label>
+            <div className="mt-1.5 flex gap-2">
+              <Input value={emailInput} onChange={(e) => setEmailInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addEmail(); } }} placeholder="reports@example.com" />
+              <Button type="button" size="sm" variant="outline" onClick={addEmail}><Plus className="h-3.5 w-3.5" /></Button>
+            </div>
+            {emails.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {emails.map((em) => (
+                  <span key={em} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
+                    {em}
+                    <button onClick={() => setEmails((e) => e.filter((x) => x !== em))} className="ml-0.5 text-muted-foreground hover:text-foreground"><AlertTriangle className="h-2.5 w-2.5" /></button>
+                  </span>
+                ))}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            )}
+          </div>
 
-        <Button type="submit" disabled={saving}>
-          {saving && <LoadingSpinner className="h-4 w-4 mr-2" />}
-          Save Settings
-        </Button>
-      </div>
-    </form>
+          <div className="flex justify-end pt-2">
+            <Button onClick={handleSave} variant="gradient">Save Settings</Button>
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Period Locking */}
+      <PeriodLockSection />
+    </div>
   );
 }

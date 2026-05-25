@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { useUIStore } from '@/stores/ui.store';
 import { I18nDocumentSync } from '@/lib/i18n/useTranslation';
+import { AdminOnly } from '@/components/shared/ProtectedRoute';
 
 // Demo page
 const DemoPage         = lazy(() => import('@/pages/Demo'));
@@ -104,11 +105,11 @@ export default function App() {
               <Route path="/trades"         element={<Trades />} />
               <Route path="/reports"        element={<Reports />} />
               <Route path="/ib-commissions" element={<IBCommissions />} />
-              <Route path="/eod"            element={<EOD />} />
+              <Route path="/eod"            element={<AdminOnly><EOD /></AdminOnly>} />
               <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
-              <Route path="/users"          element={<Users />} />
+              <Route path="/users"          element={<AdminOnly><Users /></AdminOnly>} />
               <Route path="/profile"        element={<Profile />} />
-              <Route path="/settings"       element={<Settings />}>
+              <Route path="/settings"       element={<AdminOnly><Settings /></AdminOnly>}>
                 <Route index element={<Navigate to="/settings/general" replace />} />
                 <Route path="general"    element={<GeneralSettings />} />
                 <Route path="symbols"    element={<SymbolSettings />} />

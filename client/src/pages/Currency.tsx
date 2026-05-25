@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react';
-import { ArrowUpRight, ArrowDownRight, RefreshCw, WifiOff } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, RefreshCw, WifiOff, Trash2, BellRing } from 'lucide-react';
+import { z } from 'zod';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { TrendChart } from '@/components/shared/TrendChart';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useWorkbookStore } from '@/stores/workbook.store';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import { AddRateButton } from '@/components/shared/AddRowModals';
 import { useLiveRates } from '@/hooks/useLiveRates';
@@ -14,6 +17,141 @@ import { cn } from '@/lib/utils';
 
 const PAIRS = ['USD/TRY', 'USD/EUR', 'EUR/USD'] as const;
 type Pair = typeof PAIRS[number];
+
+const alertSchema = z.object({
+  pair: z.string().min(1),
+  condition: z.enum(['above', 'below']),
+  threshold: z.number().gt(0),
+});
+
+function RateAlertsCard() {
+  const { rateAlerts, addRateAlert, removeRateAlert, toggleRateAlert } = useSettingsStore();
+  const [pair, setPair] = useState<string>('USD/TRY');
+  const [condition, setCondition] = useState<'above' | 'below'>('above');
+  const [threshold, setThreshold] = useState('');
+  const [error, setError] = useState('');
+
+  const handleAdd = () => {
+    const result = alertSchema.safeParse({ pair, condition, threshold: Number(threshold) });
+    if (!result.success) {
+      setError('Please enter a valid threshold greater than 0.');
+      return;
+    }
+    setError('');
+    addRateAlert({ pair, condition, threshold: result.data.threshold, active: true });
+    setThreshold('');
+  };
+
+  const triggeredAlerts = rateAlerts.filter((a) => a.triggeredAt);
+
+  return (
+    <SectionCard
+      title="Rate Alerts"
+      description="Get notified when an FX rate crosses a threshold"
+    >
+      {/* Triggered banner */}
+      {triggeredAlerts.length > 0 && (
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 px-4 py-3">
+          <BellRing className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
+            {triggeredAlerts.length} alert{triggeredAlerts.length > 1 ? 's' : ''} triggered!{' '}
+            {triggeredAlerts.map((a) => `${a.pair} ${a.condition} ${a.threshold}`).join(', ')}
+          </p>
+        </div>
+      )}
+
+      {/* Form */}
+      <div className="flex flex-wrap items-end gap-3 mb-4">
+        <div>
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Pair</label>
+          <select
+            value={pair}
+            onChange={(e) => setPair(e.target.value)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            {PAIRS.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Condition</label>
+          <select
+            value={condition}
+            onChange={(e) => setCondition(e.target.value as 'above' | 'below')}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="above">Above</option>
+            <option value="below">Below</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Threshold</label>
+          <Input
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="e.g. 32.5"
+            value={threshold}
+            onChange={(e) => setThreshold(e.target.value)}
+            className="w-32"
+          />
+        </div>
+        <Button variant="default" size="sm" onClick={handleAdd}>Add Alert</Button>
+      </div>
+      {error && <p className="mb-3 text-xs text-destructive">{error}</p>}
+
+      {/* Alert list */}
+      {rateAlerts.length === 0 ? (
+        <p className="text-sm text-muted-foreground py-2">No alerts configured.</p>
+      ) : (
+        <div className="space-y-2">
+          {rateAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className={cn(
+                'flex items-center justify-between rounded-xl border border-border/60 bg-muted/30 px-4 py-3 gap-3',
+                !alert.active && 'opacity-50',
+                alert.triggeredAt && 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20',
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className="font-mono text-xs">{alert.pair}</Badge>
+                <span className="text-sm font-medium capitalize">{alert.condition}</span>
+                <span className="font-mono text-sm font-bold">{alert.threshold}</span>
+                {alert.triggeredAt && (
+                  <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
+                    <BellRing className="h-3 w-3" /> Triggered
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Active toggle */}
+                <button
+                  onClick={() => toggleRateAlert(alert.id)}
+                  className={cn(
+                    'relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors',
+                    alert.active ? 'bg-primary' : 'bg-muted',
+                  )}
+                  role="switch"
+                  aria-checked={alert.active}
+                >
+                  <span className={cn('pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', alert.active ? 'translate-x-4' : 'translate-x-0')} />
+                </button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                  onClick={() => removeRateAlert(alert.id)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCard>
+  );
+}
 
 export default function Currency() {
   const { t } = useTranslation();
@@ -217,6 +355,8 @@ export default function Currency() {
           </Table>
         </div>
       </SectionCard>
+
+      <RateAlertsCard />
     </div>
   );
 }

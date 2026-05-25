@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Plus, Trash2, ChevronRight, ChevronLeft } from 'lucide-react';
+import { z } from 'zod';
+import { Plus, Trash2, ChevronRight, ChevronLeft, AlertCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,15 +78,40 @@ export function NewRequestDialog({ open, onClose }: NewRequestDialogProps) {
   const updateLine = (id: string, patch: Partial<RequestLine>) =>
     setLines((prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)));
 
+  // ── Zod schemas ──────────────────────────────────────────
+  const lineSchema = z.object({
+    accountNo: z.string().min(1, 'Account number required'),
+    amount:    z.number({ invalid_type_error: 'Amount must be a number' }).positive('Amount must be > 0'),
+    currency:  z.string().min(1, 'Currency required'),
+  });
+
+  const requestSchema = z.object({
+    date:  z.string().min(1, 'Date required'),
+    lines: z.array(lineSchema).min(1, 'At least one line required'),
+  });
+
+  const [zodErrors, setZodErrors] = useState<string[]>([]);
+
   const handleSubmit = () => {
-    const validLines = lines.filter((l) => l.accountNo && l.amount > 0);
-    if (!validLines.length) return;
+    const validLines = lines.filter((l) => l.accountNo || l.amount);
+    const result = requestSchema.safeParse({
+      date: step1.date,
+      lines: validLines.map((l) => ({ ...l, amount: Number(l.amount) })),
+    });
+
+    if (!result.success) {
+      const errs = result.error.errors.map((e) => e.message);
+      setZodErrors(errs);
+      return;
+    }
+    setZodErrors([]);
+
     addRequest({
       type: step1.type,
       expenseSubType: step1.type === 'expense' ? step1.expenseSubType : undefined,
       date: step1.date,
       priority: step1.priority,
-      lines: validLines,
+      lines: result.data.lines as typeof lines,
       createdBy: 'admin@demo.com',
       note: step1.note || undefined,
     });
@@ -343,6 +369,17 @@ export function NewRequestDialog({ open, onClose }: NewRequestDialogProps) {
                 <p className="text-xs text-muted-foreground italic">{step1.note}</p>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Zod validation errors */}
+        {zodErrors.length > 0 && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 space-y-1">
+            {zodErrors.map((e) => (
+              <p key={e} className="flex items-center gap-1.5 text-xs text-destructive font-medium">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {e}
+              </p>
+            ))}
           </div>
         )}
 

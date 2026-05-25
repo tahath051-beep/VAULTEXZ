@@ -3,6 +3,7 @@ import {
   Plus, Search, AlertTriangle, Clock, DollarSign, FileText,
   ChevronDown, ChevronUp, Filter,
 } from 'lucide-react';
+import { useAuthStore } from '@/stores/auth.store';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
@@ -39,6 +40,7 @@ export default function Operations() {
   const { t } = useTranslation();
   const { requests, confirmRequest, executeRequest, createVoucher, getPendingCount, getUrgentCount, getTodayVolume } = useOperationsStore();
   const { toast } = useToast();
+  const user = useAuthStore((s) => s.user);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<RequestStatus | 'ALL'>('ALL');
@@ -49,6 +51,7 @@ export default function Operations() {
   const [detailRequest, setDetailRequest] = useState<OperationRequest | null>(null);
   const [newOpen, setNewOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -72,6 +75,36 @@ export default function Operations() {
   const urgentCount = getUrgentCount();
   const todayVol = getTodayVolume();
   const awaitVoucher = requests.filter((r) => r.status === 'executed').length;
+
+  const pendingFiltered = filtered.filter((r) => r.status === 'pending');
+  const allPendingSelected = pendingFiltered.length > 0 && pendingFiltered.every((r) => selected.has(r.id));
+
+  const toggleSelectAll = () => {
+    if (allPendingSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(pendingFiltered.map((r) => r.id)));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleBulkConfirm = () => {
+    const confirmerEmail = user?.email ?? 'admin@demo.com';
+    selected.forEach((id) => {
+      const req = requests.find((r) => r.id === id);
+      if (req?.status === 'pending') confirmRequest(id, confirmerEmail);
+    });
+    toast({ title: `${selected.size} request(s) confirmed` });
+    setSelected(new Set());
+  };
 
   const handleQuickAction = (req: OperationRequest, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -231,11 +264,35 @@ export default function Operations() {
           )}
         </div>
 
+        {/* Bulk action bar */}
+        {selected.size > 0 && (
+          <div className="flex items-center gap-3 border-b border-border bg-blue-500/10 px-5 py-2.5">
+            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{selected.size} selected</span>
+            <Button size="sm" variant="default" className="h-7 text-xs bg-blue-500 hover:bg-blue-600 text-white" onClick={handleBulkConfirm}>
+              Confirm All
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSelected(new Set())}>
+              Clear selection
+            </Button>
+          </div>
+        )}
+
         {/* Table */}
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-8">
+                  {pendingFiltered.length > 0 && (
+                    <input
+                      type="checkbox"
+                      checked={allPendingSelected}
+                      onChange={toggleSelectAll}
+                      className="h-3.5 w-3.5 rounded border-input cursor-pointer"
+                      title="Select all pending"
+                    />
+                  )}
+                </TableHead>
                 <TableHead className="w-8" />
                 <TableHead className="w-24">{t('req.field.requestNo')}</TableHead>
                 <TableHead>{t('field.opType')}</TableHead>
@@ -254,13 +311,24 @@ export default function Operations() {
                   ? timeSince(req.timeline[0]?.at ?? req.date)
                   : null;
                 const actionLabel = quickActionLabel(req.status);
+                const isSelected = selected.has(req.id);
 
                 return (
                   <Fragment key={req.id}>
                     <TableRow
-                      className={cn('cursor-pointer hover:bg-accent/30', req.priority === 'urgent' && 'border-s-2 border-s-red-500')}
+                      className={cn('cursor-pointer hover:bg-accent/30', req.priority === 'urgent' && 'border-s-2 border-s-red-500', isSelected && 'bg-blue-500/5')}
                       onClick={() => setDetailRequest(req)}
                     >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        {req.status === 'pending' && (
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelect(req.id)}
+                            className="h-3.5 w-3.5 rounded border-input cursor-pointer"
+                          />
+                        )}
+                      </TableCell>
                       <TableCell onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : req.id); }}>
                         {isExpanded
                           ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -330,7 +398,7 @@ export default function Operations() {
                     {/* Expanded timeline row */}
                     {isExpanded && (
                       <TableRow>
-                        <TableCell colSpan={8} className="bg-muted/20 p-4">
+                        <TableCell colSpan={9} className="bg-muted/20 p-4">
                           <RequestTimeline events={req.timeline} compact />
                         </TableCell>
                       </TableRow>
@@ -341,7 +409,7 @@ export default function Operations() {
 
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-12 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={9} className="py-12 text-center text-sm text-muted-foreground">
                     {t('report.noMatch')}
                   </TableCell>
                 </TableRow>

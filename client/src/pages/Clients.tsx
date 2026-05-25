@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Search, Plus, AlertTriangle, Users, UserX, Eye, EyeOff, FileText, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, Plus, AlertTriangle, Users, UserX, Eye, EyeOff, FileText, ChevronsUpDown, ChevronUp, ChevronDown, Pencil, Check, X } from 'lucide-react';
 import { useSortable } from '@/hooks/useSortable';
 import { EmptyClients, EmptySearch } from '@/components/shared/EmptyState';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -129,11 +129,39 @@ function AddClientDialog({ open, onClose }: { open: boolean; onClose: () => void
 
 export default function Clients() {
   const { t } = useTranslation();
-  const { clients, ibs, setClientActive } = useClientsStore();
+  const { clients, ibs, setClientActive, updateClient } = useClientsStore();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [classFilter, setClassFilter] = useState<ClientClassification | 'ALL'>('ALL');
   const [showInactive, setShowInactive] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{ name: string; creditLimit: string; classification: ClientClassification }>({
+    name: '',
+    creditLimit: '',
+    classification: 'neutral',
+  });
+
+  const startEdit = (c: typeof clients[number]) => {
+    setEditingId(c.id);
+    setEditForm({
+      name: c.name,
+      creditLimit: c.creditLimit != null ? String(c.creditLimit) : '',
+      classification: c.classification,
+    });
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  const saveEdit = (id: string) => {
+    updateClient(id, {
+      name: editForm.name,
+      creditLimit: editForm.creditLimit !== '' ? Number(editForm.creditLimit) : undefined,
+      classification: editForm.classification,
+    });
+    toast({ title: t('toast.clientAdded') });
+    setEditingId(null);
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -229,42 +257,93 @@ export default function Clients() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(sortedClients as typeof filtered).map((c) => (
-                <TableRow key={c.id} className={cn(!c.active && 'opacity-40')}>
-                  <TableCell className="font-mono text-xs font-semibold text-muted-foreground">{c.accountNo}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{c.name}</p>
-                      {c.arabic && <p className="text-xs text-muted-foreground" dir="rtl">{c.arabic}</p>}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {c.ibParentId
-                      ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">{ibName(c.ibParentId)}</span>
-                      : <span className="text-xs text-muted-foreground">—</span>}
-                  </TableCell>
-                  <TableCell><ClassBadge cls={c.classification} /></TableCell>
-                  <TableCell className="text-right tabular-nums text-sm">
-                    {c.creditLimit != null ? `$${c.creditLimit.toLocaleString()}` : '—'}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <button
-                      onClick={() => setClientActive(c.id, !c.active)}
-                      className={cn('relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors',
-                        c.active ? 'bg-success dark:bg-green-500' : 'bg-muted')}
-                      role="switch" aria-checked={c.active}>
-                      <span className={cn('pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', c.active ? 'translate-x-4' : 'translate-x-0')} />
-                    </button>
-                  </TableCell>
-                  <TableCell>
-                    {c.notes && (
-                      <Button variant="ghost" size="icon" className="h-6 w-6" title={c.notes}>
-                        <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {(sortedClients as typeof filtered).map((c) => {
+                const isEditing = editingId === c.id;
+                return (
+                  <TableRow key={c.id} className={cn(!c.active && 'opacity-40', isEditing && 'bg-muted/30')}>
+                    <TableCell className="font-mono text-xs font-semibold text-muted-foreground">{c.accountNo}</TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <Input
+                          value={editForm.name}
+                          onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                          className="h-7 text-sm"
+                        />
+                      ) : (
+                        <div>
+                          <p className="font-medium">{c.name}</p>
+                          {c.arabic && <p className="text-xs text-muted-foreground" dir="rtl">{c.arabic}</p>}
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {c.ibParentId
+                        ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">{ibName(c.ibParentId)}</span>
+                        : <span className="text-xs text-muted-foreground">—</span>}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <select
+                          value={editForm.classification}
+                          onChange={(e) => setEditForm((f) => ({ ...f, classification: e.target.value as ClientClassification }))}
+                          className="rounded-md border border-input bg-background px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-ring"
+                        >
+                          {(Object.keys(classConfig) as ClientClassification[]).map((k) => (
+                            <option key={k} value={k}>{t(classConfig[k].labelKey as Parameters<typeof t>[0])}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <ClassBadge cls={c.classification} />
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-sm">
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          value={editForm.creditLimit}
+                          onChange={(e) => setEditForm((f) => ({ ...f, creditLimit: e.target.value }))}
+                          className="h-7 text-sm w-24 text-right ml-auto"
+                          placeholder="0"
+                        />
+                      ) : (
+                        c.creditLimit != null ? `$${c.creditLimit.toLocaleString()}` : '—'
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <button
+                        onClick={() => setClientActive(c.id, !c.active)}
+                        className={cn('relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors',
+                          c.active ? 'bg-success dark:bg-green-500' : 'bg-muted')}
+                        role="switch" aria-checked={c.active}>
+                        <span className={cn('pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', c.active ? 'translate-x-4' : 'translate-x-0')} />
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-success" onClick={() => saveEdit(c.id)}>
+                            <Check className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={cancelEdit}>
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => startEdit(c)}>
+                            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                          </Button>
+                          {c.notes && (
+                            <Button variant="ghost" size="icon" className="h-6 w-6" title={c.notes}>
+                              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               {filtered.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} className="p-0">

@@ -1,13 +1,109 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { StatusBadge } from '@/components/shared/StatusBadge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { getClientDashboard, getClientAccounts } from '@/api/clientPortal.api';
 import { fmt, fmtDate, fmtDateTime } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useToast } from '@/hooks/use-toast';
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CheckCircle2, Clock, XCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const requestSchema = z.object({
+  amount: z.number().gt(0, 'Amount must be greater than 0'),
+  currency: z.enum(['USD', 'EUR', 'GBP']),
+  note: z.string().optional(),
+});
+
+type RequestType = 'deposit' | 'withdrawal';
+
+function RequestDialog({
+  open,
+  type,
+  onClose,
+}: {
+  open: boolean;
+  type: RequestType;
+  onClose: () => void;
+}) {
+  const { toast } = useToast();
+  const [amount, setAmount] = useState('');
+  const [currency, setCurrency] = useState<'USD' | 'EUR' | 'GBP'>('USD');
+  const [note, setNote] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = requestSchema.safeParse({ amount: Number(amount), currency, note });
+    if (!result.success) {
+      setError(result.error.issues[0]?.message ?? 'Invalid input');
+      return;
+    }
+    setError('');
+    toast({ title: `Your ${type} request has been submitted and is under review.` });
+    setAmount('');
+    setNote('');
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="capitalize">{type} Request</DialogTitle>
+          <DialogDescription>Fill in the details below. Your request will be reviewed by the operations team.</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-3 pt-1">
+          <div>
+            <label className="mb-1 block text-xs font-medium">Amount *</label>
+            <Input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium">Currency *</label>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value as 'USD' | 'EUR' | 'GBP')}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium">Note (optional)</label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Any additional information..."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+              rows={3}
+            />
+          </div>
+          {error && <p className="text-xs text-destructive">{error}</p>}
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
+            <Button type="submit" size="sm" variant="gradient" className="capitalize">{type}</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 const statusIcon = (s: string) => {
   if (s === 'APPROVED') return <CheckCircle2 className="h-4 w-4 text-success" />;
@@ -19,6 +115,7 @@ export default function ClientDashboard() {
   const { t } = useTranslation();
   const { data, isLoading } = useQuery({ queryKey: ['client-dashboard'], queryFn: getClientDashboard });
   const { data: accounts = [] } = useQuery({ queryKey: ['client-accounts'], queryFn: getClientAccounts });
+  const [dialogType, setDialogType] = useState<RequestType | null>(null);
 
   if (isLoading) return <PageLoader />;
 
@@ -91,6 +188,36 @@ export default function ClientDashboard() {
           ))}
         </div>
       </div>
+
+      {/* Make a Request */}
+      <SectionCard title="Make a Request" description="Submit a deposit or withdrawal request for review">
+        <div className="flex gap-3">
+          <Button
+            variant="default"
+            className="flex-1 gap-2 bg-success hover:bg-success/90 text-white"
+            onClick={() => setDialogType('deposit')}
+          >
+            <ArrowUpRight className="h-4 w-4" />
+            Deposit
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 gap-2 border-destructive/30 text-destructive hover:bg-destructive/10"
+            onClick={() => setDialogType('withdrawal')}
+          >
+            <ArrowDownRight className="h-4 w-4" />
+            Withdrawal
+          </Button>
+        </div>
+      </SectionCard>
+
+      {dialogType && (
+        <RequestDialog
+          open={true}
+          type={dialogType}
+          onClose={() => setDialogType(null)}
+        />
+      )}
 
       {/* Recent activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

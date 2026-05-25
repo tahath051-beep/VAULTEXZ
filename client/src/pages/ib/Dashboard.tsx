@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { getIBDashboard } from '@/api/ib.api';
 import { fmt } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n/useTranslation';
+import { useToast } from '@/hooks/use-toast';
 import { DollarSign, Clock, TrendingUp, Users } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -12,11 +16,35 @@ import {
 
 export default function IBDashboard() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const { data, isLoading } = useQuery({ queryKey: ['ib-dashboard'], queryFn: getIBDashboard });
+
+  const [payoutAmount, setPayoutAmount] = useState('');
+  const [payoutMethod, setPayoutMethod] = useState<'Bank Transfer' | 'Crypto' | 'Internal'>('Bank Transfer');
+  const [payoutNote, setPayoutNote] = useState('');
+  const [payoutError, setPayoutError] = useState('');
 
   if (isLoading) return <PageLoader />;
 
   const m = data?.metrics;
+  const pendingCommission = m?.pending_commission ?? 0;
+
+  const handlePayoutSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = Number(payoutAmount);
+    if (!payoutAmount || isNaN(amount) || amount <= 0) {
+      setPayoutError('Please enter a valid amount greater than 0.');
+      return;
+    }
+    if (amount > pendingCommission) {
+      setPayoutError(`Amount cannot exceed pending commission ($${fmt(pendingCommission)}).`);
+      return;
+    }
+    setPayoutError('');
+    toast({ title: `Payout request submitted for $${fmt(amount)} via ${payoutMethod}. Processing time: 2-3 business days.` });
+    setPayoutAmount('');
+    setPayoutNote('');
+  };
 
   return (
     <div className="space-y-8 animate-slide-up">
@@ -101,6 +129,70 @@ export default function IBDashboard() {
           </div>
         </SectionCard>
       )}
+
+      {/* Commission Payout Request */}
+      <SectionCard
+        title="Request Commission Payout"
+        description={`Available pending commission: $${fmt(pendingCommission)}`}
+      >
+        <form onSubmit={handlePayoutSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-xs font-medium">Amount (USD) *</label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                max={pendingCommission}
+                placeholder="0.00"
+                value={payoutAmount}
+                onChange={(e) => setPayoutAmount(e.target.value)}
+                disabled={pendingCommission <= 0}
+                required
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium">Payment Method *</label>
+              <select
+                value={payoutMethod}
+                onChange={(e) => setPayoutMethod(e.target.value as typeof payoutMethod)}
+                disabled={pendingCommission <= 0}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Crypto">Crypto</option>
+                <option value="Internal">Internal</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium">Note (optional)</label>
+            <textarea
+              value={payoutNote}
+              onChange={(e) => setPayoutNote(e.target.value)}
+              placeholder="Any additional information..."
+              disabled={pendingCommission <= 0}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+              rows={2}
+            />
+          </div>
+          {payoutError && <p className="text-xs text-destructive">{payoutError}</p>}
+          {pendingCommission <= 0 && (
+            <p className="text-xs text-muted-foreground">No pending commission available for payout.</p>
+          )}
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              variant="default"
+              disabled={pendingCommission <= 0}
+              className="gap-2 bg-amber-500 hover:bg-amber-600 text-white"
+            >
+              <DollarSign className="h-4 w-4" />
+              Request Payout
+            </Button>
+          </div>
+        </form>
+      </SectionCard>
     </div>
   );
 }
