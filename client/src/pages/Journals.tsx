@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
+import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -84,7 +86,12 @@ export default function Journals() {
     <div className="space-y-6">
       <PageHeader
         title="Journal Entries"
-        subtitle="Manual double-entry journal posts"
+        subtitle="The official double-entry record of every financial transaction"
+        hint={
+          <PageHint id="journals" title="What is this page?">
+            Journal Entries are the core of accounting. Every transaction is recorded twice — once as a Debit (money coming into an account) and once as a Credit (money leaving). The two sides must always balance to zero.
+          </PageHint>
+        }
         actions={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -216,9 +223,19 @@ export default function Journals() {
               <TableRow>
                 <TableHead className="w-28">Date</TableHead>
                 <TableHead className="w-32">Type</TableHead>
-                <TableHead>Narration</TableHead>
+                <TableHead>
+                  <span className="inline-flex items-center gap-1">
+                    Narration
+                    <HelpTooltip text="A short description of what this transaction is for" side="bottom" />
+                  </span>
+                </TableHead>
                 <TableHead className="w-16 text-right">Lines</TableHead>
-                <TableHead className="w-36 text-right">Total DR</TableHead>
+                <TableHead className="w-36 text-right">
+                  <span className="inline-flex items-center gap-1 justify-end">
+                    Total DR
+                    <HelpTooltip text="Money flowing INTO an account (increases assets or expenses)" side="bottom" />
+                  </span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

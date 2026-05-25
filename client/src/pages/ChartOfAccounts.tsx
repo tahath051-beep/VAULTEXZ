@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -94,7 +95,12 @@ export default function ChartOfAccounts() {
     <div className="space-y-6">
       <PageHeader
         title="Chart of Accounts"
-        subtitle="Account structure for double-entry bookkeeping"
+        subtitle="Master list of every financial category and account in your system"
+        hint={
+          <PageHint id="chart-of-accounts" title="What is this page?">
+            The Chart of Accounts is like a filing cabinet with labeled folders for every type of money. Assets are things you own, Liabilities are things you owe, Revenue is money earned, Expenses are money spent. Every journal entry must reference one of these accounts.
+          </PageHint>
+        }
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

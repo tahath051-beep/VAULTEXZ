@@ -43,6 +43,36 @@ function isGroup(e: NavEntry): e is NavGroup {
   return 'children' in e;
 }
 
+const PLAIN_LABELS: Partial<Record<string, string>> = {
+  '/':                  'Dashboard — your financial overview at a glance',
+  '/entries':           'Entries — individual debit/credit records',
+  '/report':            'Report — account balances by category',
+  '/data':              'Data — raw workbook data',
+  '/opening':           'Opening — starting balances',
+  '/vouchers':          'Vouchers — numbered payment receipts',
+  '/currency':          'Currency — exchange rates and alerts',
+  '/operations':        'Operations — pending client requests to approve',
+  '/clients':           'Clients — your client accounts and balances',
+  '/ib-mgmt':           'IB Management — introducing broker partners',
+  '/payments':          'Payments — all money in and out',
+  '/trades':            'Trades — client buy/sell positions',
+  '/journals':          'Journals — official double-entry transaction records',
+  '/reports':           'Reports — P&L, Balance Sheet, Trial Balance',
+  '/ib-commissions':    'IB Commissions — partner earnings',
+  '/reconciliation':    'Reconciliation — match internal vs external records',
+  '/treasury':          'Treasury — cash and liquidity overview',
+  '/aging':             'Aging Report — overdue balances by age',
+  '/ops-analytics':     'Analytics — charts and operational trends',
+  '/eod':               "End of Day — close and lock today's records",
+  '/chart-of-accounts': 'Chart of Accounts — master account list',
+  '/users':             'Users — manage staff accounts',
+  '/settings/general':  'General Settings — broker config and period locking',
+  '/settings/symbols':  'Symbols — trading instrument settings',
+  '/settings/gateways': 'Gateways — payment gateway configuration',
+  '/settings/operations': 'Operations Settings — workflow configuration',
+  '/profile':           'My Profile — your account details',
+};
+
 const navigation: { titleKey: TranslationKey; entries: NavEntry[] }[] = [
   {
     titleKey: 'sidebar.workbook',
@@ -128,6 +158,7 @@ function LeafLink({
     <NavLink
       to={to}
       end={to === '/'}
+      title={PLAIN_LABELS[to] ?? t(labelKey)}
       className={({ isActive }) =>
         cn(
           'group relative flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm font-medium transition-all duration-150',

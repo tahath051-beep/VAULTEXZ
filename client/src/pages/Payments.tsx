@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
+import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -122,7 +124,12 @@ export default function Payments() {
     <div className="space-y-6">
       <PageHeader
         title="Payments"
-        subtitle="Deposits, withdrawals, and adjustments"
+        subtitle="All money movements — deposits, withdrawals, and transfers"
+        hint={
+          <PageHint id="payments" title="What is this page?">
+            Payments tracks every time money moves: clients depositing funds, withdrawing profits, or transferring between accounts. Each entry shows who, how much, which currency, and whether it has been approved.
+          </PageHint>
+        }
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => openModal('WITHDRAWAL')}>
@@ -240,7 +247,12 @@ export default function Payments() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Reference</TableHead>
+                <TableHead>
+                  <span className="inline-flex items-center gap-1">
+                    Reference
+                    <HelpTooltip text="A unique ID number used to track this specific payment" side="bottom" />
+                  </span>
+                </TableHead>
                 <TableHead>Client</TableHead>
                 <TableHead>MT5 Login</TableHead>
                 <TableHead>Type</TableHead>

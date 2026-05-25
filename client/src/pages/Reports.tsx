@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -294,7 +295,15 @@ function TrialBalanceTab() {
 export default function Reports() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Reports" subtitle="Financial statements and ledger history" />
+      <PageHeader
+        title="Reports"
+        subtitle="Financial statements — your business health at a glance"
+        hint={
+          <PageHint id="reports" title="What is this page?">
+            These are the three core financial reports: Profit & Loss (did we make money?), Balance Sheet (what do we own vs. owe?), and Trial Balance (are our books balanced?). Export any of them to Excel.
+          </PageHint>
+        }
+      />
       <Tabs defaultValue="pnl">
         <TabsList>
           <TabsTrigger value="pnl">P&L Statement</TabsTrigger>

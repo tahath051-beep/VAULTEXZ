@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Settings2 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -59,7 +60,12 @@ export default function OperationsSettings() {
     <div className="space-y-8">
       <PageHeader
         title={t('settings.ops')}
-        subtitle={t('ops.requests.subtitle')}
+        subtitle="Configure how client requests flow through the approval process"
+        hint={
+          <PageHint id="settings-operations" title="What is this page?">
+            Operations Settings controls the rules for how client requests are processed — whether auto-confirmation is allowed, priority thresholds, and the classification labels you use for IB partners.
+          </PageHint>
+        }
         actions={<Settings2 className="h-5 w-5 text-muted-foreground" />}
       />
 

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -56,7 +57,15 @@ export default function Reconciliation() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title={t('recon.title')} subtitle={t('recon.subtitle')} />
+      <PageHeader
+        title={t('recon.title')}
+        subtitle={t('recon.subtitle')}
+        hint={
+          <PageHint id="reconciliation" title="What is this page?">
+            Reconciliation means comparing your internal records with external statements (bank, LP, platform) to make sure they match. Any gap is called a "break" and must be investigated and resolved.
+          </PageHint>
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <SectionCard title={t('recon.health')} bodyClassName="p-5">

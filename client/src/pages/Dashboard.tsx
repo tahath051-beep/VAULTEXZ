@@ -6,6 +6,7 @@ import {
   ShieldCheck, Activity, ChevronDown, Check,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { CategoryCard, type CategoryTone } from '@/components/shared/CategoryCard';
 import { MoneyCell } from '@/components/shared/MoneyCell';
@@ -199,7 +200,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <PageHeader
         title={t('equity.title')}
-        subtitle={t('equity.subtitle')}
+        subtitle="Real-time snapshot of your brokerage's financial position — every balance, in one place"
         actions={
           <>
             {/* Period picker */}
@@ -252,17 +253,20 @@ export default function Dashboard() {
         <div aria-hidden className="pointer-events-none absolute -left-8 bottom-0 h-32 w-32 rounded-full bg-white/5 blur-xl" />
         <div className="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: t('equity.blockBalance'), value: equitySummary.blockBalance, icon: ShieldCheck },
-            { label: t('equity.liquidMass'),   value: equitySummary.liquidMass,   icon: Activity },
-            { label: t('equity.fastLiquid'),   value: equitySummary.fastLiquid,   icon: TrendingUp },
-            { label: t('equity.cashSavings'),  value: equitySummary.cashSavings,  icon: Wallet },
+            { label: t('equity.blockBalance'), value: equitySummary.blockBalance, icon: ShieldCheck, tip: 'The total value locked in trading accounts on your platform' },
+            { label: t('equity.liquidMass'),   value: equitySummary.liquidMass,   icon: Activity,   tip: 'How quickly you could convert assets to cash' },
+            { label: t('equity.fastLiquid'),   value: equitySummary.fastLiquid,   icon: TrendingUp, tip: 'Highly liquid assets available immediately — cash and near-cash' },
+            { label: t('equity.cashSavings'),  value: equitySummary.cashSavings,  icon: Wallet,     tip: 'Surplus cash after covering all obligations' },
           ].map((kpi) => (
             <div key={kpi.label} className="flex items-center gap-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
                 <kpi.icon className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{kpi.label}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider opacity-70 flex items-center gap-1">
+                  {kpi.label}
+                  <HelpTooltip text={kpi.tip} side="bottom" className="opacity-60" />
+                </p>
                 <p className="mt-0.5 text-xl font-black tabular-nums tracking-tight">{fmt2(kpi.value)}</p>
               </div>
             </div>
@@ -341,16 +345,17 @@ export default function Dashboard() {
         >
           <div className="grid grid-cols-2 divide-y divide-border/40 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
             {[
-              { labelKey: 'equity.blockBalance', value: equitySummary.blockBalance, tone: 'foreground' as const, borderColor: 'border-l-primary' },
-              { labelKey: 'equity.curEquity',    value: equitySummary.curEquity,    tone: 'destructive' as const, borderColor: 'border-l-destructive' },
-              { labelKey: 'equity.surplus',      value: equitySummary.surplus,      tone: 'destructive' as const, borderColor: 'border-l-destructive' },
-              { labelKey: 'equity.liquidMass',   value: equitySummary.liquidMass,   tone: 'success' as const, borderColor: 'border-l-success' },
-              { labelKey: 'equity.fastLiquid',   value: equitySummary.fastLiquid,   tone: 'success' as const, borderColor: 'border-l-success' },
-              { labelKey: 'equity.cashSavings',  value: equitySummary.cashSavings,  tone: 'success' as const, borderColor: 'border-l-success' },
+              { labelKey: 'equity.blockBalance', value: equitySummary.blockBalance, tone: 'foreground' as const, borderColor: 'border-l-primary',     tip: 'The total value locked in trading accounts on your platform' },
+              { labelKey: 'equity.curEquity',    value: equitySummary.curEquity,    tone: 'destructive' as const, borderColor: 'border-l-destructive', tip: 'Currency equity — the net value of all foreign currency positions' },
+              { labelKey: 'equity.surplus',      value: equitySummary.surplus,      tone: 'destructive' as const, borderColor: 'border-l-destructive', tip: 'How much more you have than you owe. Positive = healthy buffer.' },
+              { labelKey: 'equity.liquidMass',   value: equitySummary.liquidMass,   tone: 'success' as const, borderColor: 'border-l-success',         tip: 'How quickly you could convert assets to cash' },
+              { labelKey: 'equity.fastLiquid',   value: equitySummary.fastLiquid,   tone: 'success' as const, borderColor: 'border-l-success',         tip: 'Highly liquid assets available immediately — cash and near-cash' },
+              { labelKey: 'equity.cashSavings',  value: equitySummary.cashSavings,  tone: 'success' as const, borderColor: 'border-l-success',         tip: 'Surplus cash after covering all obligations' },
             ].map((s) => (
               <div key={s.labelKey} className={cn('flex flex-col gap-1 border-l-[3px] px-5 py-4', s.borderColor)}>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                   {t(s.labelKey as Parameters<typeof t>[0])}
+                  <HelpTooltip text={s.tip} side="top" />
                 </p>
                 <p className={cn('mt-1 text-lg font-bold tabular-nums',
                   s.tone === 'destructive' && 'text-destructive',

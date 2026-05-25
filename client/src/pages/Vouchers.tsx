@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Receipt, ChevronRight } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -30,9 +31,14 @@ export default function Vouchers() {
         title="Vouchers"
         subtitle={
           <span className="flex items-center gap-2">
-            <span>Sequential receipt/voucher tracking per account</span>
+            <span>Numbered payment slips — like a checkbook register, one per account</span>
             <span dir="rtl" className="text-muted-foreground/80">أرقام السندات</span>
           </span>
+        }
+        hint={
+          <PageHint id="vouchers" title="What is this page?">
+            Vouchers are sequentially numbered receipts tied to each client account. They prove a payment was made or received. Think of them as your official paper trail.
+          </PageHint>
         }
       />
 

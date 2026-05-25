@@ -3,6 +3,7 @@ import { Search, Plus, AlertTriangle, Users, UserX, Eye, EyeOff, FileText, Chevr
 import { useSortable } from '@/hooks/useSortable';
 import { EmptyClients, EmptySearch } from '@/components/shared/EmptyState';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { Input } from '@/components/ui/input';
@@ -206,7 +207,12 @@ export default function Clients() {
     <div className="space-y-8">
       <PageHeader
         title={t('clients.title')}
-        subtitle={t('clients.subtitle')}
+        subtitle="All your client accounts, balances, credit limits, and classifications"
+        hint={
+          <PageHint id="clients" title="What is this page?">
+            A client is anyone who trades through your brokerage. Their balance shows how much money they have with you. Credit Limit is the maximum they can owe. Classification (Good/Neutral/Bad/Fraud) is your internal risk tier.
+          </PageHint>
+        }
         actions={
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => setShowInactive((v) => !v)} className={cn('gap-1.5 text-xs', showInactive && 'text-primary')}>

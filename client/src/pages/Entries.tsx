@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Filter, Download, ArrowDownLeft, ArrowUpRight, ArrowLeftRight } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,7 +82,12 @@ export default function Entries() {
     <div className="space-y-8">
       <PageHeader
         title={t('entries.title')}
-        subtitle={t('entries.subtitle')}
+        subtitle="Raw accounting entries — the individual debits and credits"
+        hint={
+          <PageHint id="entries" title="What is this page?">
+            Entries are the line-level building blocks of Journal Entries. Each entry is a single debit or credit to one account. Multiple entries combine to form a balanced journal entry.
+          </PageHint>
+        }
         actions={
           <>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={handleExport}>

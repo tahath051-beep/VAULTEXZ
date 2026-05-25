@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Plus, ChevronDown, ChevronUp, Eye, EyeOff, Users, GitBranch, DollarSign } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 
@@ -142,6 +143,11 @@ export default function IBManagement() {
       <PageHeader
         title={t('ib.mgmt.title')}
         subtitle={t('ib.mgmt.subtitle')}
+        hint={
+          <PageHint id="ib-management" title="What is this page?">
+            An Introducing Broker (IB) is a partner or agent who refers clients to your brokerage. They earn a commission for each trade those clients make. This page lets you manage IB accounts, see their client lists, and track what commissions they are owed.
+          </PageHint>
+        }
         actions={
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => setShowInactive((v) => !v)} className={cn('gap-1.5 text-xs', showInactive && 'text-primary')}>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { BarChart2, TrendingUp, Target } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { TrendChart } from '@/components/shared/TrendChart';
@@ -106,7 +107,12 @@ export default function OperationsAnalytics() {
     <div className="space-y-8">
       <PageHeader
         title={t('analytics.title')}
-        subtitle={t('analytics.subtitle')}
+        subtitle="Charts and trends about your client operations volume"
+        hint={
+          <PageHint id="ops-analytics" title="What is this page?">
+            Analytics turns your operations data into visual charts. See which request types are most common, what time of day is busiest, and how your client activity has trended over time.
+          </PageHint>
+        }
         actions={
           <div className="flex gap-1 rounded-xl border border-border/60 bg-card p-1">
             {(['7d', '30d', '90d'] as Range[]).map((r) => (

@@ -1,6 +1,7 @@
 
 import { Wallet, Building2, TrendingUp, Lock, Unlock, AlertCircle } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -67,7 +68,15 @@ export default function Treasury() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title={t('treasury.title')} subtitle={t('treasury.subtitle')} />
+      <PageHeader
+        title={t('treasury.title')}
+        subtitle={t('treasury.subtitle')}
+        hint={
+          <PageHint id="treasury" title="What is this page?">
+            Treasury shows your liquid cash position — how much real money you have available right now across all your bank accounts, funds, and platforms. It helps you make sure you always have enough cash to cover client withdrawals.
+          </PageHint>
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-4">
         <StatCard label={t('treasury.totalFunds')} value={`$${totalFunds.toLocaleString()}`} icon={Wallet} accent="amber" />

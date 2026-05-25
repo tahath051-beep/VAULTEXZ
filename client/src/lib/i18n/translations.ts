@@ -5,7 +5,7 @@ export const translations = {
   // Brand & chrome
   'app.name':              { en: 'FX Accounting',     ar: 'إف إكس للمحاسبة' },
   'app.workbookAdmin':     { en: 'Workbook · Admin',  ar: 'دفتر العمل · المسؤول' },
-  'nav.search.placeholder':{ en: 'Search accounts, vouchers, entries…', ar: 'ابحث في الحسابات والسندات والقيود…' },
+  'nav.search.placeholder':{ en: 'Search anything — clients, accounts, vouchers, trades…', ar: 'ابحث في أي شيء — عملاء، حسابات، سندات، صفقات…' },
   'nav.toggleTheme':       { en: 'Toggle theme',       ar: 'تبديل المظهر' },
   'nav.toggleLanguage':    { en: 'Toggle language',    ar: 'تبديل اللغة' },
   'nav.notifications':     { en: 'Notifications',      ar: 'الإشعارات' },
@@ -27,7 +27,7 @@ export const translations = {
   'sidebar.symbols':       { en: 'Symbols',            ar: 'الرموز' },
   'sidebar.gateways':      { en: 'Gateways',           ar: 'البوابات' },
   'sidebar.aiTitle':       { en: 'AI Insights',        ar: 'رؤى الذكاء الاصطناعي' },
-  'sidebar.aiBody':        { en: 'Detect reconciliation breaks and balance anomalies in real time.', ar: 'اكتشاف فروقات المطابقة والشذوذ في الأرصدة في الزمن الحقيقي.' },
+  'sidebar.aiBody':        { en: 'Automatically spots mismatches between your records and flags anything that looks off.', ar: 'يكتشف التناقضات بين سجلاتك ويُنبّهك بأي شيء غير طبيعي.' },
   'sidebar.aiCta':         { en: 'Open insights →',    ar: '← فتح الرؤى' },
 
   // Sheets

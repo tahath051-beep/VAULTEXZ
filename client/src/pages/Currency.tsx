@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, RefreshCw, WifiOff, Trash2, BellRing } from 'lucide-react';
 import { z } from 'zod';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { TrendChart } from '@/components/shared/TrendChart';
 import { Button } from '@/components/ui/button';
@@ -181,7 +182,12 @@ export default function Currency() {
     <div className="space-y-8">
       <PageHeader
         title={t('currency.title')}
-        subtitle={t('currency.subtitle')}
+        subtitle="Live exchange rates, FX conversions, and rate alerts"
+        hint={
+          <PageHint id="currency" title="What is this page?">
+            Currency shows the current exchange rates between currencies your clients use. Rate Alerts notify you if a rate moves past a threshold you set — useful for risk management.
+          </PageHint>
+        }
         actions={
           <div className="flex items-center gap-2">
             {/* Live indicator */}

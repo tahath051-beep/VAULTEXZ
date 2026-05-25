@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { MoneyCell } from '@/components/shared/MoneyCell';
 import { Button } from '@/components/ui/button';
@@ -28,9 +29,14 @@ export default function Opening() {
         title="Opening Balances"
         subtitle={
           <span className="flex items-center gap-2">
-            <span>Starting balances & credit limits per account</span>
+            <span>Starting balances entered when the system was first set up</span>
             <span dir="rtl" className="text-muted-foreground/80">الرصيد الافتتاحي والحدود الائتمانية</span>
           </span>
+        }
+        hint={
+          <PageHint id="opening" title="What is this page?">
+            Opening Balances are the account values at the very beginning — typically migrated from a previous system or entered at the start of a financial year. They are the baseline everything else builds on.
+          </PageHint>
         }
         actions={
           <Button variant="outline" size="sm" className="gap-1.5">

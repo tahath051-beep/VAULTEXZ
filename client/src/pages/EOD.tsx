@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -49,7 +50,15 @@ export default function EOD() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="EOD Processing" subtitle="End-of-day journal run and lock" />
+      <PageHeader
+        title="EOD Processing"
+        subtitle="End of Day — close the trading session and lock today's records"
+        hint={
+          <PageHint id="eod" title="What is this page?">
+            EOD (End of Day) is a daily closing process. When you run EOD, it calculates the day's totals, generates any required journal entries, and locks the day so nothing can be backdated. Think of it like "closing the register" at the end of a business day.
+          </PageHint>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <SectionCard title="Trigger EOD" bodyClassName="space-y-4 p-6">

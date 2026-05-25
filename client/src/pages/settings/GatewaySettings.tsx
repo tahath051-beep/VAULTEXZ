@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHint } from '@/components/shared/PageHint';
 import { toast } from '@/hooks/use-toast';
 import { api } from '@/api/client';
 import { Settings2, Building2, Bitcoin, MoreHorizontal } from 'lucide-react';
@@ -62,6 +63,9 @@ export default function GatewaySettings() {
 
   return (
     <div className="space-y-4">
+      <PageHint id="settings-gateways" title="What is this page?">
+        Gateways are the payment channels clients use to deposit or withdraw money — such as bank wire transfers, crypto wallets, or manual payments. You can set deposit/withdrawal limits for each gateway here.
+      </PageHint>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {gateways.map((gw) => (
           <Card key={gw.id} className={!gw.is_active ? 'opacity-60' : undefined}>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Clock, AlertTriangle, TrendingDown, Users } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { Button } from '@/components/ui/button';
@@ -112,7 +113,15 @@ export default function AgingReport() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title={t('aging.title')} subtitle={t('aging.subtitle')} />
+      <PageHeader
+        title={t('aging.title')}
+        subtitle="Outstanding balances sorted by how long they've been unpaid"
+        hint={
+          <PageHint id="aging" title="What is this page?">
+            Aging shows which clients owe you money and for how long. 0–30 days is normal, 30–90 days needs a reminder, and 90+ days is overdue and should be escalated. You can send reminders or mark balances as disputed directly from here.
+          </PageHint>
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-4">
         <StatCard label={lang === 'ar' ? 'إجمالي مستحق' : 'Total outstanding'} value={`$${totalOutstanding.toLocaleString()}`} icon={TrendingDown} accent="blue" />

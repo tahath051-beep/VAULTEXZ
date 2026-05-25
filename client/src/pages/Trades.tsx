@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
+import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -112,7 +114,12 @@ export default function Trades() {
     <div className="space-y-6">
       <PageHeader
         title="Trades"
-        subtitle="Closed trade history with journal status"
+        subtitle="All buy/sell positions opened and closed by your clients"
+        hint={
+          <PageHint id="trades" title="What is this page?">
+            Trades are the actual forex/CFD buy and sell orders your clients execute on MT5. You can see the profit/loss on each position, which account it belongs to, and whether it is still open or has been closed.
+          </PageHint>
+        }
         actions={
           <Button variant="outline" onClick={exportXLSX}>
             <Download className="h-4 w-4 mr-2" />Export Excel
@@ -167,10 +174,20 @@ export default function Trades() {
                 <SortHead label="Client"     field="client_name" />
                 <SortHead label="Symbol"     field="symbol"       className="w-24" />
                 <SortHead label="Dir"        field="direction"    className="w-20" />
-                <SortHead label="Volume"     field="volume"       className="w-20" />
+                <TableHead className="w-20">
+                  <span className="inline-flex items-center gap-1">
+                    Volume
+                    <HelpTooltip text="How much was traded — 1 lot = 100,000 units of the base currency" side="bottom" />
+                  </span>
+                </TableHead>
                 <TableHead className="w-28">Open</TableHead>
                 <TableHead className="w-28">Close</TableHead>
-                <SortHead label="MT5 P&L"    field="profit"       className="w-28" />
+                <TableHead className="w-28">
+                  <span className="inline-flex items-center gap-1">
+                    MT5 P&L
+                    <HelpTooltip text="Net gain or loss on this trade in USD" side="bottom" />
+                  </span>
+                </TableHead>
                 <SortHead label="Spread Inc." field="spread_income" className="w-28" />
                 <SortHead label="Book"       field="book_type"    className="w-20" />
                 <TableHead className="w-24">Journal</TableHead>

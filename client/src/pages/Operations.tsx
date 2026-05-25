@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHint } from '@/components/shared/PageHint';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
 import { Input } from '@/components/ui/input';
@@ -138,7 +139,12 @@ export default function Operations() {
     <div className="space-y-8">
       <PageHeader
         title={t('ops.requests')}
-        subtitle={t('ops.requests.subtitle')}
+        subtitle="The approval inbox for client money movements — deposits, withdrawals, and transfers"
+        hint={
+          <PageHint id="operations" title="What is this page?">
+            Operations is the approval inbox for client money movements (deposits, withdrawals, internal transfers). Each request must be reviewed and confirmed before it gets recorded in the books.
+          </PageHint>
+        }
         actions={
           <div className="flex items-center gap-2">
             <Button

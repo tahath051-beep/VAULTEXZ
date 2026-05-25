@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { PageHint } from '@/components/shared/PageHint';
 import { toast } from '@/hooks/use-toast';
 import { api } from '@/api/client';
 import { Plus, Pencil } from 'lucide-react';
@@ -72,6 +73,9 @@ export default function SymbolSettings() {
 
   return (
     <div className="space-y-4">
+      <PageHint id="settings-symbols" title="What is this page?">
+        Symbols are the trading instruments your clients can trade — e.g. EURUSD, XAUUSD, USDJPY. Each symbol has a spread (the cost of trading it) and a pip value (how much one price unit is worth in USD). These settings affect commission and P&L calculations.
+      </PageHint>
       <div className="flex justify-end">
         <Button onClick={() => { reset(); setAssetClass('FOREX'); setAddOpen(true); }}>
           <Plus className="h-4 w-4 mr-2" />Add Symbol
