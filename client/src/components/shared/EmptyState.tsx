@@ -123,7 +123,7 @@ export function EmptyOperations({ onAdd }: { onAdd?: () => void }) {
   );
 }
 
-export function EmptySearch({ query }: { query: string }) {
+export function EmptySearch({ query: _query }: { query?: string }) {
   const { t } = useTranslation();
   return (
     <EmptyState

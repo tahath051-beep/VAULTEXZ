@@ -211,10 +211,11 @@ function TrialBalanceTab() {
 
   const handleExport = () => {
     const wb = XLSX.utils.book_new();
-    const sheetRows = rows.map((r) => ({
+    type SheetRow = { 'Account Code': string; 'Account Name': string; 'Category': string; 'Debit': number; 'Credit': number };
+    const sheetRows: SheetRow[] = rows.map((r) => ({
       'Account Code': r.code,
       'Account Name': r.name,
-      'Category': r.category,
+      'Category': r.category as string,
       'Debit': r.debit,
       'Credit': r.credit,
     }));

@@ -81,7 +81,7 @@ export function NewRequestDialog({ open, onClose }: NewRequestDialogProps) {
   // ── Zod schemas ──────────────────────────────────────────
   const lineSchema = z.object({
     accountNo: z.string().min(1, 'Account number required'),
-    amount:    z.number({ invalid_type_error: 'Amount must be a number' }).positive('Amount must be > 0'),
+    amount:    z.number({ message: 'Amount must be a number' }).positive('Amount must be > 0'),
     currency:  z.string().min(1, 'Currency required'),
   });
 
@@ -100,7 +100,7 @@ export function NewRequestDialog({ open, onClose }: NewRequestDialogProps) {
     });
 
     if (!result.success) {
-      const errs = result.error.errors.map((e) => e.message);
+      const errs = result.error.issues.map((e) => e.message);
       setZodErrors(errs);
       return;
     }

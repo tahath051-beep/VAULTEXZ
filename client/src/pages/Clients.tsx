@@ -175,7 +175,7 @@ export default function Clients() {
   }, [clients, search, classFilter, showInactive]);
 
   const { sorted: sortedClients, sortKey, sortDir, toggle } = useSortable(
-    filtered as Record<string, unknown>[],
+    filtered as unknown as Record<string, unknown>[],
     'name',
   );
 
@@ -263,7 +263,7 @@ export default function Clients() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(sortedClients as typeof filtered).map((c) => {
+              {(sortedClients as unknown as typeof filtered).map((c) => {
                 const isEditing = editingId === c.id;
                 return (
                   <TableRow key={c.id} className={cn(!c.active && 'opacity-40', isEditing && 'bg-muted/30')}>

@@ -88,7 +88,7 @@ export default function Trades() {
   const totals  = data?.totals;
 
   const { sorted: sortedTrades, sortKey, sortDir, toggle } = useSortable(
-    trades as Record<string, unknown>[],
+    trades as unknown as Record<string, unknown>[],
     'close_time',
     'desc',
   );
@@ -197,7 +197,7 @@ export default function Trades() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedTrades.length ? (sortedTrades as typeof trades).map((t) => (
+              {sortedTrades.length ? (sortedTrades as unknown as typeof trades).map((t) => (
                 <TableRow
                   key={t.id}
                   className="cursor-pointer hover:bg-muted/50"

@@ -1,13 +1,14 @@
 import { cn } from '@/lib/utils';
 
 /* ── Base pulse block ────────────────────────────────────── */
-function Bone({ className }: { className?: string }) {
+function Bone({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       className={cn(
         'animate-pulse rounded-md bg-muted/70',
         className,
       )}
+      style={style}
     />
   );
 }

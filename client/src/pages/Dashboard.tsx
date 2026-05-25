@@ -152,10 +152,6 @@ export default function Dashboard() {
     return { blockBalance, curEquity, surplus, liquidMass, fastLiquid, cashSavings };
   }, [totals, mt5]);
 
-  const ratesSeries = useMemo(
-    () => rates.slice(-12).map((r) => ({ label: r.date.slice(5), value: r.rate })),
-    [rates],
-  );
 
   const reconHealth = Math.max(0, Math.min(100, 100 - Math.abs(equitySummary.surplus) / 5000));
 
