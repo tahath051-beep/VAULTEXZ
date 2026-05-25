@@ -30,7 +30,7 @@ export default function IBLogin() {
       setAuth(token, user);
       navigate('/ib/dashboard', { replace: true });
     },
-    onError: () => toast({ title: 'Invalid email or password', variant: 'destructive' }),
+    onError: () => toast({ title: t('login.failed'), variant: 'destructive' }),
   });
 
   return (
@@ -55,8 +55,8 @@ export default function IBLogin() {
         </div>
 
         <div className="card-elevated rounded-2xl px-8 py-8">
-          <h2 className="text-xl font-bold tracking-tight mb-1">Welcome back</h2>
-          <p className="text-sm text-muted-foreground mb-6">Sign in to your IB account</p>
+          <h2 className="text-xl font-bold tracking-tight mb-1">{t('login.welcome')}</h2>
+          <p className="text-sm text-muted-foreground mb-6">{t('login.signInIB')}</p>
 
           <form onSubmit={handleSubmit((d) => login(d))} className="space-y-4">
             <div className="space-y-1.5">
@@ -88,14 +88,14 @@ export default function IBLogin() {
           </form>
 
           <div className="mt-6 rounded-xl bg-muted/60 px-4 py-3">
-            <p className="text-xs text-muted-foreground font-medium mb-1">Demo credentials</p>
+            <p className="text-xs text-muted-foreground font-medium mb-1">{t('login.demoCredentials')}</p>
             <p className="text-xs font-mono">ib@demo.com / Demo@123456</p>
           </div>
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Admin?{' '}
-          <a href="/login" className="text-amber-600 dark:text-amber-400 hover:underline font-medium">Go to Admin Panel</a>
+          {t('login.adminQuestion')}{' '}
+          <a href="/login" className="text-amber-600 dark:text-amber-400 hover:underline font-medium">{t('login.goToAdmin')}</a>
         </p>
       </div>
     </div>

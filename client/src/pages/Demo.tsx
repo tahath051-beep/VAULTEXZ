@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { useClientAuthStore } from '@/stores/clientAuth.store';
 import { useIBAuthStore } from '@/stores/ibAuth.store';
 import { useUIStore } from '@/stores/ui.store';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { clientLogin } from '@/api/clientPortal.api';
 import { ibLogin } from '@/api/ib.api';
 import { toast } from '@/hooks/use-toast';
@@ -48,7 +49,6 @@ function FeatureCard({
       </div>
       <h3 className="mb-2 text-[15px] font-semibold text-foreground">{title}</h3>
       <p className="text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-      {/* glow on hover */}
       <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{ background: 'radial-gradient(circle at 50% 0%, hsl(var(--primary)/0.06), transparent 70%)' }} />
     </div>
@@ -65,6 +65,7 @@ function PortalCard({
   description,
   email,
   password,
+  credentialsLabel,
   buttonLabel,
   buttonClass,
   onEnter,
@@ -79,6 +80,7 @@ function PortalCard({
   description: string;
   email?: string;
   password?: string;
+  credentialsLabel: string;
   buttonLabel: string;
   buttonClass: string;
   onEnter?: () => void;
@@ -107,7 +109,7 @@ function PortalCard({
         {/* Demo credentials */}
         {email && (
           <div className="mt-5 rounded-xl border border-border/60 bg-muted/40 p-3.5 space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Demo credentials</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{credentialsLabel}</p>
             <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
               <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
               <span className="font-mono font-medium">{email}</span>
@@ -156,6 +158,7 @@ export default function DemoPage() {
   const { setAuth: setClientAuth, clientUser } = useClientAuthStore();
   const { setAuth: setIBAuth, ibUser } = useIBAuthStore();
   const { theme, toggleTheme } = useUIStore();
+  const { t } = useTranslation();
 
   const [clientLoading, setClientLoading] = useState(false);
   const [ibLoading, setIBLoading] = useState(false);
@@ -168,7 +171,7 @@ export default function DemoPage() {
       setClientAuth(r.token, r.user);
       navigate('/client/dashboard');
     } catch {
-      toast({ title: 'Login failed', variant: 'destructive' });
+      toast({ title: t('demo.loginFailed'), variant: 'destructive' });
     } finally { setClientLoading(false); }
   };
 
@@ -180,72 +183,58 @@ export default function DemoPage() {
       setIBAuth(r.token, r.user);
       navigate('/ib/dashboard');
     } catch {
-      toast({ title: 'Login failed', variant: 'destructive' });
+      toast({ title: t('demo.loginFailed'), variant: 'destructive' });
     } finally { setIBLoading(false); }
   };
 
   const features = [
-    {
-      icon: Scale,
-      title: 'Real-time Reconciliation',
-      description: 'Instantly compare MT5 equity against your book balances. Gaps surface the moment they appear — no end-of-day surprises.',
-      gradient: 'bg-gradient-to-br from-blue-500 to-blue-700',
-    },
-    {
-      icon: Zap,
-      title: 'Operations Workflow',
-      description: 'Deposits, withdrawals and transfers move through a structured approval chain. Every action is logged, timestamped, and auditable.',
-      gradient: 'bg-gradient-to-br from-violet-500 to-violet-700',
-    },
-    {
-      icon: Globe2,
-      title: 'Multi-Currency FX',
-      description: 'Track live exchange rates, set alert thresholds, and revalue positions across USD, EUR, AED, TRY and more.',
-      gradient: 'bg-gradient-to-br from-emerald-500 to-emerald-700',
-    },
-    {
-      icon: Users,
-      title: 'IB Commission Engine',
-      description: 'Automatically calculate introducing broker commissions per trade. Drill down to client-level volume and payout history.',
-      gradient: 'bg-gradient-to-br from-amber-500 to-orange-600',
-    },
-    {
-      icon: TrendingUp,
-      title: 'Financial Reports',
-      description: 'Profit & Loss, Balance Sheet, Trial Balance — generated in seconds. Export to Excel with one click.',
-      gradient: 'bg-gradient-to-br from-pink-500 to-rose-600',
-    },
-    {
-      icon: LockIcon,
-      title: 'Period Locking & Audit',
-      description: 'Lock accounting periods to prevent backdated entries. Every change has a full audit trail by user and timestamp.',
-      gradient: 'bg-gradient-to-br from-slate-500 to-slate-700',
-    },
-    {
-      icon: Bell,
-      title: 'Smart Alerts',
-      description: 'Automated alerts for negative balances, overdue requests, large transactions, and reconciliation breaks.',
-      gradient: 'bg-gradient-to-br from-red-500 to-red-700',
-    },
-    {
-      icon: BarChart3,
-      title: 'Operations Analytics',
-      description: 'Volume trends, processing times, client activity charts — everything you need to run a data-driven brokerage.',
-      gradient: 'bg-gradient-to-br from-cyan-500 to-cyan-700',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Role-Based Access',
-      description: 'Admin, Financial Manager, Operations Staff — each sees only what they need. Sensitive routes are gated by role.',
-      gradient: 'bg-gradient-to-br from-indigo-500 to-indigo-700',
-    },
+    { icon: Scale,      title: t('demo.f1.title'), description: t('demo.f1.desc'), gradient: 'bg-gradient-to-br from-blue-500 to-blue-700' },
+    { icon: Zap,        title: t('demo.f2.title'), description: t('demo.f2.desc'), gradient: 'bg-gradient-to-br from-violet-500 to-violet-700' },
+    { icon: Globe2,     title: t('demo.f3.title'), description: t('demo.f3.desc'), gradient: 'bg-gradient-to-br from-emerald-500 to-emerald-700' },
+    { icon: Users,      title: t('demo.f4.title'), description: t('demo.f4.desc'), gradient: 'bg-gradient-to-br from-amber-500 to-orange-600' },
+    { icon: TrendingUp, title: t('demo.f5.title'), description: t('demo.f5.desc'), gradient: 'bg-gradient-to-br from-pink-500 to-rose-600' },
+    { icon: LockIcon,   title: t('demo.f6.title'), description: t('demo.f6.desc'), gradient: 'bg-gradient-to-br from-slate-500 to-slate-700' },
+    { icon: Bell,       title: t('demo.f7.title'), description: t('demo.f7.desc'), gradient: 'bg-gradient-to-br from-red-500 to-red-700' },
+    { icon: BarChart3,  title: t('demo.f8.title'), description: t('demo.f8.desc'), gradient: 'bg-gradient-to-br from-cyan-500 to-cyan-700' },
+    { icon: ShieldCheck,title: t('demo.f9.title'), description: t('demo.f9.desc'), gradient: 'bg-gradient-to-br from-indigo-500 to-indigo-700' },
   ];
 
   const stats = [
-    { value: 99, suffix: '.9%', label: 'Reconciliation accuracy' },
-    { value: 3, suffix: ' portals', label: 'Admin · Client · IB' },
-    { value: 20, suffix: '+ pages', label: 'Full accounting suite' },
-    { value: 100, suffix: '%', label: 'Arabic / English' },
+    { value: 99,  suffix: '.9%',      label: t('demo.stats.accuracy')  },
+    { value: 3,   suffix: ' portals', label: t('demo.stats.portals')   },
+    { value: 20,  suffix: '+ pages',  label: t('demo.stats.pages')     },
+    { value: 100, suffix: '%',        label: t('demo.stats.bilingual') },
+  ];
+
+  const checks = [
+    t('demo.check.noSetup'),
+    t('demo.check.preloaded'),
+    t('demo.check.arabic'),
+    t('demo.check.pwa'),
+  ];
+
+  const portals = [
+    {
+      icon: LayoutGrid,
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10',
+      title: t('demo.admin.title'),
+      points: [t('demo.admin.p1'), t('demo.admin.p2'), t('demo.admin.p3'), t('demo.admin.p4')],
+    },
+    {
+      icon: User,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      title: t('demo.clientSection.title'),
+      points: [t('demo.clientSection.p1'), t('demo.clientSection.p2'), t('demo.clientSection.p3'), t('demo.clientSection.p4')],
+    },
+    {
+      icon: Network,
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
+      title: t('demo.ibSection.title'),
+      points: [t('demo.ibSection.p1'), t('demo.ibSection.p2'), t('demo.ibSection.p3'), t('demo.ibSection.p4')],
+    },
   ];
 
   return (
@@ -259,14 +248,16 @@ export default function DemoPage() {
               <span className="text-[13px] font-bold tracking-tight text-white">FX</span>
             </div>
             <div>
-              <p className="text-[13px] font-bold leading-tight text-foreground">FX Accounting</p>
-              <p className="text-[11px] leading-tight text-muted-foreground">by Vaultex</p>
+              <p className="text-[13px] font-bold leading-tight text-foreground">{t('app.name')}</p>
+              <p className="text-[11px] leading-tight text-muted-foreground">{t('demo.byVaultex')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-1 rounded-full border border-border/60 bg-card px-1 py-1 text-[11px]">
-              <span className="rounded-full bg-amber-400/20 px-2.5 py-0.5 font-bold text-amber-600 dark:text-amber-400">LIVE DEMO</span>
-              <span className="px-1.5 text-muted-foreground">Mock data</span>
+              <span className="rounded-full bg-amber-400/20 px-2.5 py-0.5 font-bold text-amber-600 dark:text-amber-400">
+                {t('demo.liveBadge')}
+              </span>
+              <span className="px-1.5 text-muted-foreground">{t('demo.mockData')}</span>
             </div>
             <button
               onClick={toggleTheme}
@@ -291,20 +282,19 @@ export default function DemoPage() {
           {/* Badge */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[12px] font-semibold text-primary">
             <Sparkles className="h-3.5 w-3.5" />
-            Complete FX Brokerage Accounting Platform
+            {t('demo.badge')}
           </div>
 
           {/* Headline */}
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Your trading desk,{' '}
+            {t('demo.hero.headline1')}{' '}
             <span className="bg-gradient-to-r from-blue-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
-              fully automated
+              {t('demo.hero.headline2')}
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-muted-foreground">
-            Real-time reconciliation, multi-currency operations, IB commission tracking, and client management —
-            all in one Arabic/English accounting PWA built for modern FX brokerages.
+            {t('demo.hero.sub')}
           </p>
 
           {/* CTA buttons */}
@@ -314,20 +304,20 @@ export default function DemoPage() {
               className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-7 py-3.5 text-[14px] font-bold text-white shadow-[0_4px_24px_hsl(217_91%_60%/0.4)] transition-all hover:shadow-[0_4px_32px_hsl(217_91%_60%/0.6)] hover:-translate-y-0.5"
             >
               <Sparkles className="h-4 w-4" />
-              Explore Live Demo
+              {t('demo.cta.explore')}
             </a>
             <Link
               to="/login"
               className="flex items-center gap-2 rounded-2xl border border-border px-7 py-3.5 text-[14px] font-semibold text-foreground transition-all hover:bg-muted"
             >
               <LayoutGrid className="h-4 w-4" />
-              Admin Panel
+              {t('demo.cta.admin')}
             </Link>
           </div>
 
           {/* Check list */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {['No setup required', 'Pre-loaded demo data', 'Full Arabic RTL support', 'PWA — installable'].map((f) => (
+            {checks.map((f) => (
               <span key={f} className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                 {f}
@@ -355,10 +345,8 @@ export default function DemoPage() {
       <section className="px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-foreground">Everything a brokerage needs</h2>
-            <p className="mt-3 text-muted-foreground">
-              Built on double-entry accounting principles, designed for speed and compliance.
-            </p>
+            <h2 className="text-3xl font-bold text-foreground">{t('demo.features.heading')}</h2>
+            <p className="mt-3 text-muted-foreground">{t('demo.features.sub')}</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
@@ -372,33 +360,11 @@ export default function DemoPage() {
       <section className="border-y border-border/40 bg-muted/20 px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-foreground">Three portals, one platform</h2>
-            <p className="mt-3 text-muted-foreground">Each user type gets a tailored experience with the right level of access.</p>
+            <h2 className="text-3xl font-bold text-foreground">{t('demo.portals.heading')}</h2>
+            <p className="mt-3 text-muted-foreground">{t('demo.portals.sub')}</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-3">
-            {[
-              {
-                icon: LayoutGrid,
-                color: 'text-blue-500',
-                bg: 'bg-blue-500/10',
-                title: 'Admin Panel',
-                points: ['Full double-entry accounting', 'Operations & reconciliation', 'EOD processing & reports', 'User & role management'],
-              },
-              {
-                icon: User,
-                color: 'text-emerald-500',
-                bg: 'bg-emerald-500/10',
-                title: 'Client Portal',
-                points: ['Live account balance', 'Trade history & P&L', 'Transaction statements', 'Deposit & withdrawal requests'],
-              },
-              {
-                icon: Network,
-                color: 'text-amber-500',
-                bg: 'bg-amber-500/10',
-                title: 'IB Portal',
-                points: ['Commission dashboard', 'Referred client list', 'Payout request workflow', 'Sub-IB management'],
-              },
-            ].map((p) => (
+            {portals.map((p) => (
               <div key={p.title} className="rounded-2xl border border-border/60 bg-card p-6">
                 <div className={cn('mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl', p.bg)}>
                   <p.icon className={cn('h-6 w-6', p.color)} />
@@ -424,12 +390,12 @@ export default function DemoPage() {
           <div className="mb-4 flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-[12px] font-semibold text-amber-600 dark:text-amber-400">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-              DEMO MODE — Pre-loaded with mock data
+              {t('demo.choose.badge')}
             </div>
           </div>
           <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold text-foreground">Choose your portal</h2>
-            <p className="mt-3 text-muted-foreground">Click any card to enter instantly with demo credentials.</p>
+            <h2 className="text-3xl font-bold text-foreground">{t('demo.choose.heading')}</h2>
+            <p className="mt-3 text-muted-foreground">{t('demo.choose.sub')}</p>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-3">
@@ -438,10 +404,11 @@ export default function DemoPage() {
               icon={LayoutGrid}
               iconBg="bg-gradient-to-br from-blue-600 to-violet-600"
               accentColor="border-blue-500/20 hover:border-blue-500/50"
-              title="Admin Panel"
-              tagline="Full accounting access"
-              description="Operations, reconciliation, reports, EOD, client management, and all accounting modules."
-              buttonLabel="Enter Admin Panel"
+              title={t('demo.adminCard.title')}
+              tagline={t('demo.adminCard.tagline')}
+              description={t('demo.adminCard.desc')}
+              credentialsLabel={t('demo.demoCredentials')}
+              buttonLabel={t('demo.adminCard.btn')}
               buttonClass="bg-gradient-to-r from-blue-600 to-violet-600 shadow-[0_4px_16px_hsl(217_91%_60%/0.35)]"
               href="/login"
             />
@@ -451,12 +418,13 @@ export default function DemoPage() {
               icon={User}
               iconBg="bg-gradient-to-br from-emerald-500 to-teal-600"
               accentColor="border-emerald-500/20 hover:border-emerald-500/50"
-              title="Client Portal"
-              tagline="Trading account access"
-              description="View your balance, trade history, transactions, and submit deposit or withdrawal requests."
+              title={t('demo.clientCard.title')}
+              tagline={t('demo.clientCard.tagline')}
+              description={t('demo.clientCard.desc')}
               email="client@demo.com"
               password="Demo@123456"
-              buttonLabel={clientUser ? 'Continue as Client' : 'Enter as Client'}
+              credentialsLabel={t('demo.demoCredentials')}
+              buttonLabel={clientUser ? t('demo.clientCard.btnContinue') : t('demo.clientCard.btn')}
               buttonClass="bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_4px_16px_rgb(16_185_129/0.35)]"
               onEnter={handleClientEnter}
               loading={clientLoading}
@@ -467,12 +435,13 @@ export default function DemoPage() {
               icon={Network}
               iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
               accentColor="border-amber-500/20 hover:border-amber-500/50"
-              title="IB Portal"
-              tagline="Introducing broker access"
-              description="Monitor commissions, view referred clients, manage sub-IBs, and request payouts."
+              title={t('demo.ibCard.title')}
+              tagline={t('demo.ibCard.tagline')}
+              description={t('demo.ibCard.desc')}
               email="ib@demo.com"
               password="Demo@123456"
-              buttonLabel={ibUser ? 'Continue as IB' : 'Enter as IB'}
+              credentialsLabel={t('demo.demoCredentials')}
+              buttonLabel={ibUser ? t('demo.ibCard.btnContinue') : t('demo.ibCard.btn')}
               buttonClass="bg-gradient-to-r from-amber-500 to-orange-600 shadow-[0_4px_16px_rgb(245_158_11/0.35)]"
               onEnter={handleIBEnter}
               loading={ibLoading}
@@ -488,10 +457,10 @@ export default function DemoPage() {
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-violet-600">
               <span className="text-[10px] font-bold text-white">FX</span>
             </div>
-            <span className="text-[13px] font-semibold text-foreground">FX Accounting</span>
+            <span className="text-[13px] font-semibold text-foreground">{t('app.name')}</span>
           </div>
           <p className="text-[12px] text-muted-foreground">
-            Built with React · TypeScript · Tailwind CSS · Zustand · PWA
+            {t('demo.footer')}
           </p>
         </div>
       </footer>
