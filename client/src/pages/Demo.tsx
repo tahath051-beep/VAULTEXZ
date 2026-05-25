@@ -234,79 +234,235 @@ function PortalFeatureItem({ portal, delay }: {
   );
 }
 
-/* ── Mini dashboard mockup ─────────────────────────────────── */
+/* ── Admin panel mockup ────────────────────────────────────── */
 function AppMockup() {
-  const { ref, visible } = useInView(0.1);
+  const { ref, visible } = useInView(0.08);
+
+  /* category cards mimicking the real admin panel */
+  const cats = [
+    { label: 'Funds',    amount: '$284k', accent: 'bg-orange-400', dot: 'bg-orange-400',  bar: 72 },
+    { label: 'Banks',    amount: '$1.2M', accent: 'bg-sky-400',    dot: 'bg-sky-400',     bar: 88 },
+    { label: 'Clients',  amount: '$847k', accent: 'bg-pink-400',   dot: 'bg-pink-400',    bar: 61 },
+    { label: 'Revenue',  amount: '$125k', accent: 'bg-violet-400', dot: 'bg-violet-400',  bar: 45 },
+    { label: 'Expenses', amount: '$42k',  accent: 'bg-red-400',    dot: 'bg-red-400',     bar: 29 },
+    { label: 'IB Comm',  amount: '$18k',  accent: 'bg-amber-400',  dot: 'bg-amber-400',   bar: 53 },
+  ];
+
+  /* sidebar nav items */
+  const navItems = [
+    { color: 'bg-blue-500/40',   active: true  },
+    { color: 'bg-white/8',       active: false },
+    { color: 'bg-white/8',       active: false },
+    { color: 'bg-white/8',       active: false },
+    { color: 'bg-white/8',       active: false },
+    { color: 'bg-white/8',       active: false },
+    { color: 'bg-white/8',       active: false },
+  ];
+
+  /* chart bars mimicking equity trend */
+  const bars = [38, 52, 44, 67, 55, 78, 62, 85, 70, 91, 76, 94];
+
   return (
     <div
       ref={ref}
       className={cn(
-        'mx-auto mt-16 max-w-3xl transition-all duration-700',
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12',
+        'relative mx-auto mt-16 max-w-4xl transition-all duration-700',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-14',
       )}
     >
-      {/* Browser chrome */}
-      <div className="rounded-2xl border border-border/60 bg-card shadow-[0_24px_80px_-16px_rgba(0,0,0,0.18)] overflow-hidden">
+      {/* ── Floating badges around the mockup ──────────────────── */}
+
+      {/* Reconciled badge — top right, floats */}
+      <div
+        className="absolute -right-2 top-10 z-20 hidden sm:flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 shadow-[0_8px_24px_rgba(16,185,129,0.4)] text-white text-[11px] font-bold"
+        style={{ animation: 'float-slow 6s ease-in-out infinite' }}
+      >
+        <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+        Reconciled ✓
+      </div>
+
+      {/* New operation notification — left, floats offset */}
+      <div
+        className="absolute -left-4 top-24 z-20 hidden sm:block rounded-xl border border-border/60 bg-card px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] text-[10px]"
+        style={{ animation: 'float-slow 8s ease-in-out infinite', animationDelay: '-3s' }}
+      >
+        <p className="font-semibold text-foreground text-[11px]">New withdrawal request</p>
+        <p className="text-muted-foreground mt-0.5">$12,500 · pending review</p>
+        <div className="mt-1.5 flex items-center gap-1">
+          <div className="h-1 flex-1 rounded-full bg-amber-400/30">
+            <div className="h-1 w-3/4 rounded-full bg-amber-400" />
+          </div>
+          <span className="text-amber-500 font-medium">Pending</span>
+        </div>
+      </div>
+
+      {/* AI insight chip — bottom left, floats */}
+      <div
+        className="absolute -bottom-3 left-8 z-20 hidden sm:flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-semibold text-primary shadow-[0_4px_16px_hsl(var(--primary)/0.2)]"
+        style={{ animation: 'float-slow 10s ease-in-out infinite', animationDelay: '-5s' }}
+      >
+        <Sparkles className="h-3 w-3" />
+        AI: All books balanced
+      </div>
+
+      {/* Live ping dot — on top of equity card */}
+      <div
+        className="absolute right-[28%] top-[60px] z-20 hidden sm:block"
+        style={{ animation: 'float-slow 7s ease-in-out infinite', animationDelay: '-1s' }}
+      >
+        <div className="relative flex h-4 w-4 items-center justify-center">
+          <div className="absolute h-4 w-4 rounded-full bg-emerald-400/30 animate-ping" />
+          <div className="h-2 w-2 rounded-full bg-emerald-400" />
+        </div>
+      </div>
+
+      {/* ── Browser shell ───────────────────────────────────────── */}
+      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[0_32px_96px_-16px_rgba(0,0,0,0.22),0_0_0_1px_rgba(0,0,0,0.04)]">
+
         {/* Title bar */}
-        <div className="flex items-center gap-2 border-b border-border/50 bg-muted/40 px-4 py-2.5">
-          <div className="h-3 w-3 rounded-full bg-red-400/70" />
-          <div className="h-3 w-3 rounded-full bg-yellow-400/70" />
-          <div className="h-3 w-3 rounded-full bg-green-400/70" />
-          <div className="mx-auto flex w-48 items-center rounded-md bg-background/70 px-2 py-0.5">
-            <span className="text-[10px] text-muted-foreground">app.vaultex.com/dashboard</span>
+        <div className="flex items-center gap-2 border-b border-border/50 bg-muted/50 px-4 py-2.5">
+          <div className="flex gap-1.5">
+            <div className="h-3 w-3 rounded-full bg-red-400/80" />
+            <div className="h-3 w-3 rounded-full bg-yellow-400/80" />
+            <div className="h-3 w-3 rounded-full bg-green-400/80" />
+          </div>
+          <div className="mx-auto flex w-52 items-center gap-1.5 rounded-md bg-background/80 px-2.5 py-1 border border-border/40">
+            <div className="h-2 w-2 rounded-full bg-emerald-400/80" />
+            <span className="text-[10px] text-muted-foreground">app.vaultex.com / dashboard</span>
+          </div>
+          {/* right side nav icons */}
+          <div className="flex items-center gap-1.5 ms-auto">
+            <div className="h-5 w-5 rounded-md bg-muted/60" />
+            <div className="h-5 w-5 rounded-md bg-muted/60" />
           </div>
         </div>
 
-        {/* Mockup content */}
-        <div className="grid grid-cols-[64px_1fr] h-44">
-          {/* Sidebar strip */}
-          <div className="border-e border-border/40 bg-[hsl(222_47%_10%)] flex flex-col items-center gap-3 pt-4 pb-2">
-            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
-              <span className="text-[8px] font-bold text-white">FX</span>
+        {/* ── App layout ──────────────────────────────────────────── */}
+        <div className="grid grid-cols-[52px_1fr]">
+
+          {/* Sidebar — always dark, matches real app */}
+          <div className="flex flex-col items-center gap-2 border-e border-white/5 bg-[hsl(222_47%_9%)] px-2 py-3">
+            {/* Logo */}
+            <div className="mb-1 h-7 w-7 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.5)]">
+              <span className="text-[8px] font-extrabold text-white">FX</span>
             </div>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className={cn('h-6 w-6 rounded-lg', i === 0 ? 'bg-blue-500/30' : 'bg-white/5')} />
+            {/* Nav items */}
+            {navItems.map((item, i) => (
+              <div
+                key={i}
+                className={cn(
+                  'h-7 w-full rounded-lg transition-colors',
+                  item.active ? 'bg-blue-500/25 ring-1 ring-blue-500/30' : 'bg-white/4',
+                )}
+              />
             ))}
           </div>
 
-          {/* Main area */}
-          <div className="p-4 space-y-3">
-            {/* Stat row */}
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { label: 'Revenue', color: 'from-blue-500/20 to-blue-500/5', bar: 'bg-blue-500' },
-                { label: 'Clients', color: 'from-emerald-500/20 to-emerald-500/5', bar: 'bg-emerald-500' },
-                { label: 'Trades',  color: 'from-violet-500/20 to-violet-500/5', bar: 'bg-violet-500' },
-                { label: 'IB Comm', color: 'from-amber-500/20 to-amber-500/5',   bar: 'bg-amber-500'  },
-              ].map((s) => (
-                <div key={s.label} className={cn('rounded-xl bg-gradient-to-br p-2', s.color)}>
-                  <div className="h-1.5 w-8 rounded-full bg-muted/50 mb-1.5" />
-                  <div className={cn('h-1 rounded-full', s.bar)} style={{ width: `${40 + Math.random() * 40}%` }} />
+          {/* Main content */}
+          <div className="bg-[hsl(var(--background))] p-3 space-y-2.5">
+
+            {/* Top bar */}
+            <div className="flex items-center gap-2">
+              {/* Breadcrumb / title */}
+              <div className="h-2.5 w-20 rounded-full bg-foreground/20" />
+              <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
+              <div className="h-2 w-14 rounded-full bg-muted-foreground/20" />
+              <div className="ms-auto flex items-center gap-1.5">
+                {/* Search */}
+                <div className="h-5 w-24 rounded-lg border border-border/50 bg-muted/40" />
+                {/* Bell with dot */}
+                <div className="relative h-5 w-5 rounded-lg bg-muted/40">
+                  <div className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-blue-500 ring-1 ring-card" />
+                </div>
+                {/* Avatar */}
+                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-blue-400 to-violet-600" />
+              </div>
+            </div>
+
+            {/* Category cards — 6 in a row, mimicking real dashboard */}
+            <div className="grid grid-cols-6 gap-1.5">
+              {cats.map((c) => (
+                <div key={c.label} className="relative overflow-hidden rounded-xl border border-border/50 bg-card p-2">
+                  {/* Left accent strip like real app */}
+                  <div className={cn('absolute left-0 top-0 h-full w-0.5 rounded-s-xl', c.accent)} />
+                  <div className="ms-1">
+                    {/* Colored dot + label */}
+                    <div className="flex items-center gap-1 mb-1">
+                      <div className={cn('h-1.5 w-1.5 rounded-full', c.dot)} />
+                      <div className="h-1.5 w-8 rounded-full bg-muted-foreground/30" />
+                    </div>
+                    {/* Amount */}
+                    <div className="h-2.5 w-10 rounded-full bg-foreground/15 mb-1.5" />
+                    {/* Mini bar */}
+                    <div className="h-0.5 w-full rounded-full bg-muted/40">
+                      <div className={cn('h-0.5 rounded-full', c.accent)} style={{ width: `${c.bar}%` }} />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Chart placeholder */}
-            <div className="rounded-xl border border-border/40 bg-muted/20 p-2 h-16 flex items-end gap-1 overflow-hidden">
-              {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm bg-gradient-to-t from-blue-500/60 to-violet-500/30"
-                  style={{ height: `${h}%`, animationDelay: `${i * 0.05}s` }}
-                />
-              ))}
+            {/* Chart + table row */}
+            <div className="grid grid-cols-[1fr_100px] gap-2">
+
+              {/* Equity trend chart — mimics the real TrendChart */}
+              <div className="rounded-xl border border-border/50 bg-card p-2">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="h-2 w-20 rounded-full bg-foreground/15" />
+                  <div className="h-1.5 w-10 rounded-full bg-muted/50" />
+                </div>
+                {/* Bars with gradient fill */}
+                <div className="flex h-12 items-end gap-0.5 pb-0">
+                  {bars.map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-t-sm bg-gradient-to-t from-blue-600/70 via-violet-500/50 to-violet-400/20"
+                      style={{ height: `${h}%` }}
+                    />
+                  ))}
+                </div>
+                {/* X axis */}
+                <div className="mt-1 flex justify-between">
+                  {['Jan', 'Apr', 'Jul', 'Oct'].map((m) => (
+                    <div key={m} className="h-1.5 w-4 rounded-full bg-muted/40" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Mini operations table */}
+              <div className="rounded-xl border border-border/50 bg-card p-2 space-y-1.5">
+                <div className="h-2 w-14 rounded-full bg-foreground/15 mb-2" />
+                {[
+                  { dot: 'bg-emerald-400', status: 'bg-emerald-400/20 text-emerald-600' },
+                  { dot: 'bg-amber-400',   status: 'bg-amber-400/20 text-amber-600'   },
+                  { dot: 'bg-emerald-400', status: 'bg-emerald-400/20 text-emerald-600' },
+                  { dot: 'bg-blue-400',    status: 'bg-blue-400/20 text-blue-600'     },
+                ].map((row, i) => (
+                  <div key={i} className="flex items-center gap-1">
+                    <div className={cn('h-1.5 w-1.5 shrink-0 rounded-full', row.dot)} />
+                    <div className="h-1.5 flex-1 rounded-full bg-muted/50" />
+                    <div className={cn('h-3 w-7 rounded-md', row.status)} />
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Table placeholder */}
-            <div className="space-y-1">
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/70" />
-                  <div className="h-1.5 flex-1 rounded-full bg-muted/60" />
-                  <div className="h-1.5 w-10 rounded-full bg-muted/40" />
-                </div>
-              ))}
+            {/* Bottom health bar — mimics health score */}
+            <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-card px-3 py-1.5">
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse-soft" />
+              <div className="h-1.5 w-24 rounded-full bg-foreground/15" />
+              <div className="ms-auto flex gap-1">
+                {[90, 75, 88].map((v, i) => (
+                  <div key={i} className="h-3 w-8 overflow-hidden rounded-md bg-muted/40">
+                    <div
+                      className="h-full rounded-md bg-gradient-to-r from-emerald-400 to-teal-400"
+                      style={{ width: `${v}%` }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
+
           </div>
         </div>
       </div>
