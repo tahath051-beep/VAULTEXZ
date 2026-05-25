@@ -272,18 +272,37 @@ function AppMockup() {
     >
       {/* ── Floating badges around the mockup ──────────────────── */}
 
-      {/* Reconciled badge — top right, floats */}
+      {/* 1. Reconciled ✓ — top right, emerald */}
       <div
-        className="absolute -right-2 top-10 z-20 hidden sm:flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 shadow-[0_8px_24px_rgba(16,185,129,0.4)] text-white text-[11px] font-bold"
+        className="absolute -right-2 top-10 z-20 hidden sm:flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 shadow-[0_8px_24px_rgba(16,185,129,0.45)] text-white text-[11px] font-bold"
         style={{ animation: 'float-slow 6s ease-in-out infinite' }}
       >
         <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
         Reconciled ✓
       </div>
 
-      {/* New operation notification — left, floats offset */}
+      {/* 2. EUR/USD live rate — top right, below reconciled */}
       <div
-        className="absolute -left-4 top-24 z-20 hidden sm:block rounded-xl border border-border/60 bg-card px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] text-[10px]"
+        className="absolute -right-6 top-[88px] z-20 hidden sm:flex items-center gap-2 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)] text-[10px]"
+        style={{ animation: 'float-slow 9s ease-in-out infinite', animationDelay: '-2s' }}
+      >
+        <span className="font-mono font-bold text-foreground text-[11px]">EUR/USD</span>
+        <span className="font-mono text-emerald-500 font-semibold">1.0847</span>
+        <span className="text-emerald-400 text-[9px]">▲ 0.12%</span>
+      </div>
+
+      {/* 3. Trade closed profit — top left corner, green */}
+      <div
+        className="absolute -left-6 -top-4 z-20 hidden sm:flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-2 shadow-[0_8px_24px_rgba(16,185,129,0.35)] text-white text-[11px] font-bold"
+        style={{ animation: 'float-slow 7s ease-in-out infinite', animationDelay: '-4s' }}
+      >
+        <TrendingUp className="h-3.5 w-3.5" />
+        Trade closed · +$842
+      </div>
+
+      {/* 4. New withdrawal request — left mid */}
+      <div
+        className="absolute -left-4 top-28 z-20 hidden sm:block rounded-xl border border-border/60 bg-card px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] text-[10px]"
         style={{ animation: 'float-slow 8s ease-in-out infinite', animationDelay: '-3s' }}
       >
         <p className="font-semibold text-foreground text-[11px]">New withdrawal request</p>
@@ -296,7 +315,25 @@ function AppMockup() {
         </div>
       </div>
 
-      {/* AI insight chip — bottom left, floats */}
+      {/* 5. IB Commission chip — right mid */}
+      <div
+        className="absolute -right-4 top-[44%] z-20 hidden sm:flex items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-2 shadow-[0_8px_20px_rgba(245,158,11,0.2)] text-[11px]"
+        style={{ animation: 'float-slow 11s ease-in-out infinite', animationDelay: '-6s' }}
+      >
+        <Network className="h-3 w-3 text-amber-500" />
+        <span className="font-semibold text-amber-600 dark:text-amber-400">IB Comm · $1,240</span>
+      </div>
+
+      {/* 6. 3 approvals badge — right bottom */}
+      <div
+        className="absolute -right-3 bottom-14 z-20 hidden sm:flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 shadow-[0_8px_24px_rgba(37,99,235,0.4)] text-white text-[11px] font-bold"
+        style={{ animation: 'float-slow 9s ease-in-out infinite', animationDelay: '-1.5s' }}
+      >
+        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[9px] font-extrabold">3</div>
+        Approvals waiting
+      </div>
+
+      {/* 7. AI insight chip — bottom left */}
       <div
         className="absolute -bottom-3 left-8 z-20 hidden sm:flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-[10px] font-semibold text-primary shadow-[0_4px_16px_hsl(var(--primary)/0.2)]"
         style={{ animation: 'float-slow 10s ease-in-out infinite', animationDelay: '-5s' }}
@@ -305,7 +342,32 @@ function AppMockup() {
         AI: All books balanced
       </div>
 
-      {/* Live ping dot — on top of equity card */}
+      {/* 8. EOD complete chip — bottom right */}
+      <div
+        className="absolute -bottom-5 right-12 z-20 hidden sm:flex items-center gap-1.5 rounded-xl border border-violet-400/30 bg-violet-500/10 px-3 py-1.5 text-[10px] font-semibold text-violet-500 shadow-[0_4px_16px_rgba(139,92,246,0.2)]"
+        style={{ animation: 'float-slow 13s ease-in-out infinite', animationDelay: '-7s' }}
+      >
+        <ShieldCheck className="h-3 w-3" />
+        EOD Complete · Day locked
+      </div>
+
+      {/* 9. Mini sparkline chip — left bottom */}
+      <div
+        className="absolute -left-2 bottom-10 z-20 hidden sm:flex items-center gap-2 rounded-xl border border-border/50 bg-card px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.1)] text-[10px]"
+        style={{ animation: 'float-slow 12s ease-in-out infinite', animationDelay: '-9s' }}
+      >
+        <div className="flex items-end gap-0.5 h-5">
+          {[40, 55, 48, 70, 62, 85, 78].map((h, i) => (
+            <div key={i} className="w-1 rounded-sm bg-gradient-to-t from-blue-500 to-violet-400" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+        <div>
+          <p className="font-semibold text-foreground">Equity</p>
+          <p className="text-emerald-500 font-bold">+14.2%</p>
+        </div>
+      </div>
+
+      {/* 10. Live ping dot — overlaid on mockup */}
       <div
         className="absolute right-[28%] top-[60px] z-20 hidden sm:block"
         style={{ animation: 'float-slow 7s ease-in-out infinite', animationDelay: '-1s' }}
