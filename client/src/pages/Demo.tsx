@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  ChevronRight, Sun, Moon, Mail, Lock, Sparkles,
+  ChevronRight, Sun, Moon, Sparkles,
   BarChart3, ShieldCheck, Zap, Globe2, Users, TrendingUp,
   Scale, Lock as LockIcon, Bell, ArrowRight, CheckCircle2,
   LayoutGrid, Network, User,
@@ -63,9 +63,6 @@ function PortalCard({
   title,
   tagline,
   description,
-  email,
-  password,
-  credentialsLabel,
   buttonLabel,
   buttonClass,
   onEnter,
@@ -78,9 +75,6 @@ function PortalCard({
   title: string;
   tagline: string;
   description: string;
-  email?: string;
-  password?: string;
-  credentialsLabel: string;
   buttonLabel: string;
   buttonClass: string;
   onEnter?: () => void;
@@ -105,21 +99,6 @@ function PortalCard({
         <h3 className="text-xl font-bold text-foreground">{title}</h3>
         <p className="mt-1 text-[13px] font-semibold text-primary">{tagline}</p>
         <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-
-        {/* Demo credentials */}
-        {email && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-muted/40 p-3.5 space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{credentialsLabel}</p>
-            <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
-              <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-              <span className="font-mono font-medium">{email}</span>
-            </div>
-            <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
-              <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-              <span className="font-mono font-medium">{password}</span>
-            </div>
-          </div>
-        )}
 
         <div className="mt-auto pt-6">
           {href ? (
@@ -253,12 +232,6 @@ export default function DemoPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-1 rounded-full border border-border/60 bg-card px-1 py-1 text-[11px]">
-              <span className="rounded-full bg-amber-400/20 px-2.5 py-0.5 font-bold text-amber-600 dark:text-amber-400">
-                {t('demo.liveBadge')}
-              </span>
-              <span className="px-1.5 text-muted-foreground">{t('demo.mockData')}</span>
-            </div>
             {/* Language toggle */}
             <button
               onClick={toggleLang}
@@ -396,12 +369,6 @@ export default function DemoPage() {
       {/* ── Portal access ──────────────────────────────────────── */}
       <section id="portals" className="px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-4 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-[12px] font-semibold text-amber-600 dark:text-amber-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-              {t('demo.choose.badge')}
-            </div>
-          </div>
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-foreground">{t('demo.choose.heading')}</h2>
             <p className="mt-3 text-muted-foreground">{t('demo.choose.sub')}</p>
@@ -416,7 +383,6 @@ export default function DemoPage() {
               title={t('demo.adminCard.title')}
               tagline={t('demo.adminCard.tagline')}
               description={t('demo.adminCard.desc')}
-              credentialsLabel={t('demo.demoCredentials')}
               buttonLabel={t('demo.adminCard.btn')}
               buttonClass="bg-gradient-to-r from-blue-600 to-violet-600 shadow-[0_4px_16px_hsl(217_91%_60%/0.35)]"
               href="/login"
@@ -430,9 +396,6 @@ export default function DemoPage() {
               title={t('demo.clientCard.title')}
               tagline={t('demo.clientCard.tagline')}
               description={t('demo.clientCard.desc')}
-              email="client@demo.com"
-              password="Demo@123456"
-              credentialsLabel={t('demo.demoCredentials')}
               buttonLabel={clientUser ? t('demo.clientCard.btnContinue') : t('demo.clientCard.btn')}
               buttonClass="bg-gradient-to-r from-emerald-500 to-teal-600 shadow-[0_4px_16px_rgb(16_185_129/0.35)]"
               onEnter={handleClientEnter}
@@ -447,9 +410,6 @@ export default function DemoPage() {
               title={t('demo.ibCard.title')}
               tagline={t('demo.ibCard.tagline')}
               description={t('demo.ibCard.desc')}
-              email="ib@demo.com"
-              password="Demo@123456"
-              credentialsLabel={t('demo.demoCredentials')}
               buttonLabel={ibUser ? t('demo.ibCard.btnContinue') : t('demo.ibCard.btn')}
               buttonClass="bg-gradient-to-r from-amber-500 to-orange-600 shadow-[0_4px_16px_rgb(245_158_11/0.35)]"
               onEnter={handleIBEnter}
@@ -461,16 +421,13 @@ export default function DemoPage() {
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="border-t border-border/40 px-4 py-8 sm:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
-          <div className="flex items-center gap-2">
-            <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-violet-600">
-              <span className="text-[10px] font-bold text-white">FX</span>
-            </div>
-            <span className="text-[13px] font-semibold text-foreground">{t('app.name')}</span>
+        <div className="mx-auto flex max-w-5xl items-center justify-center gap-2">
+          <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-violet-600">
+            <span className="text-[10px] font-bold text-white">FX</span>
           </div>
-          <p className="text-[12px] text-muted-foreground">
-            {t('demo.footer')}
-          </p>
+          <span className="text-[13px] font-semibold text-foreground">{t('app.name')}</span>
+          <span className="text-muted-foreground/40 mx-1">·</span>
+          <span className="text-[12px] text-muted-foreground">{t('demo.byVaultex')}</span>
         </div>
       </footer>
     </div>

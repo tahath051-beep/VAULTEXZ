@@ -1017,7 +1017,7 @@ export const translations = {
 
   'demo.choose.badge':          { en: 'DEMO MODE — Pre-loaded with mock data', ar: 'وضع العرض — بيانات تجريبية محملة' },
   'demo.choose.heading':        { en: 'Choose your portal',            ar: 'اختر بوابتك' },
-  'demo.choose.sub':            { en: 'Click any card to enter instantly with demo credentials.', ar: 'انقر على أي بطاقة للدخول فوراً ببيانات العرض التجريبي.' },
+  'demo.choose.sub':            { en: 'Click any card to access your portal instantly.',          ar: 'انقر على أي بطاقة للوصول إلى بوابتك فوراً.' },
   'demo.demoCredentials':       { en: 'Demo credentials',              ar: 'بيانات الدخول التجريبية' },
   'demo.liveBadge':             { en: 'LIVE DEMO',                     ar: 'عرض حي' },
   'demo.mockData':              { en: 'Mock data',                     ar: 'بيانات تجريبية' },
