@@ -60,17 +60,17 @@ export default function OperationsSettings() {
     <div className="space-y-8">
       <PageHeader
         title={t('settings.ops')}
-        subtitle="Configure how client requests flow through the approval process"
+        subtitle={t('settings.ops.subtitle2')}
         hint={
-          <PageHint id="settings-operations" title="What is this page?">
-            Operations Settings controls the rules for how client requests are processed — whether auto-confirmation is allowed, priority thresholds, and the classification labels you use for IB partners.
+          <PageHint id="settings-operations" title={t('settings.ops.hint.title')}>
+            {t('settings.ops.hint.body')}
           </PageHint>
         }
         actions={<Settings2 className="h-5 w-5 text-muted-foreground" />}
       />
 
       {/* Workflow settings */}
-      <SectionCard title="Workflow">
+      <SectionCard title={t('settings.ops.workflow')}>
         <div className="space-y-3">
           <Toggle
             checked={settings.requireDifferentConfirmer}
@@ -94,7 +94,7 @@ export default function OperationsSettings() {
       </SectionCard>
 
       {/* Threshold settings */}
-      <SectionCard title="Alert Thresholds">
+      <SectionCard title={t('settings.ops.alertThresholds')}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-xs font-semibold">{t('settings.ops.urgentHours')}</label>

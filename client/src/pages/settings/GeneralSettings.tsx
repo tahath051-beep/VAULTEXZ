@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SectionCard } from '@/components/shared/SectionCard';
+import { PageHint } from '@/components/shared/PageHint';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { useToast } from '@/hooks/use-toast';
-import { Lock, Unlock, Plus, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+import { Lock, Unlock, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
@@ -20,6 +22,7 @@ const CURRENCIES = ['USD', 'EUR', 'GBP', 'AED', 'SAR', 'TRY'];
 
 /* ── Period Locking ────────────────────────────────────────── */
 function PeriodLockSection() {
+  const { t } = useTranslation();
   const { lockedPeriods, lockPeriod, unlockPeriod } = useSettingsStore();
   const user = useAuthStore((s) => s.user);
   const { toast } = useToast();
@@ -36,27 +39,27 @@ function PeriodLockSection() {
   const [customLabel, setCustomLabel] = useState('');
 
   const handleLockPreset = (p: typeof presets[0]) => {
-    if (!p.from) { toast({ title: 'Select a custom range instead', variant: 'destructive' }); return; }
+    if (!p.from) { toast({ title: t('settings.general.selectCustom'), variant: 'destructive' }); return; }
     const already = lockedPeriods.some((lp) => lp.from === p.from);
-    if (already) { toast({ title: 'Period already locked' }); return; }
+    if (already) { toast({ title: t('settings.general.periodAlready') }); return; }
     lockPeriod(p.from, p.to, p.label, user?.email ?? 'admin');
-    toast({ title: `🔒 ${p.label} locked`, description: 'No entries can be backdated into this period.' });
+    toast({ title: `🔒 ${p.label} locked`, description: t('settings.periodLock.desc') });
   };
 
   const handleLockCustom = () => {
-    if (!customFrom || !customTo || !customLabel) { toast({ title: 'Fill all fields', variant: 'destructive' }); return; }
-    if (customFrom > customTo) { toast({ title: 'From date must be before To date', variant: 'destructive' }); return; }
+    if (!customFrom || !customTo || !customLabel) { toast({ title: t('settings.general.fillAll'), variant: 'destructive' }); return; }
+    if (customFrom > customTo) { toast({ title: t('settings.general.dateOrder'), variant: 'destructive' }); return; }
     lockPeriod(customFrom, customTo, customLabel, user?.email ?? 'admin');
     toast({ title: `🔒 ${customLabel} locked` });
     setCustomFrom(''); setCustomTo(''); setCustomLabel('');
   };
 
   return (
-    <SectionCard title="Period Locking" description="Lock accounting periods to prevent backdated entries.">
+    <SectionCard title={t('settings.periodLock')} description={t('settings.periodLock.desc')}>
       <div className="space-y-5">
         {/* Quick lock presets */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Quick Lock</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{t('settings.quickLock')}</p>
           <div className="flex flex-wrap gap-2">
             {presets.filter((p) => p.from).map((p) => {
               const isLocked = lockedPeriods.some((lp) => lp.from === p.from);
@@ -81,34 +84,34 @@ function PeriodLockSection() {
 
         {/* Custom range */}
         <div className="rounded-xl border border-border p-4 space-y-3">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Custom Range</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('settings.customRange')}</p>
           <div className="grid grid-cols-3 gap-3">
-            <div><Label className="text-xs">Label</Label><Input value={customLabel} onChange={(e) => setCustomLabel(e.target.value)} placeholder="e.g. Q1 2026" /></div>
-            <div><Label className="text-xs">From</Label><Input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} /></div>
-            <div><Label className="text-xs">To</Label><Input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} /></div>
+            <div><Label className="text-xs">{t('settings.label.label')}</Label><Input value={customLabel} onChange={(e) => setCustomLabel(e.target.value)} placeholder="e.g. Q1 2026" /></div>
+            <div><Label className="text-xs">{t('settings.label.from')}</Label><Input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} /></div>
+            <div><Label className="text-xs">{t('settings.label.to')}</Label><Input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} /></div>
           </div>
           <Button size="sm" variant="outline" onClick={handleLockCustom} className="gap-1.5">
-            <Lock className="h-3.5 w-3.5" /> Lock Period
+            <Lock className="h-3.5 w-3.5" /> {t('settings.lockPeriod')}
           </Button>
         </div>
 
         {/* Locked periods list */}
         {lockedPeriods.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Locked Periods</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('settings.lockedPeriods')}</p>
             {lockedPeriods.map((p) => (
               <div key={p.id} className="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-2.5">
                 <div className="flex items-center gap-3">
                   <Lock className="h-3.5 w-3.5 text-destructive" />
                   <div>
                     <p className="text-sm font-semibold">{p.label}</p>
-                    <p className="text-xs text-muted-foreground">{p.from} → {p.to} · Locked by {p.lockedBy}</p>
+                    <p className="text-xs text-muted-foreground">{p.from} → {p.to} · {t('settings.general.lockedBy')} {p.lockedBy}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => { unlockPeriod(p.id); toast({ title: `🔓 ${p.label} unlocked` }); }}
                   className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                  title="Unlock period"
+                  title={t('settings.general.unlockTitle')}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -120,7 +123,7 @@ function PeriodLockSection() {
         {lockedPeriods.length === 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CheckCircle2 className="h-4 w-4 text-success" />
-            No periods are locked. All dates are open for entries.
+            {t('settings.noPeriodsLocked')}
           </div>
         )}
       </div>
@@ -130,6 +133,7 @@ function PeriodLockSection() {
 
 /* ── Main component ────────────────────────────────────────── */
 export default function GeneralSettings() {
+  const { t } = useTranslation();
   const { general, updateGeneral } = useSettingsStore();
   const { toast } = useToast();
 
@@ -139,27 +143,31 @@ export default function GeneralSettings() {
 
   const handleSave = () => {
     updateGeneral(form);
-    toast({ title: '✓ Settings saved', description: 'General settings updated successfully.' });
+    toast({ title: t('settings.general.toast.saved'), description: t('settings.general.toast.savedDesc') });
   };
 
   const addEmail = () => {
-    if (!emailInput.includes('@')) { toast({ title: 'Invalid email', variant: 'destructive' }); return; }
+    if (!emailInput.includes('@')) { toast({ title: t('settings.general.invalidEmail'), variant: 'destructive' }); return; }
     if (!emails.includes(emailInput)) setEmails((e) => [...e, emailInput]);
     setEmailInput('');
   };
 
   return (
     <div className="space-y-6 max-w-2xl">
+      <PageHint id="settings-general" title={t('settings.general.hint.title')}>
+        {t('settings.general.hint.body')}
+      </PageHint>
+
       {/* Broker Info */}
-      <SectionCard title="Broker Configuration" description="Core platform settings for your brokerage.">
+      <SectionCard title={t('settings.brokerConfig')} description={t('settings.brokerConfig.desc')}>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Broker Name</Label>
+              <Label>{t('settings.brokerName')}</Label>
               <Input value={form.brokerName} onChange={(e) => setForm((f) => ({ ...f, brokerName: e.target.value }))} placeholder="Vaultex FX" />
             </div>
             <div>
-              <Label>Default Currency</Label>
+              <Label>{t('settings.defaultCurrency')}</Label>
               <Select value={form.defaultCurrency} onValueChange={(v) => setForm((f) => ({ ...f, defaultCurrency: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
@@ -168,20 +176,20 @@ export default function GeneralSettings() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Timezone</Label>
+              <Label>{t('settings.timezone')}</Label>
               <Select value={form.timezone} onValueChange={(v) => setForm((f) => ({ ...f, timezone: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div>
-              <Label>EOD Schedule Time</Label>
+              <Label>{t('settings.eodTime')}</Label>
               <Input type="time" value={form.eodScheduleTime} onChange={(e) => setForm((f) => ({ ...f, eodScheduleTime: e.target.value }))} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Reconciliation Threshold (%)</Label>
+              <Label>{t('settings.reconThreshold')}</Label>
               <Input type="number" min="0" max="10" step="0.1" value={form.reconciliationThreshold} onChange={(e) => setForm((f) => ({ ...f, reconciliationThreshold: Number(e.target.value) }))} />
             </div>
             <div className="flex items-center gap-3 pt-5">
@@ -194,14 +202,14 @@ export default function GeneralSettings() {
                 <span className={cn('inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', form.requireDualApproval ? 'translate-x-4' : 'translate-x-0')} />
               </button>
               <Label className="cursor-pointer" onClick={() => setForm((f) => ({ ...f, requireDualApproval: !f.requireDualApproval }))}>
-                Require Dual Approval
+                {t('settings.general.dualApproval')}
               </Label>
             </div>
           </div>
 
           {/* Report delivery emails */}
           <div>
-            <Label>Report Delivery Emails</Label>
+            <Label>{t('settings.reportEmails')}</Label>
             <div className="mt-1.5 flex gap-2">
               <Input value={emailInput} onChange={(e) => setEmailInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addEmail(); } }} placeholder="reports@example.com" />
               <Button type="button" size="sm" variant="outline" onClick={addEmail}><Plus className="h-3.5 w-3.5" /></Button>
@@ -211,7 +219,7 @@ export default function GeneralSettings() {
                 {emails.map((em) => (
                   <span key={em} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
                     {em}
-                    <button onClick={() => setEmails((e) => e.filter((x) => x !== em))} className="ml-0.5 text-muted-foreground hover:text-foreground"><AlertTriangle className="h-2.5 w-2.5" /></button>
+                    <button onClick={() => setEmails((e) => e.filter((x) => x !== em))} className="ml-0.5 text-muted-foreground hover:text-foreground"><Trash2 className="h-2.5 w-2.5" /></button>
                   </span>
                 ))}
               </div>
@@ -219,7 +227,7 @@ export default function GeneralSettings() {
           </div>
 
           <div className="flex justify-end pt-2">
-            <Button onClick={handleSave} variant="gradient">Save Settings</Button>
+            <Button onClick={handleSave} variant="gradient">{t('settings.saveSettings')}</Button>
           </div>
         </div>
       </SectionCard>

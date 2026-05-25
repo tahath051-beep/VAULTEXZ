@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -23,6 +24,7 @@ const monthStart = format(new Date(new Date().getFullYear(), new Date().getMonth
 const LIMIT = 20;
 
 function PnLTab() {
+  const { t } = useTranslation();
   const [start, setStart] = useState(monthStart);
   const [end, setEnd] = useState(today);
   const { data, isLoading } = useQuery({ queryKey: ['pnl', start, end], queryFn: () => getPnL({ start_date: start, end_date: end }) });
@@ -40,15 +42,15 @@ function PnLTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-end gap-4">
-        <div className="space-y-1"><Label>From</Label><Input type="date" value={start} onChange={(e) => setStart(e.target.value)} /></div>
-        <div className="space-y-1"><Label>To</Label><Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
-        <Button variant="outline" size="sm" onClick={handleExport} className="mb-0.5">Export Excel</Button>
+        <div className="space-y-1"><Label>{t('filter.from')}</Label><Input type="date" value={start} onChange={(e) => setStart(e.target.value)} /></div>
+        <div className="space-y-1"><Label>{t('filter.to')}</Label><Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
+        <Button variant="outline" size="sm" onClick={handleExport} className="mb-0.5">{t('btn.export.excel')}</Button>
       </div>
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Revenue', value: data?.totalRevenue, color: 'text-success dark:text-green-400' },
-          { label: 'Total Expenses', value: data?.totalExpenses, color: 'text-destructive dark:text-red-400' },
-          { label: 'Net P&L', value: data?.netPnL, color: Number(data?.netPnL) >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400' },
+          { label: t('reports.pl.revenue'), value: data?.totalRevenue, color: 'text-success dark:text-green-400' },
+          { label: t('reports.pl.expenses'), value: data?.totalExpenses, color: 'text-destructive dark:text-red-400' },
+          { label: t('reports.pl.netProfit'), value: data?.netPnL, color: Number(data?.netPnL) >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400' },
         ].map(({ label, value, color }) => (
           <div key={label} className="card-elevated rounded-2xl p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
@@ -57,15 +59,15 @@ function PnLTab() {
         ))}
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <SectionCard title="Revenue" padded={false}>
+        <SectionCard title={t('reports.pl.revenue')} padded={false}>
           <Table>
-            <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>{t('reports.tb.account')}</TableHead><TableHead>{t('col.balance')}</TableHead></TableRow></TableHeader>
             <TableBody>{data?.revenue?.map((r) => (<TableRow key={r.account_id}><TableCell>{r.account_name}</TableCell><TableCell className="font-mono text-success dark:text-green-400">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
           </Table>
         </SectionCard>
-        <SectionCard title="Expenses" padded={false}>
+        <SectionCard title={t('reports.pl.expenses')} padded={false}>
           <Table>
-            <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>{t('reports.tb.account')}</TableHead><TableHead>{t('col.balance')}</TableHead></TableRow></TableHeader>
             <TableBody>{data?.expenses?.map((e) => (<TableRow key={e.account_id}><TableCell>{e.account_name}</TableCell><TableCell className="font-mono text-destructive dark:text-red-400">${fmt(e.balance)}</TableCell></TableRow>))}</TableBody>
           </Table>
         </SectionCard>
@@ -75,6 +77,7 @@ function PnLTab() {
 }
 
 function BalanceSheetTab() {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({ queryKey: ['balance-sheet'], queryFn: () => getBalanceSheet({}) });
   if (isLoading) return <PageLoader />;
 
@@ -89,16 +92,22 @@ function BalanceSheetTab() {
     XLSX.writeFile(wb, `BalanceSheet_${today}.xlsx`);
   };
 
+  const sectionTitles = {
+    assets: t('reports.bs.assets'),
+    liabilities: t('reports.bs.liabilities'),
+    equity: t('reports.bs.equity'),
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={handleExport}>Export Excel</Button>
+        <Button variant="outline" size="sm" onClick={handleExport}>{t('btn.export.excel')}</Button>
       </div>
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Assets',      value: data?.totalAssets,      color: 'text-primary' },
-          { label: 'Total Liabilities', value: data?.totalLiabilities, color: 'text-warning dark:text-amber-400' },
-          { label: 'Total Equity',      value: data?.totalEquity,      color: 'text-success dark:text-green-400' },
+          { label: t('reports.bs.assets'),      value: data?.totalAssets,      color: 'text-primary' },
+          { label: t('reports.bs.liabilities'), value: data?.totalLiabilities, color: 'text-warning dark:text-amber-400' },
+          { label: t('reports.bs.equity'),      value: data?.totalEquity,      color: 'text-success dark:text-green-400' },
         ].map(({ label, value, color }) => (
           <div key={label} className="card-elevated rounded-2xl p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
@@ -108,9 +117,9 @@ function BalanceSheetTab() {
       </div>
       <div className="grid grid-cols-3 gap-4">
         {(['assets', 'liabilities', 'equity'] as const).map((key) => (
-          <SectionCard key={key} title={<span className="capitalize">{key}</span>} padded={false}>
+          <SectionCard key={key} title={sectionTitles[key]} padded={false}>
             <Table>
-              <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow><TableHead>{t('reports.tb.account')}</TableHead><TableHead>{t('col.balance')}</TableHead></TableRow></TableHeader>
               <TableBody>{data?.[key]?.map((r) => (<TableRow key={r.account_id}><TableCell className="text-sm">{r.account_name}</TableCell><TableCell className="font-mono text-sm">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
             </Table>
           </SectionCard>
@@ -185,6 +194,7 @@ function ReconciliationTab() {
 }
 
 function TrialBalanceTab() {
+  const { t } = useTranslation();
   const accounts = useWorkbookStore((s) => s.accounts);
 
   const rows = accounts.map((a) => ({
@@ -235,7 +245,7 @@ function TrialBalanceTab() {
             )}
           </span>
         </div>
-        <Button variant="outline" size="sm" onClick={handleExport}>Export Excel</Button>
+        <Button variant="outline" size="sm" onClick={handleExport}>{t('btn.export.excel')}</Button>
       </div>
 
       <SectionCard padded={false}>
@@ -243,11 +253,11 @@ function TrialBalanceTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-28">Account Code</TableHead>
-                <TableHead>Account Name</TableHead>
-                <TableHead className="w-28">Category</TableHead>
-                <TableHead className="w-32 text-right">Debit</TableHead>
-                <TableHead className="w-32 text-right">Credit</TableHead>
+                <TableHead className="w-28">{t('col.code')}</TableHead>
+                <TableHead>{t('reports.tb.account')}</TableHead>
+                <TableHead className="w-28">{t('col.category')}</TableHead>
+                <TableHead className="w-32 text-right">{t('reports.tb.debit')}</TableHead>
+                <TableHead className="w-32 text-right">{t('reports.tb.credit')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -271,7 +281,7 @@ function TrialBalanceTab() {
               <TableRow className="border-t-2 border-border bg-muted/30 font-bold">
                 <TableCell colSpan={3} className="text-sm font-bold">
                   <div className="flex items-center gap-2">
-                    Totals
+                    {t('report.total')}
                     {balanced
                       ? <span className="text-success text-base">✓</span>
                       : <span className="text-destructive text-base">✗</span>}
@@ -293,24 +303,25 @@ function TrialBalanceTab() {
 }
 
 export default function Reports() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Reports"
-        subtitle="Financial statements — your business health at a glance"
+        title={t('reports.title')}
+        subtitle={t('reports.subtitle')}
         hint={
-          <PageHint id="reports" title="What is this page?">
-            These are the three core financial reports: Profit & Loss (did we make money?), Balance Sheet (what do we own vs. owe?), and Trial Balance (are our books balanced?). Export any of them to Excel.
+          <PageHint id="reports" title={t('hint.reports.title')}>
+            {t('hint.reports.body')}
           </PageHint>
         }
       />
       <Tabs defaultValue="pnl">
         <TabsList>
-          <TabsTrigger value="pnl">P&L Statement</TabsTrigger>
-          <TabsTrigger value="bs">Balance Sheet</TabsTrigger>
+          <TabsTrigger value="pnl">{t('reports.tab.pl')}</TabsTrigger>
+          <TabsTrigger value="bs">{t('reports.tab.bs')}</TabsTrigger>
           <TabsTrigger value="ledger">Client Ledger</TabsTrigger>
           <TabsTrigger value="recon">Reconciliation</TabsTrigger>
-          <TabsTrigger value="trial">Trial Balance</TabsTrigger>
+          <TabsTrigger value="trial">{t('reports.tab.tb')}</TabsTrigger>
         </TabsList>
         <TabsContent value="pnl" className="mt-4"><PnLTab /></TabsContent>
         <TabsContent value="bs" className="mt-4"><BalanceSheetTab /></TabsContent>

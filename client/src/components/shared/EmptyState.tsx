@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -43,17 +44,18 @@ export function EmptyState({ icon, title, description, action, className }: Empt
 
 /* Preset empty states for common pages */
 export function EmptyClients({ onAdd }: { onAdd?: () => void }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title="No clients yet"
-      description="Add your first client to start tracking accounts, deposits, and trade activity."
+      title={t('empty.clients')}
+      description={t('empty.clients.sub')}
       action={
         onAdd && (
           <button
             onClick={onAdd}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           >
-            + Add Client
+            + {t('clients.add')}
           </button>
         )
       }
@@ -62,26 +64,28 @@ export function EmptyClients({ onAdd }: { onAdd?: () => void }) {
 }
 
 export function EmptyTrades() {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title="No trades found"
-      description="No closed trades match your current filters. Try adjusting the date range or search criteria."
+      title={t('empty.trades')}
+      description={t('empty.trades.sub')}
     />
   );
 }
 
 export function EmptyJournals({ onAdd }: { onAdd?: () => void }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title="No journal entries"
-      description="Manual journal entries will appear here once created."
+      title={t('empty.journals')}
+      description={t('empty.journals.sub')}
       action={
         onAdd && (
           <button
             onClick={onAdd}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           >
-            + New Entry
+            + {t('journals.new')}
           </button>
         )
       }
@@ -90,26 +94,28 @@ export function EmptyJournals({ onAdd }: { onAdd?: () => void }) {
 }
 
 export function EmptyPayments() {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title="No payments found"
-      description="Deposits and withdrawals will appear here once processed."
+      title={t('empty.payments')}
+      description={t('empty.payments.sub')}
     />
   );
 }
 
 export function EmptyOperations({ onAdd }: { onAdd?: () => void }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title="No operation requests"
-      description="Create your first request to start tracking deposits, withdrawals, and transfers."
+      title={t('empty.operations')}
+      description={t('empty.operations.sub')}
       action={
         onAdd && (
           <button
             onClick={onAdd}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           >
-            + New Request
+            + {t('ops.requests.new')}
           </button>
         )
       }
@@ -118,10 +124,11 @@ export function EmptyOperations({ onAdd }: { onAdd?: () => void }) {
 }
 
 export function EmptySearch({ query }: { query: string }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
-      title={`No results for "${query}"`}
-      description="Try different keywords or clear your search to see all records."
+      title={t('empty.search')}
+      description={t('empty.search.sub')}
     />
   );
 }

@@ -106,6 +106,18 @@
   }
 }
 
+/* Arabic font — applied when HTML dir is RTL */
+html[dir="rtl"] body,
+html[lang="ar"] body {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+  font-feature-settings: normal;
+  letter-spacing: 0;
+}
+html[dir="rtl"] .font-mono,
+html[lang="ar"] .font-mono {
+  font-family: 'Cairo', monospace;
+}
+
 @layer components {
   /* ── Card System ──────────────────────────────────────────── */
   .card-elevated {

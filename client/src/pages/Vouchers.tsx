@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Search, Receipt, ChevronRight } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,7 @@ import { voucherSeries } from '@/lib/workbook';
 import { cn } from '@/lib/utils';
 
 export default function Vouchers() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [activeCode, setActiveCode] = useState(voucherSeries[0]?.accountCode ?? '');
 
@@ -28,28 +30,23 @@ export default function Vouchers() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Vouchers"
-        subtitle={
-          <span className="flex items-center gap-2">
-            <span>Numbered payment slips — like a checkbook register, one per account</span>
-            <span dir="rtl" className="text-muted-foreground/80">أرقام السندات</span>
-          </span>
-        }
+        title={t('vouchers.title')}
+        subtitle={t('vouchers.subtitle2')}
         hint={
-          <PageHint id="vouchers" title="What is this page?">
-            Vouchers are sequentially numbered receipts tied to each client account. They prove a payment was made or received. Think of them as your official paper trail.
+          <PageHint id="vouchers" title={t('hint.vouchers.title')}>
+            {t('hint.vouchers.body')}
           </PageHint>
         }
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <SectionCard title="Total vouchers" bodyClassName="p-5">
+        <SectionCard title={t('vouchers.totalVouchers')} bodyClassName="p-5">
           <span className="text-2xl font-bold tabular-nums">{totalVouchers}</span>
         </SectionCard>
-        <SectionCard title="Accounts with series" bodyClassName="p-5">
+        <SectionCard title={t('vouchers.accountsWithSeries')} bodyClassName="p-5">
           <span className="text-2xl font-bold tabular-nums">{voucherSeries.length}</span>
         </SectionCard>
-        <SectionCard title="Latest voucher" bodyClassName="p-5">
+        <SectionCard title={t('vouchers.latestVoucher')} bodyClassName="p-5">
           <span className="text-2xl font-bold tabular-nums">
             {voucherSeries.flatMap((s) => s.vouchers).reduce((mx, v) => Math.max(mx, v), 0)}
           </span>
@@ -60,7 +57,7 @@ export default function Vouchers() {
         {/* Left list */}
         <SectionCard
           className="lg:col-span-4"
-          title="Accounts"
+          title={t('vouchers.accounts')}
           action={
             <div className="relative w-44">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +45,7 @@ type FormData = {
 };
 
 export default function ChartOfAccounts() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [open, setOpen] = useState(false);
@@ -94,17 +96,17 @@ export default function ChartOfAccounts() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Chart of Accounts"
-        subtitle="Master list of every financial category and account in your system"
+        title={t('coa.title')}
+        subtitle={t('coa.subtitle')}
         hint={
-          <PageHint id="chart-of-accounts" title="What is this page?">
-            The Chart of Accounts is like a filing cabinet with labeled folders for every type of money. Assets are things you own, Liabilities are things you owe, Revenue is money earned, Expenses are money spent. Every journal entry must reference one of these accounts.
+          <PageHint id="chart-of-accounts" title={t('hint.coa.title')}>
+            {t('hint.coa.body')}
           </PageHint>
         }
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Add Account</Button>
+              <Button><Plus className="h-4 w-4 mr-2" />{t('coa.new')}</Button>
             </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>New Account</DialogTitle></DialogHeader>

@@ -207,10 +207,10 @@ export default function Clients() {
     <div className="space-y-8">
       <PageHeader
         title={t('clients.title')}
-        subtitle="All your client accounts, balances, credit limits, and classifications"
+        subtitle={t('clients.subtitle2')}
         hint={
-          <PageHint id="clients" title="What is this page?">
-            A client is anyone who trades through your brokerage. Their balance shows how much money they have with you. Credit Limit is the maximum they can owe. Classification (Good/Neutral/Bad/Fraud) is your internal risk tier.
+          <PageHint id="clients" title={t('hint.clients.title')}>
+            {t('hint.clients.body')}
           </PageHint>
         }
         actions={

@@ -72,8 +72,8 @@ export default function Treasury() {
         title={t('treasury.title')}
         subtitle={t('treasury.subtitle')}
         hint={
-          <PageHint id="treasury" title="What is this page?">
-            Treasury shows your liquid cash position — how much real money you have available right now across all your bank accounts, funds, and platforms. It helps you make sure you always have enough cash to cover client withdrawals.
+          <PageHint id="treasury" title={t('hint.treasury.title')}>
+            {t('hint.treasury.body')}
           </PageHint>
         }
       />

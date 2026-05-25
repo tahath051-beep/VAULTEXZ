@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,6 +18,7 @@ import { Play } from 'lucide-react';
 const today = format(new Date(), 'yyyy-MM-dd');
 
 export default function EOD() {
+  const { t } = useTranslation();
   const [date, setDate] = useState(today);
 
   const { data: status, isLoading, refetch } = useQuery({
@@ -51,11 +53,11 @@ export default function EOD() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="EOD Processing"
-        subtitle="End of Day — close the trading session and lock today's records"
+        title={t('eod.title')}
+        subtitle={t('eod.subtitle')}
         hint={
-          <PageHint id="eod" title="What is this page?">
-            EOD (End of Day) is a daily closing process. When you run EOD, it calculates the day's totals, generates any required journal entries, and locks the day so nothing can be backdated. Think of it like "closing the register" at the end of a business day.
+          <PageHint id="eod" title={t('hint.eod.title')}>
+            {t('hint.eod.body')}
           </PageHint>
         }
       />

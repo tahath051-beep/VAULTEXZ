@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageHint } from '@/components/shared/PageHint';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -68,6 +70,7 @@ const levelIndentClass: Record<string, string> = {
 };
 
 export default function IBCommissions() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -99,15 +102,15 @@ export default function IBCommissions() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-2xl font-bold">IB Commissions</h1>
-          <p className="text-muted-foreground">Introducing broker commission tracking and payouts</p>
-        </div>
-        <PageHint id="ib-commissions" title="What is this page?">
-          IB Commissions are the fees earned by your Introducing Broker partners. When a client referred by an IB makes a trade, the IB earns a percentage. This page shows what each IB has earned and what has or has not been paid out yet.
-        </PageHint>
-      </div>
+      <PageHeader
+        title={t('ibComm.title')}
+        subtitle={t('ibComm.subtitle')}
+        hint={
+          <PageHint id="ib-commissions" title={t('hint.ibComm.title')}>
+            {t('hint.ibComm.body')}
+          </PageHint>
+        }
+      />
 
       {/* IB Hierarchy Tree */}
       {summaryList.length > 0 && (
@@ -196,12 +199,12 @@ export default function IBCommissions() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>IB Name</TableHead>
-                <TableHead>Code</TableHead>
+                <TableHead>{t('ibComm.col.ib')}</TableHead>
+                <TableHead>{t('col.code')}</TableHead>
                 <TableHead>Level</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>{t('col.amount')}</TableHead>
+                <TableHead>{t('col.status')}</TableHead>
+                <TableHead>{t('col.date')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

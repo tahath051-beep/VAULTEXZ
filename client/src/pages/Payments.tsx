@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
@@ -32,6 +33,7 @@ type PaymentFormData = {
 };
 
 export default function Payments() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [statusTab, setStatusTab] = useState('ALL');
@@ -123,11 +125,11 @@ export default function Payments() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Payments"
-        subtitle="All money movements — deposits, withdrawals, and transfers"
+        title={t('payments.title')}
+        subtitle={t('payments.subtitle')}
         hint={
-          <PageHint id="payments" title="What is this page?">
-            Payments tracks every time money moves: clients depositing funds, withdrawing profits, or transferring between accounts. Each entry shows who, how much, which currency, and whether it has been approved.
+          <PageHint id="payments" title={t('hint.payments.title')}>
+            {t('hint.payments.body')}
           </PageHint>
         }
         actions={
@@ -249,17 +251,17 @@ export default function Payments() {
               <TableRow>
                 <TableHead>
                   <span className="inline-flex items-center gap-1">
-                    Reference
+                    {t('payments.col.ref')}
                     <HelpTooltip text="A unique ID number used to track this specific payment" side="bottom" />
                   </span>
                 </TableHead>
-                <TableHead>Client</TableHead>
+                <TableHead>{t('payments.col.client')}</TableHead>
                 <TableHead>MT5 Login</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('payments.col.type')}</TableHead>
+                <TableHead>{t('payments.col.amount')}</TableHead>
+                <TableHead>{t('payments.col.status')}</TableHead>
+                <TableHead>{t('payments.col.date')}</TableHead>
+                <TableHead>{t('col.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

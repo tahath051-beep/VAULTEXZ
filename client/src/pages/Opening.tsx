@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { MoneyCell } from '@/components/shared/MoneyCell';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { openingBalances } from '@/lib/workbook';
 
 export default function Opening() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
@@ -26,16 +28,11 @@ export default function Opening() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Opening Balances"
-        subtitle={
-          <span className="flex items-center gap-2">
-            <span>Starting balances entered when the system was first set up</span>
-            <span dir="rtl" className="text-muted-foreground/80">الرصيد الافتتاحي والحدود الائتمانية</span>
-          </span>
-        }
+        title={t('opening.title')}
+        subtitle={t('opening.subtitle2')}
         hint={
-          <PageHint id="opening" title="What is this page?">
-            Opening Balances are the account values at the very beginning — typically migrated from a previous system or entered at the start of a financial year. They are the baseline everything else builds on.
+          <PageHint id="opening" title={t('hint.opening.title')}>
+            {t('hint.opening.body')}
           </PageHint>
         }
         actions={

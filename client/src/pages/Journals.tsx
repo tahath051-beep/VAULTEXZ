@@ -4,6 +4,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,7 @@ interface FormData {
 }
 
 export default function Journals() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [open, setOpen] = useState(false);
@@ -85,49 +87,49 @@ export default function Journals() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Journal Entries"
-        subtitle="The official double-entry record of every financial transaction"
+        title={t('journals.title')}
+        subtitle={t('journals.subtitle')}
         hint={
-          <PageHint id="journals" title="What is this page?">
-            Journal Entries are the core of accounting. Every transaction is recorded twice — once as a Debit (money coming into an account) and once as a Credit (money leaving). The two sides must always balance to zero.
+          <PageHint id="journals" title={t('hint.journals.title')}>
+            {t('hint.journals.body')}
           </PageHint>
         }
         actions={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />New Journal</Button>
+            <Button><Plus className="h-4 w-4 mr-2" />{t('journals.new')}</Button>
           </DialogTrigger>
 
           <DialogContent className="max-w-2xl">
-            <DialogHeader><DialogTitle>Post Manual Journal</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t('journals.form.title')}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit((d) => create(d))} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label>Narration <span className="text-destructive">*</span></Label>
+                  <Label>{t('journals.form.narration')} <span className="text-destructive">*</span></Label>
                   <Input {...register('narration', { required: true })} placeholder="e.g. Month-end accrual" />
                 </div>
                 <div className="space-y-1">
-                  <Label>Entry Date <span className="text-destructive">*</span></Label>
+                  <Label>{t('journals.form.date')} <span className="text-destructive">*</span></Label>
                   <Input type="date" {...register('entry_date', { required: true })} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label>Lines</Label>
+                  <Label>{t('journals.col.lines')}</Label>
                   <Button
                     type="button" variant="outline" size="sm"
                     onClick={() => append({ account_id: '', debit: '0', credit: '0' })}
                   >
-                    <Plus className="h-3 w-3 mr-1" />Add Line
+                    <Plus className="h-3 w-3 mr-1" />{t('journals.form.addLine')}
                   </Button>
                 </div>
 
                 {/* Column headers */}
                 <div className="grid grid-cols-[1fr_110px_110px_32px] gap-2 text-xs font-medium text-muted-foreground px-1">
-                  <span>Account</span>
-                  <span>Debit (DR)</span>
-                  <span>Credit (CR)</span>
+                  <span>{t('journals.form.account')}</span>
+                  <span>{t('journals.form.debit')} (DR)</span>
+                  <span>{t('journals.form.credit')} (CR)</span>
                   <span />
                 </div>
 
@@ -206,7 +208,7 @@ export default function Journals() {
 
               <Button type="submit" className="w-full" disabled={isPending || !balanced || totalDebit === 0}>
                 {isPending ? <LoadingSpinner className="h-4 w-4 mr-2" /> : null}
-                Post Journal Entry
+                {t('journals.form.submit')}
               </Button>
             </form>
           </DialogContent>
@@ -221,18 +223,18 @@ export default function Journals() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-28">Date</TableHead>
-                <TableHead className="w-32">Type</TableHead>
+                <TableHead className="w-28">{t('journals.col.date')}</TableHead>
+                <TableHead className="w-32">{t('col.type')}</TableHead>
                 <TableHead>
                   <span className="inline-flex items-center gap-1">
-                    Narration
+                    {t('journals.col.narration')}
                     <HelpTooltip text="A short description of what this transaction is for" side="bottom" />
                   </span>
                 </TableHead>
-                <TableHead className="w-16 text-right">Lines</TableHead>
+                <TableHead className="w-16 text-right">{t('journals.col.lines')}</TableHead>
                 <TableHead className="w-36 text-right">
                   <span className="inline-flex items-center gap-1 justify-end">
-                    Total DR
+                    {t('journals.col.totalDr')}
                     <HelpTooltip text="Money flowing INTO an account (increases assets or expenses)" side="bottom" />
                   </span>
                 </TableHead>

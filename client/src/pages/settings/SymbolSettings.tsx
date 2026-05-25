@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { toast } from '@/hooks/use-toast';
 import { api } from '@/api/client';
 import { Plus, Pencil } from 'lucide-react';
@@ -34,6 +35,7 @@ const updateSymbol = ({ id, ...data }: Partial<Symbol> & { id: string }) =>
 const ASSET_CLASSES = ['FOREX', 'METALS', 'CRYPTO', 'INDICES', 'ENERGY'];
 
 export default function SymbolSettings() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Symbol | null>(null);
@@ -46,39 +48,39 @@ export default function SymbolSettings() {
   const { mutate: create, isPending: creating } = useMutation({
     mutationFn: createSymbol,
     onSuccess: () => {
-      toast({ title: 'Symbol added' });
+      toast({ title: t('settings.symbols.toast.added') });
       qc.invalidateQueries({ queryKey: ['settings-symbols'] });
       reset(); setAddOpen(false);
     },
     onError: (e: { response?: { data?: { error?: string } } }) =>
-      toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
+      toast({ title: t('settings.symbols.toast.error'), description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
   const { mutate: update, isPending: updating } = useMutation({
     mutationFn: updateSymbol,
     onSuccess: () => {
-      toast({ title: 'Symbol updated' });
+      toast({ title: t('settings.symbols.toast.updated') });
       qc.invalidateQueries({ queryKey: ['settings-symbols'] });
       setEditTarget(null);
     },
     onError: (e: { response?: { data?: { error?: string } } }) =>
-      toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
+      toast({ title: t('settings.symbols.toast.error'), description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
   const openEdit = (s: Symbol) => {
     setEditTarget(s);
   };
 
-  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
+  if (isLoading) return <div className="py-8 text-center text-muted-foreground">{t('settings.symbols.loading')}</div>;
 
   return (
     <div className="space-y-4">
-      <PageHint id="settings-symbols" title="What is this page?">
-        Symbols are the trading instruments your clients can trade — e.g. EURUSD, XAUUSD, USDJPY. Each symbol has a spread (the cost of trading it) and a pip value (how much one price unit is worth in USD). These settings affect commission and P&L calculations.
+      <PageHint id="settings-symbols" title={t('settings.symbols.hint.title')}>
+        {t('settings.symbols.hint.body')}
       </PageHint>
       <div className="flex justify-end">
         <Button onClick={() => { reset(); setAssetClass('FOREX'); setAddOpen(true); }}>
-          <Plus className="h-4 w-4 mr-2" />Add Symbol
+          <Plus className="h-4 w-4 mr-2" />{t('settings.symbols.addSymbol')}
         </Button>
       </div>
 
@@ -87,14 +89,14 @@ export default function SymbolSettings() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Symbol</TableHead>
-                <TableHead>Asset Class</TableHead>
-                <TableHead className="w-28">Pip Value</TableHead>
-                <TableHead className="w-28">Broker Spread</TableHead>
-                <TableHead className="w-28">LP Spread</TableHead>
-                <TableHead className="w-24">Markup</TableHead>
-                <TableHead className="w-28">Contract Size</TableHead>
-                <TableHead className="w-20">Status</TableHead>
+                <TableHead>{t('settings.symbols.col.symbol')}</TableHead>
+                <TableHead>{t('settings.symbols.col.assetClass')}</TableHead>
+                <TableHead className="w-28">{t('settings.symbols.col.pipValue')}</TableHead>
+                <TableHead className="w-28">{t('settings.symbols.col.brokerSpread')}</TableHead>
+                <TableHead className="w-28">{t('settings.symbols.col.lpSpread')}</TableHead>
+                <TableHead className="w-24">{t('settings.symbols.col.markup')}</TableHead>
+                <TableHead className="w-28">{t('settings.symbols.col.contractSize')}</TableHead>
+                <TableHead className="w-20">{t('settings.symbols.col.status')}</TableHead>
                 <TableHead className="w-16"></TableHead>
               </TableRow>
             </TableHeader>
@@ -114,7 +116,7 @@ export default function SymbolSettings() {
                   <TableCell className="font-mono text-sm">{Number(s.contract_size).toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge variant={s.is_active ? 'success' : 'secondary'} className="text-xs">
-                      {s.is_active ? 'Active' : 'Inactive'}
+                      {s.is_active ? t('settings.symbols.active') : t('settings.symbols.inactive')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -132,16 +134,16 @@ export default function SymbolSettings() {
       {/* Add Symbol Dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Add Symbol</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t('settings.symbols.addDialog.title')}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit((d) => create({ ...d, asset_class: assetClass }))} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Symbol <span className="text-destructive">*</span></Label>
+                <Label>{t('settings.symbols.field.symbol')} <span className="text-destructive">*</span></Label>
                 <Input placeholder="e.g. EURUSD" {...register('symbol', { required: true })} />
-                {errors.symbol && <p className="text-xs text-destructive">Required</p>}
+                {errors.symbol && <p className="text-xs text-destructive">{t('settings.symbols.required')}</p>}
               </div>
               <div className="space-y-1">
-                <Label>Asset Class</Label>
+                <Label>{t('settings.symbols.field.assetClass')}</Label>
                 <Select value={assetClass} onValueChange={setAssetClass}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -152,27 +154,27 @@ export default function SymbolSettings() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Pip Value (USD) <span className="text-destructive">*</span></Label>
+                <Label>{t('settings.symbols.field.pipValue')} <span className="text-destructive">*</span></Label>
                 <Input type="number" step="0.01" placeholder="10.00" {...register('pip_value_usd', { required: true })} />
               </div>
               <div className="space-y-1">
-                <Label>Contract Size</Label>
+                <Label>{t('settings.symbols.field.contractSize')}</Label>
                 <Input type="number" placeholder="100000" {...register('contract_size')} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label>Broker Spread (pips) <span className="text-destructive">*</span></Label>
+                <Label>{t('settings.symbols.field.brokerSpread')} <span className="text-destructive">*</span></Label>
                 <Input type="number" step="0.1" placeholder="1.5" {...register('broker_spread', { required: true })} />
               </div>
               <div className="space-y-1">
-                <Label>LP Spread (pips) <span className="text-destructive">*</span></Label>
+                <Label>{t('settings.symbols.field.lpSpread')} <span className="text-destructive">*</span></Label>
                 <Input type="number" step="0.1" placeholder="0.5" {...register('lp_spread', { required: true })} />
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={creating}>
               {creating && <LoadingSpinner className="h-4 w-4 mr-2" />}
-              Add Symbol
+              {t('settings.symbols.addSymbol')}
             </Button>
           </form>
         </DialogContent>
@@ -182,7 +184,7 @@ export default function SymbolSettings() {
       {editTarget && (
         <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) setEditTarget(null); }}>
           <DialogContent>
-            <DialogHeader><DialogTitle>Edit {editTarget.symbol}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t('settings.symbols.editDialog.title')} {editTarget.symbol}</DialogTitle></DialogHeader>
             <EditForm symbol={editTarget} onSave={(d) => update({ id: editTarget.id, ...d })} saving={updating} />
           </DialogContent>
         </Dialog>
@@ -196,6 +198,7 @@ function EditForm({ symbol, onSave, saving }: {
   onSave: (d: Partial<Symbol>) => void;
   saving: boolean;
 }) {
+  const { t } = useTranslation();
   const [brokerSpread, setBrokerSpread] = useState(symbol.broker_spread);
   const [lpSpread, setLpSpread]         = useState(symbol.lp_spread);
   const [isActive, setIsActive]         = useState(String(symbol.is_active));
@@ -205,25 +208,25 @@ function EditForm({ symbol, onSave, saving }: {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <Label>Broker Spread (pips)</Label>
+          <Label>{t('settings.symbols.field.brokerSpread')}</Label>
           <Input type="number" step="0.1" value={brokerSpread} onChange={(e) => setBrokerSpread(e.target.value)} />
         </div>
         <div className="space-y-1">
-          <Label>LP Spread (pips)</Label>
+          <Label>{t('settings.symbols.field.lpSpread')}</Label>
           <Input type="number" step="0.1" value={lpSpread} onChange={(e) => setLpSpread(e.target.value)} />
         </div>
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Markup:</span>
+        <span className="text-muted-foreground">{t('settings.symbols.field.markup')}</span>
         <span className="font-semibold text-green-700 dark:text-green-400">{markup} pips</span>
       </div>
       <div className="space-y-1">
-        <Label>Status</Label>
+        <Label>{t('settings.symbols.field.status')}</Label>
         <Select value={isActive} onValueChange={setIsActive}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
+            <SelectItem value="true">{t('settings.symbols.active')}</SelectItem>
+            <SelectItem value="false">{t('settings.symbols.inactive')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -233,7 +236,7 @@ function EditForm({ symbol, onSave, saving }: {
         onClick={() => onSave({ broker_spread: brokerSpread, lp_spread: lpSpread, is_active: isActive === 'true' })}
       >
         {saving && <LoadingSpinner className="h-4 w-4 mr-2" />}
-        Save Changes
+        {t('settings.symbols.save')}
       </Button>
     </div>
   );

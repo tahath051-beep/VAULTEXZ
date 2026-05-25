@@ -139,10 +139,10 @@ export default function Operations() {
     <div className="space-y-8">
       <PageHeader
         title={t('ops.requests')}
-        subtitle="The approval inbox for client money movements — deposits, withdrawals, and transfers"
+        subtitle={t('ops.subtitle')}
         hint={
-          <PageHint id="operations" title="What is this page?">
-            Operations is the approval inbox for client money movements (deposits, withdrawals, internal transfers). Each request must be reviewed and confirmed before it gets recorded in the books.
+          <PageHint id="operations" title={t('hint.operations.title')}>
+            {t('hint.operations.body')}
           </PageHint>
         }
         actions={
@@ -273,12 +273,12 @@ export default function Operations() {
         {/* Bulk action bar */}
         {selected.size > 0 && (
           <div className="flex items-center gap-3 border-b border-border bg-blue-500/10 px-5 py-2.5">
-            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{selected.size} selected</span>
+            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{t('btn.selected').replace('{n}', String(selected.size))}</span>
             <Button size="sm" variant="default" className="h-7 text-xs bg-blue-500 hover:bg-blue-600 text-white" onClick={handleBulkConfirm}>
-              Confirm All
+              {t('btn.confirmAll')}
             </Button>
             <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSelected(new Set())}>
-              Clear selection
+              {t('btn.clearSelection')}
             </Button>
           </div>
         )}

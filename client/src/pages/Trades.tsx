@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { Input } from '@/components/ui/input';
@@ -29,6 +30,7 @@ const bookBadge = (book: string) =>
     : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
 
 export default function Trades() {
+  const { t } = useTranslation();
   const [offset, setOffset]       = useState(0);
   const [ticket, setTicket]       = useState('');
   const [symbol, setSymbol]       = useState('ALL');
@@ -113,16 +115,16 @@ export default function Trades() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trades"
-        subtitle="All buy/sell positions opened and closed by your clients"
+        title={t('trades.title')}
+        subtitle={t('trades.subtitle')}
         hint={
-          <PageHint id="trades" title="What is this page?">
-            Trades are the actual forex/CFD buy and sell orders your clients execute on MT5. You can see the profit/loss on each position, which account it belongs to, and whether it is still open or has been closed.
+          <PageHint id="trades" title={t('hint.trades.title')}>
+            {t('hint.trades.body')}
           </PageHint>
         }
         actions={
           <Button variant="outline" onClick={exportXLSX}>
-            <Download className="h-4 w-4 mr-2" />Export Excel
+            <Download className="h-4 w-4 mr-2" />{t('btn.export.excel')}
           </Button>
         }
       />

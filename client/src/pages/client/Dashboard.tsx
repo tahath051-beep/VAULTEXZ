@@ -32,6 +32,7 @@ function RequestDialog({
   type: RequestType;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState<'USD' | 'EUR' | 'GBP'>('USD');
@@ -46,22 +47,24 @@ function RequestDialog({
       return;
     }
     setError('');
-    toast({ title: `Your ${type} request has been submitted and is under review.` });
+    toast({ title: t('client.request.toast.submitted') });
     setAmount('');
     setNote('');
     onClose();
   };
 
+  const titleKey = type === 'deposit' ? 'client.request.title.deposit' : 'client.request.title.withdrawal';
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle className="capitalize">{type} Request</DialogTitle>
-          <DialogDescription>Fill in the details below. Your request will be reviewed by the operations team.</DialogDescription>
+          <DialogTitle>{t(titleKey)}</DialogTitle>
+          <DialogDescription>{t('client.request.desc')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-3 pt-1">
           <div>
-            <label className="mb-1 block text-xs font-medium">Amount *</label>
+            <label className="mb-1 block text-xs font-medium">{t('client.request.amount')} *</label>
             <Input
               type="number"
               min="0"
@@ -73,7 +76,7 @@ function RequestDialog({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Currency *</label>
+            <label className="mb-1 block text-xs font-medium">{t('client.request.currency')} *</label>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value as 'USD' | 'EUR' | 'GBP')}
@@ -85,19 +88,19 @@ function RequestDialog({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Note (optional)</label>
+            <label className="mb-1 block text-xs font-medium">{t('client.request.note')}</label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Any additional information..."
+              placeholder={t('client.request.notePlaceholder')}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
               rows={3}
             />
           </div>
           {error && <p className="text-xs text-destructive">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
-            <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
-            <Button type="submit" size="sm" variant="gradient" className="capitalize">{type}</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={onClose}>{t('client.request.cancel')}</Button>
+            <Button type="submit" size="sm" variant="gradient">{t('client.request.submit')}</Button>
           </div>
         </form>
       </DialogContent>
@@ -150,8 +153,8 @@ export default function ClientDashboard() {
             <SectionCard key={acct.id} bodyClassName="p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm font-semibold">{acct.account_type} Account</p>
-                  <p className="text-xs text-muted-foreground font-mono mt-0.5">Login: {acct.mt5_login}</p>
+                  <p className="text-sm font-semibold">{acct.account_type} {t('client.account.type')}</p>
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5">{t('client.account.login')} {acct.mt5_login}</p>
                 </div>
                 <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                   {acct.currency}
@@ -190,7 +193,7 @@ export default function ClientDashboard() {
       </div>
 
       {/* Make a Request */}
-      <SectionCard title="Make a Request" description="Submit a deposit or withdrawal request for review">
+      <SectionCard title={t('client.makeRequest')} description={t('client.makeRequest.desc')}>
         <div className="flex gap-3">
           <Button
             variant="default"
@@ -198,7 +201,7 @@ export default function ClientDashboard() {
             onClick={() => setDialogType('deposit')}
           >
             <ArrowUpRight className="h-4 w-4" />
-            Deposit
+            {t('client.deposit')}
           </Button>
           <Button
             variant="outline"
@@ -206,7 +209,7 @@ export default function ClientDashboard() {
             onClick={() => setDialogType('withdrawal')}
           >
             <ArrowDownRight className="h-4 w-4" />
-            Withdrawal
+            {t('client.withdrawal')}
           </Button>
         </div>
       </SectionCard>

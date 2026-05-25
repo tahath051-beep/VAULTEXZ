@@ -144,8 +144,8 @@ export default function IBManagement() {
         title={t('ib.mgmt.title')}
         subtitle={t('ib.mgmt.subtitle')}
         hint={
-          <PageHint id="ib-management" title="What is this page?">
-            An Introducing Broker (IB) is a partner or agent who refers clients to your brokerage. They earn a commission for each trade those clients make. This page lets you manage IB accounts, see their client lists, and track what commissions they are owed.
+          <PageHint id="ib-management" title={t('hint.ibMgmt.title')}>
+            {t('hint.ibMgmt.body')}
           </PageHint>
         }
         actions={

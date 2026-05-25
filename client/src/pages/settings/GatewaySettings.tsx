@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { PageHint } from '@/components/shared/PageHint';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { toast } from '@/hooks/use-toast';
 import { api } from '@/api/client';
 import { Settings2, Building2, Bitcoin, MoreHorizontal } from 'lucide-react';
@@ -44,6 +45,7 @@ const typeColors: Record<string, string> = {
 const fmt = (v: string) => Number(v).toLocaleString('en-US');
 
 export default function GatewaySettings() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [configTarget, setConfigTarget] = useState<Gateway | null>(null);
 
@@ -52,19 +54,19 @@ export default function GatewaySettings() {
   const { mutate: update, isPending: updating } = useMutation({
     mutationFn: updateGateway,
     onSuccess: () => {
-      toast({ title: 'Gateway updated' });
+      toast({ title: t('settings.gateways.toast.updated') });
       qc.invalidateQueries({ queryKey: ['settings-gateways'] });
       setConfigTarget(null);
     },
-    onError: () => toast({ title: 'Failed to update gateway', variant: 'destructive' }),
+    onError: () => toast({ title: t('settings.gateways.toast.error'), variant: 'destructive' }),
   });
 
-  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
+  if (isLoading) return <div className="py-8 text-center text-muted-foreground">{t('settings.gateways.loading')}</div>;
 
   return (
     <div className="space-y-4">
-      <PageHint id="settings-gateways" title="What is this page?">
-        Gateways are the payment channels clients use to deposit or withdraw money — such as bank wire transfers, crypto wallets, or manual payments. You can set deposit/withdrawal limits for each gateway here.
+      <PageHint id="settings-gateways" title={t('settings.gateways.hint.title')}>
+        {t('settings.gateways.hint.body')}
       </PageHint>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {gateways.map((gw) => (
@@ -79,31 +81,31 @@ export default function GatewaySettings() {
                   </div>
                 </div>
                 <Badge variant={gw.is_active ? 'success' : 'secondary'} className="text-xs">
-                  {gw.is_active ? 'Active' : 'Inactive'}
+                  {gw.is_active ? t('settings.gateways.active') : t('settings.gateways.inactive')}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="pt-3 pb-4 px-4 space-y-2">
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <p className="text-xs text-muted-foreground">Min Deposit</p>
+                  <p className="text-xs text-muted-foreground">{t('settings.gateways.minDeposit')}</p>
                   <p className="font-mono font-medium">${fmt(gw.min_deposit)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Max Deposit</p>
+                  <p className="text-xs text-muted-foreground">{t('settings.gateways.maxDeposit')}</p>
                   <p className="font-mono font-medium">${fmt(gw.max_deposit)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Min Withdrawal</p>
+                  <p className="text-xs text-muted-foreground">{t('settings.gateways.minWithdrawal')}</p>
                   <p className="font-mono font-medium">${fmt(gw.min_withdrawal)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Max Withdrawal</p>
+                  <p className="text-xs text-muted-foreground">{t('settings.gateways.maxWithdrawal')}</p>
                   <p className="font-mono font-medium">${fmt(gw.max_withdrawal)}</p>
                 </div>
               </div>
               <Button size="sm" variant="outline" className="w-full mt-1" onClick={() => setConfigTarget(gw)}>
-                Configure
+                {t('settings.gateways.configure')}
               </Button>
             </CardContent>
           </Card>
@@ -117,7 +119,7 @@ export default function GatewaySettings() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 {gwIcon(configTarget.type)}
-                Configure {configTarget.name}
+                {t('settings.gateways.dialogTitle')} {configTarget.name}
               </DialogTitle>
             </DialogHeader>
             <ConfigForm
@@ -137,42 +139,43 @@ function ConfigForm({ gateway, onSave, saving }: {
   onSave: (d: Partial<GatewayForm>) => void;
   saving: boolean;
 }) {
+  const { t } = useTranslation();
   const { register, handleSubmit } = useForm<GatewayForm>({ defaultValues: gateway as unknown as GatewayForm });
   const [isActive, setIsActive] = useState(String(gateway.is_active));
 
   return (
     <form onSubmit={handleSubmit((d) => onSave({ ...d, is_active: isActive === 'true' }))} className="space-y-4">
       <div className="space-y-1">
-        <Label>Status</Label>
+        <Label>{t('settings.gateways.field.status')}</Label>
         <Select value={isActive} onValueChange={setIsActive}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
+            <SelectItem value="true">{t('settings.gateways.active')}</SelectItem>
+            <SelectItem value="false">{t('settings.gateways.inactive')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <Label>Min Deposit ($)</Label>
+          <Label>{t('settings.gateways.field.minDep')}</Label>
           <Input type="number" step="1" {...register('min_deposit')} />
         </div>
         <div className="space-y-1">
-          <Label>Max Deposit ($)</Label>
+          <Label>{t('settings.gateways.field.maxDep')}</Label>
           <Input type="number" step="1" {...register('max_deposit')} />
         </div>
         <div className="space-y-1">
-          <Label>Min Withdrawal ($)</Label>
+          <Label>{t('settings.gateways.field.minWdr')}</Label>
           <Input type="number" step="1" {...register('min_withdrawal')} />
         </div>
         <div className="space-y-1">
-          <Label>Max Withdrawal ($)</Label>
+          <Label>{t('settings.gateways.field.maxWdr')}</Label>
           <Input type="number" step="1" {...register('max_withdrawal')} />
         </div>
       </div>
       <Button type="submit" className="w-full" disabled={saving}>
         {saving && <LoadingSpinner className="h-4 w-4 mr-2" />}
-        Save Gateway
+        {t('settings.gateways.save')}
       </Button>
     </form>
   );

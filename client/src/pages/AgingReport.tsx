@@ -115,19 +115,19 @@ export default function AgingReport() {
     <div className="space-y-8">
       <PageHeader
         title={t('aging.title')}
-        subtitle="Outstanding balances sorted by how long they've been unpaid"
+        subtitle={t('aging.subtitle2')}
         hint={
-          <PageHint id="aging" title="What is this page?">
-            Aging shows which clients owe you money and for how long. 0–30 days is normal, 30–90 days needs a reminder, and 90+ days is overdue and should be escalated. You can send reminders or mark balances as disputed directly from here.
+          <PageHint id="aging" title={t('hint.aging.title')}>
+            {t('hint.aging.body')}
           </PageHint>
         }
       />
 
       <div className="grid gap-4 sm:grid-cols-4">
-        <StatCard label={lang === 'ar' ? 'إجمالي مستحق' : 'Total outstanding'} value={`$${totalOutstanding.toLocaleString()}`} icon={TrendingDown} accent="blue" />
+        <StatCard label={t('aging.subtitle2')} value={`$${totalOutstanding.toLocaleString()}`} icon={TrendingDown} accent="blue" />
         <StatCard label={t('aging.current')} value={bucketTotals['0-30'].count} icon={Users} accent="green" />
-        <StatCard label={lang === 'ar' ? 'متأخر (60+ يوم)' : 'Overdue (60+ days)'} value={overdueRows.length} icon={AlertTriangle} accent="amber" />
-        <StatCard label={lang === 'ar' ? 'حرج (+90 يوم)' : 'Critical (90+ days)'} value={criticalRows.length} icon={Clock} accent="pink" />
+        <StatCard label={t('aging.60to90')} value={overdueRows.length} icon={AlertTriangle} accent="amber" />
+        <StatCard label={t('aging.over90')} value={criticalRows.length} icon={Clock} accent="pink" />
       </div>
 
       {/* Bucket summary */}
@@ -152,17 +152,17 @@ export default function AgingReport() {
         })}
       </div>
 
-      <SectionCard title={lang === 'ar' ? 'تفاصيل الأرصدة المستحقة' : 'Outstanding Balance Detail'} padded={false}>
+      <SectionCard title={t('aging.subtitle2')} padded={false}>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-24">Code</TableHead>
+                <TableHead className="w-24">{t('col.code')}</TableHead>
                 <TableHead>{t('field.name')}</TableHead>
-                <TableHead className="text-right">Balance</TableHead>
+                <TableHead className="text-right">{t('col.balance')}</TableHead>
                 <TableHead className="w-32 text-center">{t('aging.col.days')}</TableHead>
                 <TableHead className="w-28">{t('aging.col.bucket')}</TableHead>
-                <TableHead className="w-48">Actions</TableHead>
+                <TableHead className="w-48">{t('col.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -207,7 +207,7 @@ export default function AgingReport() {
                             className="h-6 px-2 text-[10px] text-amber-600 border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30"
                             onClick={(e) => handleRemind(r.name, e)}
                           >
-                            Remind
+                            {t('btn.remindClient')}
                           </Button>
                         )}
                         {r.bucket === '90+' && (
@@ -217,7 +217,7 @@ export default function AgingReport() {
                             className="h-6 px-2 text-[10px] text-destructive border-destructive/30 hover:bg-destructive/10"
                             onClick={(e) => handleEscalate(r.name, e)}
                           >
-                            Escalate
+                            {t('btn.escalate')}
                           </Button>
                         )}
                         <Button
@@ -231,7 +231,7 @@ export default function AgingReport() {
                           )}
                           onClick={(e) => handleDispute(r.code, e)}
                         >
-                          {isDisputed ? 'Undispute' : 'Dispute'}
+                          {isDisputed ? t('btn.undispute') : t('btn.dispute')}
                         </Button>
                       </div>
                     </TableCell>

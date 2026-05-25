@@ -61,8 +61,8 @@ export default function Reconciliation() {
         title={t('recon.title')}
         subtitle={t('recon.subtitle')}
         hint={
-          <PageHint id="reconciliation" title="What is this page?">
-            Reconciliation means comparing your internal records with external statements (bank, LP, platform) to make sure they match. Any gap is called a "break" and must be investigated and resolved.
+          <PageHint id="reconciliation" title={t('hint.reconciliation.title')}>
+            {t('hint.reconciliation.body')}
           </PageHint>
         }
       />

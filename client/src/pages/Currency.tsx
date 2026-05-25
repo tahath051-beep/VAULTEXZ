@@ -182,10 +182,10 @@ export default function Currency() {
     <div className="space-y-8">
       <PageHeader
         title={t('currency.title')}
-        subtitle="Live exchange rates, FX conversions, and rate alerts"
+        subtitle={t('currency.subtitle2')}
         hint={
-          <PageHint id="currency" title="What is this page?">
-            Currency shows the current exchange rates between currencies your clients use. Rate Alerts notify you if a rate moves past a threshold you set — useful for risk management.
+          <PageHint id="currency" title={t('hint.currency.title')}>
+            {t('hint.currency.body')}
           </PageHint>
         }
         actions={

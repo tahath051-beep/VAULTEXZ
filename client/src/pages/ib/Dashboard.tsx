@@ -33,15 +33,15 @@ export default function IBDashboard() {
     e.preventDefault();
     const amount = Number(payoutAmount);
     if (!payoutAmount || isNaN(amount) || amount <= 0) {
-      setPayoutError('Please enter a valid amount greater than 0.');
+      setPayoutError(t('ib.payout.errorInvalid'));
       return;
     }
     if (amount > pendingCommission) {
-      setPayoutError(`Amount cannot exceed pending commission ($${fmt(pendingCommission)}).`);
+      setPayoutError(t('ib.payout.errorExceed'));
       return;
     }
     setPayoutError('');
-    toast({ title: `Payout request submitted for $${fmt(amount)} via ${payoutMethod}. Processing time: 2-3 business days.` });
+    toast({ title: t('ib.payout.toast') });
     setPayoutAmount('');
     setPayoutNote('');
   };
@@ -117,7 +117,7 @@ export default function IBDashboard() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{ib.full_name}</p>
-                    <p className="text-xs text-muted-foreground font-mono">{ib.ib_code} · {ib.clients} clients</p>
+                    <p className="text-xs text-muted-foreground font-mono">{ib.ib_code} · {ib.clients} {t('ib.clients')}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -132,13 +132,13 @@ export default function IBDashboard() {
 
       {/* Commission Payout Request */}
       <SectionCard
-        title="Request Commission Payout"
-        description={`Available pending commission: $${fmt(pendingCommission)}`}
+        title={t('ib.payout.title')}
+        description={`${t('ib.payout.desc')} $${fmt(pendingCommission)}`}
       >
         <form onSubmit={handlePayoutSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-xs font-medium">Amount (USD) *</label>
+              <label className="mb-1 block text-xs font-medium">{t('ib.payout.amount')} *</label>
               <Input
                 type="number"
                 min="0"
@@ -152,25 +152,25 @@ export default function IBDashboard() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium">Payment Method *</label>
+              <label className="mb-1 block text-xs font-medium">{t('ib.payout.method')} *</label>
               <select
                 value={payoutMethod}
                 onChange={(e) => setPayoutMethod(e.target.value as typeof payoutMethod)}
                 disabled={pendingCommission <= 0}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="Bank Transfer">Bank Transfer</option>
-                <option value="Crypto">Crypto</option>
-                <option value="Internal">Internal</option>
+                <option value="Bank Transfer">{t('ib.payout.method.bank')}</option>
+                <option value="Crypto">{t('ib.payout.method.crypto')}</option>
+                <option value="Internal">{t('ib.payout.method.internal')}</option>
               </select>
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium">Note (optional)</label>
+            <label className="mb-1 block text-xs font-medium">{t('ib.payout.note')}</label>
             <textarea
               value={payoutNote}
               onChange={(e) => setPayoutNote(e.target.value)}
-              placeholder="Any additional information..."
+              placeholder={t('ib.payout.notePlaceholder')}
               disabled={pendingCommission <= 0}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               rows={2}
@@ -178,7 +178,7 @@ export default function IBDashboard() {
           </div>
           {payoutError && <p className="text-xs text-destructive">{payoutError}</p>}
           {pendingCommission <= 0 && (
-            <p className="text-xs text-muted-foreground">No pending commission available for payout.</p>
+            <p className="text-xs text-muted-foreground">{t('ib.payout.noPending')}</p>
           )}
           <div className="flex justify-end">
             <Button
@@ -188,7 +188,7 @@ export default function IBDashboard() {
               className="gap-2 bg-amber-500 hover:bg-amber-600 text-white"
             >
               <DollarSign className="h-4 w-4" />
-              Request Payout
+              {t('ib.payout.submit')}
             </Button>
           </div>
         </form>

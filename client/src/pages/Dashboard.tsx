@@ -175,12 +175,12 @@ export default function Dashboard() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const periodOptions: { key: Period; label: string; range: () => [Date, Date] }[] = [
-    { key: 'today',   label: 'Today',          range: () => { const d = new Date(); return [d, d]; } },
-    { key: 'week',    label: 'This Week',       range: () => { const d = new Date(); const s = new Date(d); s.setDate(d.getDate() - d.getDay()); return [s, d]; } },
-    { key: 'month',   label: 'This Month',      range: () => { const d = new Date(); return [new Date(d.getFullYear(), d.getMonth(), 1), d]; } },
-    { key: 'quarter', label: 'This Quarter',    range: () => { const d = new Date(); const q = Math.floor(d.getMonth() / 3); return [new Date(d.getFullYear(), q * 3, 1), d]; } },
-    { key: 'ytd',     label: 'Year to Date',    range: () => { const d = new Date(); return [new Date(d.getFullYear(), 0, 1), d]; } },
+  const periodOptions: { key: Period; labelKey: string; range: () => [Date, Date] }[] = [
+    { key: 'today',   labelKey: 'period.today',   range: () => { const d = new Date(); return [d, d]; } },
+    { key: 'week',    labelKey: 'period.week',    range: () => { const d = new Date(); const s = new Date(d); s.setDate(d.getDate() - d.getDay()); return [s, d]; } },
+    { key: 'month',   labelKey: 'period.month',   range: () => { const d = new Date(); return [new Date(d.getFullYear(), d.getMonth(), 1), d]; } },
+    { key: 'quarter', labelKey: 'period.quarter', range: () => { const d = new Date(); const q = Math.floor(d.getMonth() / 3); return [new Date(d.getFullYear(), q * 3, 1), d]; } },
+    { key: 'ytd',     labelKey: 'period.ytd',     range: () => { const d = new Date(); return [new Date(d.getFullYear(), 0, 1), d]; } },
   ];
 
   const activePeriod = periodOptions.find((p) => p.key === period)!;
@@ -200,7 +200,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <PageHeader
         title={t('equity.title')}
-        subtitle="Real-time snapshot of your brokerage's financial position — every balance, in one place"
+        subtitle={t('equity.subtitle2')}
         actions={
           <>
             {/* Period picker */}
@@ -212,7 +212,7 @@ export default function Dashboard() {
                 onClick={() => setPickerOpen((o) => !o)}
               >
                 <Calendar className="h-3.5 w-3.5" />
-                {activePeriod.label}
+                {t(activePeriod.labelKey as Parameters<typeof t>[0])}
                 <ChevronDown className={`h-3 w-3 transition-transform duration-150 ${pickerOpen ? 'rotate-180' : ''}`} />
               </Button>
 
@@ -225,7 +225,7 @@ export default function Dashboard() {
                       className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-sm hover:bg-accent transition-colors"
                     >
                       <span className={period === opt.key ? 'font-semibold text-primary' : 'text-foreground'}>
-                        {opt.label}
+                        {t(opt.labelKey as Parameters<typeof t>[0])}
                       </span>
                       {period === opt.key && <Check className="h-3.5 w-3.5 text-primary" />}
                     </button>

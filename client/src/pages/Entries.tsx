@@ -82,10 +82,10 @@ export default function Entries() {
     <div className="space-y-8">
       <PageHeader
         title={t('entries.title')}
-        subtitle="Raw accounting entries — the individual debits and credits"
+        subtitle={t('entries.subtitle2')}
         hint={
-          <PageHint id="entries" title="What is this page?">
-            Entries are the line-level building blocks of Journal Entries. Each entry is a single debit or credit to one account. Multiple entries combine to form a balanced journal entry.
+          <PageHint id="entries" title={t('hint.entries.title')}>
+            {t('hint.entries.body')}
           </PageHint>
         }
         actions={

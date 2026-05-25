@@ -107,10 +107,10 @@ export default function OperationsAnalytics() {
     <div className="space-y-8">
       <PageHeader
         title={t('analytics.title')}
-        subtitle="Charts and trends about your client operations volume"
+        subtitle={t('analytics.subtitle2')}
         hint={
-          <PageHint id="ops-analytics" title="What is this page?">
-            Analytics turns your operations data into visual charts. See which request types are most common, what time of day is busiest, and how your client activity has trended over time.
+          <PageHint id="ops-analytics" title={t('hint.analytics.title')}>
+            {t('hint.analytics.body')}
           </PageHint>
         }
         actions={
