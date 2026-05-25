@@ -158,7 +158,7 @@ export default function DemoPage() {
   const { setAuth: setClientAuth, clientUser } = useClientAuthStore();
   const { setAuth: setIBAuth, ibUser } = useIBAuthStore();
   const { theme, toggleTheme } = useUIStore();
-  const { t } = useTranslation();
+  const { t, lang, toggleLang } = useTranslation();
 
   const [clientLoading, setClientLoading] = useState(false);
   const [ibLoading, setIBLoading] = useState(false);
@@ -259,6 +259,15 @@ export default function DemoPage() {
               </span>
               <span className="px-1.5 text-muted-foreground">{t('demo.mockData')}</span>
             </div>
+            {/* Language toggle */}
+            <button
+              onClick={toggleLang}
+              className="inline-flex h-9 items-center gap-1 rounded-xl border border-border bg-card px-2.5 text-[11px] font-bold text-foreground transition-all hover:bg-muted hover:border-primary/30"
+            >
+              <span className="text-sm leading-none">{lang === 'en' ? '🇺🇸' : '🇸🇦'}</span>
+              <span>{lang === 'en' ? 'EN' : 'عر'}</span>
+            </button>
+            {/* Theme toggle */}
             <button
               onClick={toggleTheme}
               className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
