@@ -11,10 +11,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Pagination } from '@/components/shared/Pagination';
-import { PageLoader } from '@/components/shared/LoadingSpinner';
+import { TableSkeleton } from '@/components/shared/SkeletonLoaders';
+import { EmptyTrades } from '@/components/shared/EmptyState';
 import { getTrades, getTrade } from '@/api/trades.api';
 import { fmt, fmtDate, fmtDateTime } from '@/lib/utils';
-import { Download, CheckCircle2, Clock } from 'lucide-react';
+import { Download, CheckCircle2, Clock, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useSortable } from '@/hooks/useSortable';
 
 const LIMIT = 20;
 
@@ -77,10 +80,33 @@ export default function Trades() {
     XLSX.writeFile(wb, `trades-export-${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
-  if (isLoading) return <PageLoader />;
-
   const trades  = data?.trades  ?? [];
   const totals  = data?.totals;
+
+  const { sorted: sortedTrades, sortKey, sortDir, toggle } = useSortable(
+    trades as Record<string, unknown>[],
+    'close_time',
+    'desc',
+  );
+
+  function SortHead({ label, field, className }: { label: string; field: string; className?: string }) {
+    const active = sortKey === field;
+    return (
+      <TableHead
+        className={cn('cursor-pointer select-none hover:bg-muted/30 transition-colors', className)}
+        onClick={() => toggle(field as never)}
+      >
+        <span className="inline-flex items-center gap-1">
+          {label}
+          {active
+            ? sortDir === 'asc'
+              ? <ChevronUp className="h-3 w-3 text-primary" />
+              : <ChevronDown className="h-3 w-3 text-primary" />
+            : <ChevronsUpDown className="h-3 w-3 text-muted-foreground/40" />}
+        </span>
+      </TableHead>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -131,25 +157,28 @@ export default function Trades() {
             <Input type="date" className="w-40" value={endDate} onChange={(e) => { setEndDate(e.target.value); reset(); }} />
           </div>
 
+          {isLoading ? (
+            <TableSkeleton rows={8} cols={7} />
+          ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-24">Ticket</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead className="w-24">Symbol</TableHead>
-                <TableHead className="w-20">Dir</TableHead>
-                <TableHead className="w-20">Volume</TableHead>
+                <SortHead label="Ticket"     field="ticket"       className="w-24" />
+                <SortHead label="Client"     field="client_name" />
+                <SortHead label="Symbol"     field="symbol"       className="w-24" />
+                <SortHead label="Dir"        field="direction"    className="w-20" />
+                <SortHead label="Volume"     field="volume"       className="w-20" />
                 <TableHead className="w-28">Open</TableHead>
                 <TableHead className="w-28">Close</TableHead>
-                <TableHead className="w-28">MT5 P&amp;L</TableHead>
-                <TableHead className="w-28">Spread Inc.</TableHead>
-                <TableHead className="w-20">Book</TableHead>
+                <SortHead label="MT5 P&L"    field="profit"       className="w-28" />
+                <SortHead label="Spread Inc." field="spread_income" className="w-28" />
+                <SortHead label="Book"       field="book_type"    className="w-20" />
                 <TableHead className="w-24">Journal</TableHead>
-                <TableHead className="w-28">Close Time</TableHead>
+                <SortHead label="Close Time" field="close_time"   className="w-28" />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {trades.length ? trades.map((t) => (
+              {sortedTrades.length ? (sortedTrades as typeof trades).map((t) => (
                 <TableRow
                   key={t.id}
                   className="cursor-pointer hover:bg-muted/50"
@@ -164,7 +193,7 @@ export default function Trades() {
                   </TableCell>
                   <TableCell className="font-semibold">{t.symbol}</TableCell>
                   <TableCell>
-                    <span className={t.direction === 'BUY' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                    <span className={cn('font-semibold', t.direction === 'BUY' ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400')}>
                       {t.direction}
                     </span>
                   </TableCell>
@@ -184,23 +213,24 @@ export default function Trades() {
                   </TableCell>
                   <TableCell>
                     {t.journal_posted
-                      ? <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      ? <CheckCircle2 className="h-4 w-4 text-success dark:text-green-400" />
                       : <Clock className="h-4 w-4 text-muted-foreground" />}
                   </TableCell>
                   <TableCell className="text-sm">{fmtDate(t.close_time)}</TableCell>
                 </TableRow>
               )) : (
                 <TableRow>
-                  <TableCell colSpan={12} className="text-center text-muted-foreground py-12">
-                    No trades found
+                  <TableCell colSpan={12} className="p-0">
+                    <EmptyTrades />
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+          )}
 
           {/* Summary bar */}
-          {totals && (
+          {!isLoading && totals && (
             <div className="border-t bg-muted/30 px-4 py-3 flex flex-wrap gap-6 text-sm">
               <div>
                 <span className="text-muted-foreground">Total Volume: </span>
@@ -208,17 +238,17 @@ export default function Trades() {
               </div>
               <div>
                 <span className="text-muted-foreground">Spread Income: </span>
-                <span className="font-semibold text-green-700 dark:text-green-400">${fmt(totals.spread_income)}</span>
+                <span className="font-semibold text-success dark:text-green-400">${fmt(totals.spread_income)}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">B-Book P&amp;L: </span>
-                <span className={`font-semibold ${totals.b_book_pl >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600'}`}>
+                <span className={`font-semibold ${totals.b_book_pl >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400'}`}>
                   ${fmt(totals.b_book_pl)}
                 </span>
               </div>
               <div>
                 <span className="text-muted-foreground">Net Broker P&amp;L: </span>
-                <span className={`font-semibold ${totals.net_broker_pl >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600'}`}>
+                <span className={`font-semibold ${totals.net_broker_pl >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400'}`}>
                   ${fmt(totals.net_broker_pl)}
                 </span>
               </div>

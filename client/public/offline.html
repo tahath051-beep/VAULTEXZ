@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — Vaultex FX</title>
+  <meta name="theme-color" content="#2563eb" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      box-shadow: 0 0 32px rgba(37, 99, 235, 0.4);
+      margin-bottom: 32px;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .illustration {
+      margin: 0 auto 32px;
+      width: 200px;
+      height: 140px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 340px;
+      margin: 0 auto 32px;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: var(--primary-light); }
+    .btn:active { transform: scale(0.97); }
+
+    .status-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --muted: #64748b;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">FX</div>
+
+  <svg class="illustration" viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cloud with wifi slash -->
+    <ellipse cx="100" cy="90" rx="70" ry="30" fill="#1e2230" stroke="#2a2d3a" stroke-width="2"/>
+    <circle cx="65" cy="75" r="22" fill="#1e2230" stroke="#2a2d3a" stroke-width="2"/>
+    <circle cx="135" cy="78" r="18" fill="#1e2230" stroke="#2a2d3a" stroke-width="2"/>
+    <circle cx="100" cy="65" r="28" fill="#1e2230" stroke="#2a2d3a" stroke-width="2"/>
+    <!-- wifi bars (muted) -->
+    <path d="M88 75 Q100 63 112 75" stroke="#2a2d3a" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M82 69 Q100 53 118 69" stroke="#2a2d3a" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="100" cy="81" r="3" fill="#2a2d3a"/>
+    <!-- red slash -->
+    <line x1="78" y1="56" x2="122" y2="88" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+    <!-- small devices below -->
+    <rect x="30" y="108" width="32" height="22" rx="4" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1.5"/>
+    <rect x="84" y="105" width="32" height="25" rx="4" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1.5"/>
+    <rect x="138" y="108" width="32" height="22" rx="4" fill="#1a1d27" stroke="#2a2d3a" stroke-width="1.5"/>
+  </svg>
+
+  <h1>You're offline</h1>
+  <p>
+    Vaultex FX needs a connection to sync your data.
+    Your cached dashboards and reports are still available below.
+  </p>
+
+  <div class="pills">
+    <span class="pill"><span class="pill-dot"></span>Dashboard cached</span>
+    <span class="pill"><span class="pill-dot"></span>Reports cached</span>
+    <span class="pill"><span class="pill-dot"></span>Trades cached</span>
+  </div>
+
+  <button class="btn" onclick="window.location.reload()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="1 4 1 10 7 10"></polyline>
+      <path d="M3.51 15a9 9 0 1 0 .49-3.5"></path>
+    </svg>
+    Try again
+  </button>
+
+  <div class="status-bar">Last synced: <span id="lastSync">checking…</span></div>
+
+  <script>
+    const el = document.getElementById('lastSync');
+    try {
+      const ts = localStorage.getItem('vaultex-last-sync');
+      el.textContent = ts ? new Date(ts).toLocaleString() : 'unknown';
+    } catch {
+      el.textContent = 'unknown';
+    }
+  </script>
+</body>
+</html>

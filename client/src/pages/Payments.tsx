@@ -11,7 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Pagination } from '@/components/shared/Pagination';
-import { PageLoader, LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { TableSkeleton } from '@/components/shared/SkeletonLoaders';
+import { EmptyPayments } from '@/components/shared/EmptyState';
 import { getPayments, createPayment, approvePayment, rejectPayment } from '@/api/payments.api';
 import { getClients, getClient } from '@/api/clients.api';
 import { toast } from '@/hooks/use-toast';
@@ -116,8 +118,6 @@ export default function Payments() {
   const mt5Accounts = clientDetail?.mt5_accounts ?? [];
   const typeLabel = modalType === 'DEPOSIT' ? 'Deposit' : 'Withdrawal';
 
-  if (isLoading) return <PageLoader />;
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -126,7 +126,7 @@ export default function Payments() {
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => openModal('WITHDRAWAL')}>
-              <ArrowUpCircle className="h-4 w-4 mr-2 text-red-500" />
+              <ArrowUpCircle className="h-4 w-4 mr-2 text-destructive" />
               New Withdrawal
             </Button>
             <Button onClick={() => openModal('DEPOSIT')}>
@@ -143,8 +143,8 @@ export default function Payments() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {modalType === 'DEPOSIT'
-                ? <ArrowDownCircle className="h-5 w-5 text-green-500" />
-                : <ArrowUpCircle className="h-5 w-5 text-red-500" />}
+                ? <ArrowDownCircle className="h-5 w-5 text-success dark:text-green-400" />
+                : <ArrowUpCircle className="h-5 w-5 text-destructive dark:text-red-400" />}
               New {typeLabel}
             </DialogTitle>
           </DialogHeader>
@@ -236,6 +236,7 @@ export default function Payments() {
           </Tabs>
         </div>
         <div className="mt-2">
+          {isLoading ? <TableSkeleton rows={7} cols={6} /> : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -264,8 +265,8 @@ export default function Payments() {
                   <TableCell className="font-mono text-sm">{p.mt5_login ?? '—'}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center gap-1 text-xs font-semibold ${
-                      p.payment_type === 'DEPOSIT' ? 'text-green-600' :
-                      p.payment_type === 'WITHDRAWAL' ? 'text-red-600' : 'text-blue-600'
+                      p.payment_type === 'DEPOSIT' ? 'text-success dark:text-green-400' :
+                      p.payment_type === 'WITHDRAWAL' ? 'text-destructive dark:text-red-400' : 'text-primary'
                     }`}>
                       {p.payment_type === 'DEPOSIT'
                         ? <ArrowDownCircle className="h-3 w-3" />
@@ -287,7 +288,7 @@ export default function Payments() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 px-2 text-green-600 border-green-200 hover:bg-green-50 dark:hover:bg-green-950"
+                          className="h-7 px-2 text-success border-green-200 hover:bg-green-50 dark:hover:bg-green-950 dark:border-green-800"
                           onClick={() => approve(p.id)}
                         >
                           <Check className="h-3 w-3 mr-1" />Approve
@@ -306,13 +307,14 @@ export default function Payments() {
                 </TableRow>
               )) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground py-12">
-                    No payments found
+                  <TableCell colSpan={8} className="p-0">
+                    <EmptyPayments />
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+          )}
           <Pagination
             offset={offset}
             limit={LIMIT}

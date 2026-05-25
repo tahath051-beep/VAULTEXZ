@@ -8,27 +8,35 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-512-maskable.png'],
+      includeAssets: ['favicon.svg', 'offline.html', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-512-maskable.png'],
       manifest: {
-        name: 'FX Accounting Workbook',
-        short_name: 'FX Workbook',
-        description: 'Real-time multi-currency forex accounting workbook PWA.',
+        name: 'Vaultex FX Accounting',
+        short_name: 'Vaultex',
+        description: 'Enterprise-grade multi-currency FX accounting platform with real-time reconciliation, IB management, and client portals.',
+        lang: 'en',
+        dir: 'ltr',
         theme_color: '#2563eb',
-        background_color: '#F5F6FA',
+        background_color: '#0f1117',
         display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
         orientation: 'any',
         scope: '/',
-        start_url: '/',
+        start_url: '/?source=pwa',
+        categories: ['finance', 'business', 'productivity'],
         icons: [
           { src: '/icons/icon-192.png',          sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: '/icons/icon-512.png',          sizes: '512x512', type: 'image/png', purpose: 'any' },
           { src: '/icons/icon-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
+        screenshots: [
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', form_factor: 'wide',   label: 'Vaultex FX Dashboard' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', form_factor: 'narrow', label: 'Vaultex FX Mobile' },
+        ],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/offline\.html$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

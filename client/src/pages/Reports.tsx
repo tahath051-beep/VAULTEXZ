@@ -31,9 +31,9 @@ function PnLTab() {
       </div>
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Revenue', value: data?.totalRevenue, color: 'text-green-600' },
-          { label: 'Total Expenses', value: data?.totalExpenses, color: 'text-red-600' },
-          { label: 'Net P&L', value: data?.netPnL, color: Number(data?.netPnL) >= 0 ? 'text-green-600' : 'text-red-600' },
+          { label: 'Total Revenue', value: data?.totalRevenue, color: 'text-success dark:text-green-400' },
+          { label: 'Total Expenses', value: data?.totalExpenses, color: 'text-destructive dark:text-red-400' },
+          { label: 'Net P&L', value: data?.netPnL, color: Number(data?.netPnL) >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400' },
         ].map(({ label, value, color }) => (
           <div key={label} className="card-elevated rounded-2xl p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
@@ -45,13 +45,13 @@ function PnLTab() {
         <SectionCard title="Revenue" padded={false}>
           <Table>
             <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
-            <TableBody>{data?.revenue?.map((r) => (<TableRow key={r.account_id}><TableCell>{r.account_name}</TableCell><TableCell className="font-mono text-green-600">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
+            <TableBody>{data?.revenue?.map((r) => (<TableRow key={r.account_id}><TableCell>{r.account_name}</TableCell><TableCell className="font-mono text-success dark:text-green-400">${fmt(r.balance)}</TableCell></TableRow>))}</TableBody>
           </Table>
         </SectionCard>
         <SectionCard title="Expenses" padded={false}>
           <Table>
             <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Balance</TableHead></TableRow></TableHeader>
-            <TableBody>{data?.expenses?.map((e) => (<TableRow key={e.account_id}><TableCell>{e.account_name}</TableCell><TableCell className="font-mono text-red-600">${fmt(e.balance)}</TableCell></TableRow>))}</TableBody>
+            <TableBody>{data?.expenses?.map((e) => (<TableRow key={e.account_id}><TableCell>{e.account_name}</TableCell><TableCell className="font-mono text-destructive dark:text-red-400">${fmt(e.balance)}</TableCell></TableRow>))}</TableBody>
           </Table>
         </SectionCard>
       </div>
@@ -66,9 +66,9 @@ function BalanceSheetTab() {
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Assets', value: data?.totalAssets, color: 'text-blue-600' },
-          { label: 'Total Liabilities', value: data?.totalLiabilities, color: 'text-orange-600' },
-          { label: 'Total Equity', value: data?.totalEquity, color: 'text-purple-600' },
+          { label: 'Total Assets',      value: data?.totalAssets,      color: 'text-primary' },
+          { label: 'Total Liabilities', value: data?.totalLiabilities, color: 'text-warning dark:text-amber-400' },
+          { label: 'Total Equity',      value: data?.totalEquity,      color: 'text-success dark:text-green-400' },
         ].map(({ label, value, color }) => (
           <div key={label} className="card-elevated rounded-2xl p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
@@ -111,7 +111,7 @@ function LedgerTab() {
                   <TableCell>{e.client_name ?? '-'}</TableCell>
                   <TableCell className="font-mono">{e.mt5_login ?? '-'}</TableCell>
                   <TableCell>{e.entry_type}</TableCell>
-                  <TableCell className={`font-mono ${['DEPOSIT','CREDIT'].includes(e.entry_type) ? 'text-green-600' : 'text-red-600'}`}>${fmt(e.amount)} {e.currency}</TableCell>
+                  <TableCell className={`font-mono ${['DEPOSIT','CREDIT'].includes(e.entry_type) ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400'}`}>${fmt(e.amount)} {e.currency}</TableCell>
                   <TableCell className="font-mono">${fmt(e.balance_after)}</TableCell>
                   <TableCell>{fmtDateTime(e.created_at)}</TableCell>
                 </TableRow>

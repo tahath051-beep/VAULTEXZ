@@ -10,7 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Pagination } from '@/components/shared/Pagination';
-import { PageLoader, LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { TableSkeleton } from '@/components/shared/SkeletonLoaders';
+import { EmptyJournals } from '@/components/shared/EmptyState';
 import { getJournals, createJournal } from '@/api/journals.api';
 import { getCOA } from '@/api/coa.api';
 import { toast } from '@/hooks/use-toast';
@@ -77,7 +79,6 @@ export default function Journals() {
       toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
-  if (isLoading) return <PageLoader />;
 
   return (
     <div className="space-y-6">
@@ -192,7 +193,7 @@ export default function Journals() {
                   </p>
                 )}
                 {balanced && totalDebit > 0 && (
-                  <p className="text-xs text-green-600 font-medium">✓ Journal is balanced</p>
+                  <p className="text-xs text-success dark:text-green-400 font-medium">✓ Journal is balanced</p>
                 )}
               </div>
 
@@ -207,6 +208,9 @@ export default function Journals() {
       />
 
       <SectionCard padded={false}>
+          {isLoading ? (
+            <TableSkeleton rows={8} cols={5} />
+          ) : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -232,13 +236,14 @@ export default function Journals() {
                 </TableRow>
               )) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                    No journal entries found
+                  <TableCell colSpan={5} className="p-0">
+                    <EmptyJournals />
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+          )}
           <Pagination
             offset={offset}
             limit={LIMIT}

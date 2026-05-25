@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Search, Plus, AlertTriangle, Users, UserX, Eye, EyeOff, FileText } from 'lucide-react';
+import { Search, Plus, AlertTriangle, Users, UserX, Eye, EyeOff, FileText, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { useSortable } from '@/hooks/useSortable';
+import { EmptyClients, EmptySearch } from '@/components/shared/EmptyState';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { SectionCard } from '@/components/shared/SectionCard';
 import { StatCard } from '@/components/shared/StatCard';
@@ -143,6 +145,30 @@ export default function Clients() {
     });
   }, [clients, search, classFilter, showInactive]);
 
+  const { sorted: sortedClients, sortKey, sortDir, toggle } = useSortable(
+    filtered as Record<string, unknown>[],
+    'name',
+  );
+
+  function SortHead({ label, field, className }: { label: string; field: string; className?: string }) {
+    const active = sortKey === field;
+    return (
+      <TableHead
+        className={cn('cursor-pointer select-none hover:bg-muted/30 transition-colors', className)}
+        onClick={() => toggle(field as never)}
+      >
+        <span className="inline-flex items-center gap-1">
+          {label}
+          {active
+            ? sortDir === 'asc'
+              ? <ChevronUp className="h-3 w-3 text-primary" />
+              : <ChevronDown className="h-3 w-3 text-primary" />
+            : <ChevronsUpDown className="h-3 w-3 text-muted-foreground/40" />}
+        </span>
+      </TableHead>
+    );
+  }
+
   const activeClients = clients.filter((c) => c.active);
   const flagged = activeClients.filter((c) => c.classification === 'fraud' || c.classification === 'bad');
   const withoutIB = activeClients.filter((c) => !c.ibParentId);
@@ -193,17 +219,17 @@ export default function Clients() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-28">{t('req.field.accountNo')}</TableHead>
-                <TableHead>{t('field.name')}</TableHead>
+                <SortHead label={t('req.field.accountNo')} field="accountNo" className="w-28" />
+                <SortHead label={t('field.name')}          field="name" />
                 <TableHead>{t('clients.ibParent')}</TableHead>
-                <TableHead>{t('clients.classification')}</TableHead>
-                <TableHead className="w-24 text-right">{t('clients.creditLimit')}</TableHead>
+                <SortHead label={t('clients.classification')} field="classification" />
+                <SortHead label={t('clients.creditLimit')} field="creditLimit" className="w-24 text-right" />
                 <TableHead className="w-24 text-center">{t('data.col.active')}</TableHead>
                 <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((c) => (
+              {(sortedClients as typeof filtered).map((c) => (
                 <TableRow key={c.id} className={cn(!c.active && 'opacity-40')}>
                   <TableCell className="font-mono text-xs font-semibold text-muted-foreground">{c.accountNo}</TableCell>
                   <TableCell>
@@ -225,7 +251,7 @@ export default function Clients() {
                     <button
                       onClick={() => setClientActive(c.id, !c.active)}
                       className={cn('relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors',
-                        c.active ? 'bg-emerald-500' : 'bg-muted')}
+                        c.active ? 'bg-success dark:bg-green-500' : 'bg-muted')}
                       role="switch" aria-checked={c.active}>
                       <span className={cn('pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform', c.active ? 'translate-x-4' : 'translate-x-0')} />
                     </button>
@@ -241,7 +267,12 @@ export default function Clients() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">{t('report.noMatch')}</TableCell>
+                  <TableCell colSpan={7} className="p-0">
+                    {search.trim()
+                      ? <EmptySearch query={search} />
+                      : <EmptyClients onAdd={() => setAddOpen(true)} />
+                    }
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

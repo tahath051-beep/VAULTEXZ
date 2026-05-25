@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Wallet, Landmark, Users as UsersIcon, Truck, Handshake, BadgeDollarSign,
   TrendingUp, ReceiptText, ListChecks, Database, ArrowRight, Calendar, Download,
-  ShieldCheck, Activity,
+  ShieldCheck, Activity, ChevronDown, Check,
 } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { SectionCard } from '@/components/shared/SectionCard';
@@ -158,9 +158,42 @@ export default function Dashboard() {
 
   const reconHealth = Math.max(0, Math.min(100, 100 - Math.abs(equitySummary.surplus) / 5000));
 
-  const today = new Date();
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  /* ── Date range picker ───────────────────────────────────── */
+  type Period = 'today' | 'week' | 'month' | 'quarter' | 'ytd';
+  const [period, setPeriod] = useState<Period>('month');
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setPickerOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const periodOptions: { key: Period; label: string; range: () => [Date, Date] }[] = [
+    { key: 'today',   label: 'Today',          range: () => { const d = new Date(); return [d, d]; } },
+    { key: 'week',    label: 'This Week',       range: () => { const d = new Date(); const s = new Date(d); s.setDate(d.getDate() - d.getDay()); return [s, d]; } },
+    { key: 'month',   label: 'This Month',      range: () => { const d = new Date(); return [new Date(d.getFullYear(), d.getMonth(), 1), d]; } },
+    { key: 'quarter', label: 'This Quarter',    range: () => { const d = new Date(); const q = Math.floor(d.getMonth() / 3); return [new Date(d.getFullYear(), q * 3, 1), d]; } },
+    { key: 'ytd',     label: 'Year to Date',    range: () => { const d = new Date(); return [new Date(d.getFullYear(), 0, 1), d]; } },
+  ];
+
+  const activePeriod = periodOptions.find((p) => p.key === period)!;
+  const [rangeStart, rangeEnd] = activePeriod.range();
   const fmtRange = (d: Date) => d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  // Filter rate series based on selected period
+  const filteredRatesSeries = useMemo(() => {
+    const [start] = activePeriod.range();
+    const startIso = start.toISOString().slice(0, 10);
+    const filtered = rates.filter((r) => r.date >= startIso);
+    const src = filtered.length >= 2 ? filtered : rates.slice(-12);
+    return src.map((r) => ({ label: r.date.slice(5), value: r.rate }));
+  }, [rates, period]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-8">
@@ -169,10 +202,40 @@ export default function Dashboard() {
         subtitle={t('equity.subtitle')}
         actions={
           <>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Calendar className="h-3.5 w-3.5" />
-              {fmtRange(startOfMonth)} – {fmtRange(today)}
-            </Button>
+            {/* Period picker */}
+            <div ref={pickerRef} className="relative">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setPickerOpen((o) => !o)}
+              >
+                <Calendar className="h-3.5 w-3.5" />
+                {activePeriod.label}
+                <ChevronDown className={`h-3 w-3 transition-transform duration-150 ${pickerOpen ? 'rotate-180' : ''}`} />
+              </Button>
+
+              {pickerOpen && (
+                <div className="absolute end-0 top-full z-50 mt-2 w-44 rounded-2xl border border-border bg-popover shadow-shadow-3 overflow-hidden animate-slide-up">
+                  {periodOptions.map((opt) => (
+                    <button
+                      key={opt.key}
+                      onClick={() => { setPeriod(opt.key); setPickerOpen(false); }}
+                      className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-sm hover:bg-accent transition-colors"
+                    >
+                      <span className={period === opt.key ? 'font-semibold text-primary' : 'text-foreground'}>
+                        {opt.label}
+                      </span>
+                      {period === opt.key && <Check className="h-3.5 w-3.5 text-primary" />}
+                    </button>
+                  ))}
+                  <div className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+                    {fmtRange(rangeStart)} – {fmtRange(rangeEnd)}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Button variant="gradient" size="sm" className="gap-1.5">
               <Download className="h-3.5 w-3.5" />
               {t('action.export')}
@@ -316,7 +379,7 @@ export default function Dashboard() {
             ) : null
           }
         >
-          <TrendChart data={ratesSeries} height={220} formatValue={(v) => v.toFixed(2)} />
+          <TrendChart data={filteredRatesSeries} height={220} formatValue={(v) => v.toFixed(2)} />
         </SectionCard>
 
         <SectionCard
