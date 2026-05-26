@@ -28,6 +28,7 @@ const opLabelKey: Record<OpType, 'entries.op.deposit' | 'entries.op.withdraw' | 
   'سحب':        'entries.op.withdraw',
   'تحويل من':   'entries.op.transferFrom',
   'تحويل الى':  'entries.op.transferTo',
+  'مصروف':      'entries.op.withdraw',
 };
 
 const today = () => new Date().toISOString().slice(0, 10);

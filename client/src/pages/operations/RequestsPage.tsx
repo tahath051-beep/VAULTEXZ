@@ -26,7 +26,7 @@ export default function RequestsPage() {
   const { t, lang } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const { toast } = useToast();
-  const { requests, advanceStage, trashRequest, getPendingCount, settings } = useOpModuleStore();
+  const { requests, advanceStage, trashRequest, getPendingCount } = useOpModuleStore();
 
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<OpType | 'ALL'>('ALL');
@@ -279,7 +279,7 @@ export function StatusBadge({ status }: { status: OpStatus }) {
   );
 }
 
-function MoreMenu({ req, canSeeTrashed, onReject, onTrash, onHistory }: {
+function MoreMenu({ req, canSeeTrashed: _canSeeTrashed, onReject, onTrash, onHistory }: {
   req: OpRequest; canSeeTrashed: boolean;
   onReject: () => void; onTrash: () => void; onHistory: () => void;
 }) {

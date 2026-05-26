@@ -20,6 +20,7 @@ const opIcon: Record<OpType, typeof ArrowDownLeft> = {
   'سحب':        ArrowUpRight,
   'تحويل من':   ArrowLeftRight,
   'تحويل الى':  ArrowLeftRight,
+  'مصروف':      ArrowUpRight,
 };
 
 const opColor: Record<OpType, 'success' | 'destructive' | 'warning' | 'info'> = {
@@ -27,6 +28,7 @@ const opColor: Record<OpType, 'success' | 'destructive' | 'warning' | 'info'> = 
   'سحب':       'destructive',
   'تحويل من':  'warning',
   'تحويل الى': 'info',
+  'مصروف':     'destructive',
 };
 
 const opLabelKey: Record<OpType, 'entries.op.deposit' | 'entries.op.withdraw' | 'entries.op.transferFrom' | 'entries.op.transferTo'> = {
@@ -34,6 +36,7 @@ const opLabelKey: Record<OpType, 'entries.op.deposit' | 'entries.op.withdraw' | 
   'سحب':       'entries.op.withdraw',
   'تحويل من':  'entries.op.transferFrom',
   'تحويل الى': 'entries.op.transferTo',
+  'مصروف':     'entries.op.withdraw',
 };
 
 const fmtNum = (n: number) =>

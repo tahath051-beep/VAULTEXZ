@@ -20,7 +20,7 @@ import { HistoryModal } from '@/components/operations/HistoryModal';
 
 export default function VerificationPage() {
   const { t, lang } = useTranslation();
-  const { toast } = useToast();
+  const { toast: _toast } = useToast();
   const { requests, getVerificationCount } = useOpModuleStore();
 
   const [search, setSearch] = useState('');
