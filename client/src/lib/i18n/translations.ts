@@ -3,7 +3,7 @@
 
 export const translations = {
   // Brand & chrome
-  'app.name':              { en: 'FX Accounting',     ar: 'إف إكس للمحاسبة' },
+  'app.name':              { en: 'Vaultex',            ar: 'فولتكس' },
   'app.workbookAdmin':     { en: 'Workbook · Admin',  ar: 'دفتر العمل · المسؤول' },
   'nav.search.placeholder':{ en: 'Search anything — clients, accounts, vouchers, trades…', ar: 'ابحث في أي شيء — عملاء، حسابات، سندات، صفقات…' },
   'nav.toggleTheme':       { en: 'Toggle theme',       ar: 'تبديل المظهر' },
@@ -1044,6 +1044,148 @@ export const translations = {
   'demo.cta.readyBadge':       { en: 'Ready to explore?',             ar: 'مستعد للاستكشاف؟' },
   'demo.cta.readyHeadline':    { en: 'Step inside and see the difference', ar: 'ادخل وأرَ الفارق بنفسك' },
   'demo.cta.readySub':         { en: 'Three fully functional portals. Real accounting logic. Built for FX brokerages that demand precision.', ar: 'ثلاث بوابات كاملة. منطق محاسبي حقيقي. مصمم لشركات الوساطة التي تتطلب الدقة.' },
+
+  // ── Operations Module (4-stage workflow) ─────────────────────────────────────
+  'opmod.requests.title':      { en: 'Requests',                      ar: 'الطلبات' },
+  'opmod.requests.subtitle':   { en: 'Stage 1 — intake and dispatch', ar: 'المرحلة 1 — استلام الطلبات وإحالتها' },
+  'opmod.verification.title':  { en: 'Verification',                  ar: 'التشييك' },
+  'opmod.verification.subtitle':{ en: 'Stage 2 — payment verification', ar: 'المرحلة 2 — التحقق من الدفع' },
+  'opmod.execution.title':     { en: 'MT5 Execution',                 ar: 'التنفيذ MT5' },
+  'opmod.execution.subtitle':  { en: 'Stage 3 — MT5 platform execution', ar: 'المرحلة 3 — التنفيذ على منصة MT5' },
+  'opmod.completed.title':     { en: 'Completed',                     ar: 'المكتملة' },
+  'opmod.completed.subtitle':  { en: 'Completed operations log',      ar: 'سجل العمليات المكتملة' },
+
+  // Status labels
+  'opmod.status.pending':      { en: 'Pending',                       ar: 'معلق' },
+  'opmod.status.verification': { en: 'Verification',                  ar: 'قيد التحقق' },
+  'opmod.status.execution':    { en: 'Execution',                     ar: 'قيد التنفيذ' },
+  'opmod.status.completed':    { en: 'Completed',                     ar: 'مكتمل' },
+  'opmod.status.rejected':     { en: 'Rejected',                      ar: 'مرفوض' },
+  'opmod.status.trashed':      { en: 'Trashed',                       ar: 'محذوف' },
+
+  // Type labels
+  'opmod.type.deposit':        { en: 'Deposit',                       ar: 'تعزيز' },
+  'opmod.type.withdrawal':     { en: 'Withdrawal',                    ar: 'سحب' },
+  'opmod.type.agent_deposit':  { en: 'Agent Deposit',                 ar: 'تعزيز ايجنت' },
+  'opmod.type.agent_withdrawal':{ en: 'Agent Withdrawal',             ar: 'سحب ايجنت' },
+  'opmod.type.transfer_from':  { en: 'Transfer From',                 ar: 'تحويل من' },
+  'opmod.type.transfer_to':    { en: 'Transfer To',                   ar: 'تحويل الى' },
+  'opmod.type.expense':        { en: 'Expense',                       ar: 'مصروف' },
+
+  // Source
+  'opmod.source.manual':       { en: 'Manual',                        ar: 'يدوي' },
+  'opmod.source.app':          { en: 'App',                           ar: 'تطبيق' },
+
+  // Table column headers
+  'opmod.col.reqNo':           { en: 'Req. No.',                      ar: 'رقم الطلب' },
+  'opmod.col.date':            { en: 'Date',                          ar: 'التاريخ' },
+  'opmod.col.type':            { en: 'Type',                          ar: 'النوع' },
+  'opmod.col.mt5':             { en: 'MT5 Account',                   ar: 'حساب MT5' },
+  'opmod.col.amount':          { en: 'Amount',                        ar: 'المبلغ' },
+  'opmod.col.amountUsd':       { en: 'USD',                           ar: 'دولار' },
+  'opmod.col.sourceAccount':   { en: 'Source Account',                ar: 'الحساب المصدر' },
+  'opmod.col.counterAccount':  { en: 'Counter Account',               ar: 'الحساب المقابل' },
+  'opmod.col.currency':        { en: 'Currency',                      ar: 'العملة' },
+  'opmod.col.rate':            { en: 'Rate',                          ar: 'السعر' },
+  'opmod.col.paymentMethod':   { en: 'Payment Method',                ar: 'طريقة الدفع' },
+  'opmod.col.notes1':          { en: 'Notes 1',                       ar: 'البيان' },
+  'opmod.col.notes2':          { en: 'Notes 2',                       ar: 'ملاحظات' },
+  'opmod.col.status':          { en: 'Status',                        ar: 'الحالة' },
+  'opmod.col.actions':         { en: 'Actions',                       ar: 'الإجراءات' },
+  'opmod.col.journalRef':      { en: 'Journal Ref',                   ar: 'مرجع القيد' },
+
+  // Actions
+  'opmod.action.newRequest':   { en: 'New Request',                   ar: 'طلب جديد' },
+  'opmod.action.confirm':      { en: 'Confirm ✓',                     ar: 'تأكيد ✓' },
+  'opmod.action.reject':       { en: 'Reject',                        ar: 'رفض' },
+  'opmod.action.trash':        { en: 'Move to Trash',                 ar: 'نقل إلى المحذوفات' },
+  'opmod.action.addLine':      { en: 'Add Sub-line',                  ar: 'إضافة بند فرعي' },
+  'opmod.action.viewHistory':  { en: 'View History',                  ar: 'سجل العمليات' },
+  'opmod.action.markExecuted': { en: 'Mark Executed',                 ar: 'تم التنفيذ' },
+  'opmod.action.confirmReceipt':{ en: 'Confirm Receipt',              ar: 'تأكيد الاستلام' },
+  'opmod.action.exportCsv':    { en: 'Export CSV',                    ar: 'تصدير CSV' },
+  'opmod.action.filter':       { en: 'Filter',                        ar: 'تصفية' },
+
+  // Form fields
+  'opmod.field.requestType':   { en: 'Request Type',                  ar: 'نوع الطلب' },
+  'opmod.field.requestDate':   { en: 'Request Date',                  ar: 'تاريخ الطلب' },
+  'opmod.field.mt5Account':    { en: 'MT5 Account Number',            ar: 'رقم حساب MT5' },
+  'opmod.field.counterAccount':{ en: 'Counter Account (auto)',        ar: 'الحساب المقابل (تلقائي)' },
+  'opmod.field.sourceAccount': { en: 'Source / Dest. Account',        ar: 'حساب المصدر / الوجهة' },
+  'opmod.field.amount':        { en: 'Amount',                        ar: 'المبلغ' },
+  'opmod.field.currency':      { en: 'Currency',                      ar: 'العملة' },
+  'opmod.field.exchangeRate':  { en: 'Exchange Rate',                 ar: 'سعر الصرف' },
+  'opmod.field.amountUsd':     { en: 'Amount (USD)',                  ar: 'المبلغ (دولار)' },
+  'opmod.field.paymentMethod': { en: 'Payment Method',                ar: 'طريقة الدفع' },
+  'opmod.field.notes1':        { en: 'Notes 1',                       ar: 'البيان' },
+  'opmod.field.notes2':        { en: 'Notes 2 (optional)',            ar: 'ملاحظات (اختياري)' },
+  'opmod.field.agentDetected': { en: 'Agent account detected',        ar: 'تم اكتشاف حساب وكيل' },
+  'opmod.field.traderDetected':{ en: 'Trader account',                ar: 'حساب متداول' },
+  'opmod.field.noRateWarning': { en: 'No rate for today — using 1.0', ar: 'لا يوجد سعر صرف لهذه العملة اليوم — يُستخدم 1.0' },
+
+  // Verify modal
+  'opmod.verify.title':        { en: 'Confirm Receipt / Transfer',    ar: 'تأكيد الاستلام / التحويل' },
+  'opmod.verify.account':      { en: 'Receiving / Sending Account',   ar: 'حساب الاستلام / الإرسال' },
+  'opmod.verify.notes':        { en: 'Notes (optional)',               ar: 'ملاحظات (اختياري)' },
+
+  // Reject modal
+  'opmod.reject.title':        { en: 'Reject Request',                ar: 'رفض الطلب' },
+  'opmod.reject.reason':       { en: 'Rejection Reason',              ar: 'سبب الرفض' },
+  'opmod.reject.reasonPh':     { en: 'Enter reason…',                 ar: 'أدخل سبب الرفض…' },
+
+  // History / timeline
+  'opmod.history.title':       { en: 'Request History',               ar: 'سجل الطلب' },
+  'opmod.history.created':     { en: 'Created',                       ar: 'تم الإنشاء' },
+  'opmod.history.advanced':    { en: 'Advanced to next stage',        ar: 'انتقل إلى المرحلة التالية' },
+  'opmod.history.rejected':    { en: 'Rejected',                      ar: 'مرفوض' },
+  'opmod.history.trashed':     { en: 'Moved to trash',                ar: 'نُقل إلى المحذوفات' },
+
+  // Completed page summaries
+  'opmod.completed.depositsToday':    { en: 'Total Deposits Today',   ar: 'إجمالي التعزيزات اليوم' },
+  'opmod.completed.withdrawalsToday': { en: 'Total Withdrawals Today',ar: 'إجمالي السحوبات اليوم' },
+  'opmod.completed.netToday':         { en: 'Net Today',              ar: 'الصافي اليوم' },
+  'opmod.completed.compareHint':      { en: 'Compare with MT5 daily report', ar: 'قارن مع تقرير MT5 اليومي' },
+
+  // Toasts
+  'opmod.toast.advanced':      { en: 'Request advanced to next stage', ar: 'تم نقل الطلب إلى المرحلة التالية' },
+  'opmod.toast.rejected':      { en: 'Request rejected',              ar: 'تم رفض الطلب' },
+  'opmod.toast.trashed':       { en: 'Request moved to trash',        ar: 'تم نقل الطلب إلى المحذوفات' },
+  'opmod.toast.created':       { en: 'Request created',               ar: 'تم إنشاء الطلب' },
+  'opmod.toast.executed':      { en: 'MT5 execution marked',          ar: 'تم تسجيل التنفيذ في MT5' },
+  'opmod.toast.completed':     { en: 'Request completed — journal entry generated', ar: 'اكتمل الطلب — تم إنشاء قيد محاسبي' },
+
+  // Empty states
+  'opmod.empty.requests':      { en: 'No pending requests',           ar: 'لا توجد طلبات معلقة' },
+  'opmod.empty.verification':  { en: 'No requests awaiting verification', ar: 'لا توجد طلبات في انتظار التحقق' },
+  'opmod.empty.execution':     { en: 'No requests awaiting MT5 execution', ar: 'لا توجد طلبات في انتظار التنفيذ' },
+  'opmod.empty.completed':     { en: 'No completed operations',       ar: 'لا توجد عمليات مكتملة' },
+
+  // Settings additions
+  'opmod.settings.title':      { en: 'Operations Module',             ar: 'وحدة العمليات' },
+  'opmod.settings.general':    { en: 'General Settings',              ar: 'الإعدادات العامة' },
+  'opmod.settings.walletMode': { en: 'Enable Wallet Mode',            ar: 'تفعيل وضع المحفظة' },
+  'opmod.settings.walletDesc': { en: 'Each trader gets their own wallet account in the chart of accounts', ar: 'كل متداول يحصل على حساب محفظة خاص في دليل الحسابات' },
+  'opmod.settings.agentRange': { en: 'Agent MT5 Account Range',       ar: 'نطاق حسابات الوكلاء MT5' },
+  'opmod.settings.agentFrom':  { en: 'From',                          ar: 'من' },
+  'opmod.settings.agentTo':    { en: 'To',                            ar: 'إلى' },
+  'opmod.settings.agentHint':  { en: 'MT5 accounts in this range are treated as agent accounts', ar: 'الحسابات ضمن هذا النطاق تُعامَل كحسابات وكلاء' },
+  'opmod.settings.rateApiUrl': { en: 'Exchange Rate API URL',         ar: 'رابط API أسعار الصرف' },
+  'opmod.settings.paymentMethods':{ en: 'Payment Methods',            ar: 'طرق الدفع' },
+  'opmod.settings.addMethod':  { en: 'Add Payment Method',            ar: 'إضافة طريقة دفع' },
+  'opmod.settings.nameAr':     { en: 'Arabic Name',                   ar: 'الاسم بالعربية' },
+  'opmod.settings.nameEn':     { en: 'English Name',                  ar: 'الاسم بالإنجليزية' },
+  'opmod.settings.linkedAccount':{ en: 'Linked Account',              ar: 'الحساب المرتبط' },
+  'opmod.settings.exchangeRates':{ en: 'Exchange Rates',              ar: 'أسعار الصرف' },
+  'opmod.settings.addRate':    { en: 'Add / Update Rate',             ar: 'إضافة / تحديث سعر' },
+  'opmod.settings.rateCurrency':{ en: 'Currency',                     ar: 'العملة' },
+  'opmod.settings.rateValue':  { en: 'Rate to USD',                   ar: 'السعر مقابل الدولار' },
+  'opmod.settings.rateDate':   { en: 'Date',                          ar: 'التاريخ' },
+
+  // Sidebar new items
+  'sidebar.opRequests':        { en: 'Requests',                      ar: 'الطلبات' },
+  'sidebar.opVerification':    { en: 'Verification',                  ar: 'التشييك' },
+  'sidebar.opExecution':       { en: 'MT5 Execution',                 ar: 'التنفيذ' },
+  'sidebar.opCompleted':       { en: 'Completed',                     ar: 'المكتملة' },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

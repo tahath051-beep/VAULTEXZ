@@ -10,6 +10,7 @@ import {
   expenses as seedExpenses,
   debts as seedDebts,
   staff as seedStaff,
+  platform as seedPlatform,
   mt5Accounts as seedMt5,
   coverage as seedCoverage,
   currencyRates as seedRates,
@@ -66,7 +67,7 @@ interface WorkbookState {
 
 const allSeedAccounts: AccountRow[] = [
   ...seedFunds, ...seedBanks, ...seedClients, ...seedSuppliers,
-  ...seedPartners, ...seedRevenue, ...seedExpenses, ...seedDebts, ...seedStaff,
+  ...seedPartners, ...seedRevenue, ...seedExpenses, ...seedDebts, ...seedStaff, ...seedPlatform,
 ];
 
 export const useWorkbookStore = create<WorkbookState>()(

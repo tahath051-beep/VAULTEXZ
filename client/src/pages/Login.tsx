@@ -77,7 +77,7 @@ export default function LoginPage() {
 
         <div className="relative flex items-center gap-2">
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 backdrop-blur">
-            <span className="text-sm font-bold text-white">FX</span>
+            <span className="text-sm font-bold text-white">VX</span>
           </div>
           <p className="text-base font-semibold tracking-tight">{t('app.name')}</p>
         </div>
@@ -132,7 +132,7 @@ export default function LoginPage() {
           <div className="mt-6 lg:hidden">
             <div className="inline-flex items-center gap-2">
               <div className="grid h-9 w-9 place-items-center rounded-xl gradient-bg glow-primary">
-                <span className="text-sm font-bold text-white">FX</span>
+                <span className="text-sm font-bold text-white">VX</span>
               </div>
               <p className="text-sm font-semibold tracking-tight">{t('app.name')}</p>
             </div>

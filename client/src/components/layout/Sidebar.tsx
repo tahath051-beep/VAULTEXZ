@@ -1,5 +1,6 @@
 import { useState, useMemo, type ReactElement } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useOpModuleStore } from '@/stores/opModule.store';
 import {
   LayoutGrid,
   ListTree,
@@ -35,9 +36,10 @@ import { useTranslation } from '@/lib/i18n/useTranslation';
 import type { TranslationKey } from '@/lib/i18n/translations';
 
 type Icon = typeof LayoutGrid;
-type NavLeaf  = { to: string; labelKey: TranslationKey; icon: Icon };
-type NavGroup = { key: string; labelKey: TranslationKey; icon: Icon; children: NavLeaf[] };
+type NavLeaf  = { to: string; labelKey: TranslationKey; icon: Icon; badge?: number };
+type NavGroup = { key: string; labelKey: TranslationKey; icon: Icon; children: NavLeaf[]; badge?: number };
 type NavEntry = NavLeaf | NavGroup;
+type NavSection = { titleKey: TranslationKey; entries: NavEntry[] };
 
 function isGroup(e: NavEntry): e is NavGroup {
   return 'children' in e;
@@ -73,7 +75,8 @@ const PLAIN_LABELS: Partial<Record<string, string>> = {
   '/profile':           'My Profile — your account details',
 };
 
-const navigation: { titleKey: TranslationKey; entries: NavEntry[] }[] = [
+function useNavigation(pendingBadge: number, verifyBadge: number, execBadge: number): NavSection[] {
+  return [
   {
     titleKey: 'sidebar.workbook',
     entries: [
@@ -96,7 +99,18 @@ const navigation: { titleKey: TranslationKey; entries: NavEntry[] }[] = [
   {
     titleKey: 'sidebar.operations',
     entries: [
-      { to: '/operations', labelKey: 'ops.requests', icon: Inbox },
+      {
+        key: 'opmodule',
+        labelKey: 'sidebar.operations' as TranslationKey,
+        icon: Inbox,
+        badge: pendingBadge + verifyBadge + execBadge,
+        children: [
+          { to: '/operations/requests',     labelKey: 'sidebar.opRequests',     icon: Inbox,      badge: pendingBadge },
+          { to: '/operations/verification', labelKey: 'sidebar.opVerification', icon: ShieldCheck, badge: verifyBadge },
+          { to: '/operations/execution',    labelKey: 'sidebar.opExecution',    icon: Sparkles,   badge: execBadge },
+          { to: '/operations/completed',    labelKey: 'sidebar.opCompleted',    icon: BookOpen },
+        ],
+      },
       {
         key: 'records',
         labelKey: 'sidebar.records',
@@ -144,14 +158,15 @@ const navigation: { titleKey: TranslationKey; entries: NavEntry[] }[] = [
       { to: '/profile', labelKey: 'ops.myProfile', icon: ShieldCheck },
     ],
   },
-];
+  ];
+}
 
 function ItemIcon({ Icon }: { Icon: Icon }) {
   return <Icon className="h-[15px] w-[15px] shrink-0" />;
 }
 
 function LeafLink({
-  to, labelKey, icon: Icon, expanded, nested,
+  to, labelKey, icon: Icon, expanded, nested, badge,
 }: NavLeaf & { expanded: boolean; nested?: boolean }) {
   const { t } = useTranslation();
   return (
@@ -175,7 +190,16 @@ function LeafLink({
             <span className="absolute inset-y-2 start-0 w-[3px] rounded-e-full bg-sidebar-primary shadow-[0_0_8px_hsl(var(--sidebar-primary)/0.6)]" />
           )}
           <ItemIcon Icon={Icon} />
-          {expanded && <span className="truncate">{t(labelKey)}</span>}
+          {expanded && (
+            <>
+              <span className="flex-1 truncate">{t(labelKey)}</span>
+              {badge != null && badge > 0 && (
+                <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white min-w-[16px] text-center">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
+            </>
+          )}
         </>
       )}
     </NavLink>
@@ -188,6 +212,7 @@ function GroupItem({
   const [open, setOpen] = useState(autoOpen);
   const { t } = useTranslation();
   const childCount = group.children.length;
+  const groupBadge = group.badge ?? group.children.reduce((s, c) => s + (c.badge ?? 0), 0);
 
   if (!expanded) {
     return (
@@ -223,9 +248,15 @@ function GroupItem({
       >
         <ItemIcon Icon={group.icon} />
         <span className="flex-1 text-start">{t(group.labelKey)}</span>
-        <span className="rounded-full bg-sidebar-accent/80 px-1.5 text-[10px] font-bold text-sidebar-foreground/50">
-          {childCount}
-        </span>
+        {groupBadge > 0 ? (
+          <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-bold text-white min-w-[16px] text-center leading-none">
+            {groupBadge > 99 ? '99+' : groupBadge}
+          </span>
+        ) : (
+          <span className="rounded-full bg-sidebar-accent/80 px-1.5 text-[10px] font-bold text-sidebar-foreground/50">
+            {childCount}
+          </span>
+        )}
         <ChevronRight className={cn('h-3.5 w-3.5 transition-transform duration-200 rtl:rotate-180', open && 'rotate-90 rtl:-rotate-90')} />
       </button>
 
@@ -244,6 +275,11 @@ export function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const { t } = useTranslation();
   const location = useLocation();
+  const { getPendingCount, getVerificationCount, getExecutionCount } = useOpModuleStore();
+  const pendingBadge = getPendingCount();
+  const verifyBadge = getVerificationCount();
+  const execBadge = getExecutionCount();
+  const navigation = useNavigation(pendingBadge, verifyBadge, execBadge);
 
   const activeGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -270,7 +306,7 @@ export function Sidebar() {
       {/* Brand */}
       <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-3">
         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl gradient-bg glow-primary">
-          <span className="text-[13px] font-bold tracking-tight text-white">FX</span>
+          <span className="text-[13px] font-bold tracking-tight text-white">VX</span>
         </div>
         {sidebarOpen && (
           <div className="min-w-0 flex-1">

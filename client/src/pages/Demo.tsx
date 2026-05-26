@@ -406,7 +406,7 @@ function AppMockup() {
           <div className="flex flex-col items-center gap-2 border-e border-white/5 bg-[hsl(222_47%_9%)] px-2 py-3">
             {/* Logo */}
             <div className="mb-1 h-7 w-7 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.5)]">
-              <span className="text-[8px] font-extrabold text-white">FX</span>
+              <span className="text-[8px] font-extrabold text-white">VX</span>
             </div>
             {/* Nav items */}
             {navItems.map((item, i) => (
@@ -644,7 +644,7 @@ export default function DemoPage() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2.5">
             <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 shadow-[0_0_16px_hsl(217_91%_60%/0.4)]">
-              <span className="text-[13px] font-bold tracking-tight text-white">FX</span>
+              <span className="text-[13px] font-bold tracking-tight text-white">VX</span>
             </div>
             <div>
               <p className="text-[13px] font-bold leading-tight text-foreground">{t('app.name')}</p>
@@ -904,7 +904,7 @@ export default function DemoPage() {
       <footer className="border-t border-border/40 px-4 py-8 sm:px-6">
         <div className="mx-auto flex max-w-5xl items-center justify-center gap-2">
           <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-violet-600">
-            <span className="text-[10px] font-bold text-white">FX</span>
+            <span className="text-[10px] font-bold text-white">VX</span>
           </div>
           <span className="text-[13px] font-semibold text-foreground">{t('app.name')}</span>
           <span className="text-muted-foreground/40 mx-1">·</span>

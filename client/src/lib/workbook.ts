@@ -241,6 +241,16 @@ export const staff: AccountRow[] = [
   { code: 'EMP-12', name: 'Mgr. Anas',       arabic: 'المدير انس',        category: 'staff', balance: 600 },
 ];
 
+// Platform accounts (MT5 pools, IB wallets, op expense accounts)
+export const platform: AccountRow[] = [
+  { code: 'MT5TR', name: 'MT5 Traders',        arabic: 'حسابات المتداولين MT5', category: 'platform', balance: 0 },
+  { code: 'MT5AG', name: 'MT5 Agents',          arabic: 'وكلاء MT5',             category: 'platform', balance: 0 },
+  { code: '1500',  name: 'IB Ali Hassan',        arabic: 'وكيل علي حسن',         category: 'platform', balance: 0 },
+  { code: '1600',  name: 'IB Omar Trading',      arabic: 'وكيل عمر للتداول',     category: 'platform', balance: 0 },
+  { code: 'EXP01', name: 'Transfer Commission',  arabic: 'عمولة التحويل',         category: 'platform', balance: 0 },
+  { code: 'EXP02', name: 'Gift Expense',         arabic: 'مصروف الهدايا',         category: 'platform', balance: 0 },
+];
+
 // MT5 accounts
 export interface MT5Account { code: string; balance: number; }
 export const mt5Accounts: MT5Account[] = [
@@ -311,7 +321,7 @@ export const currencyRates = [
 ];
 
 // Sample entries (paired debit/credit)
-export type OpType = 'تعزيز' | 'سحب' | 'تحويل من' | 'تحويل الى';
+export type OpType = 'تعزيز' | 'سحب' | 'تحويل من' | 'تحويل الى' | 'مصروف';
 export interface EntryRow {
   ticket: number;
   date: string;

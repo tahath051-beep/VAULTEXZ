@@ -48,7 +48,7 @@ export default function ClientLogin() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl gradient-bg glow-primary mb-4 shadow-shadow-3">
-            <span className="text-white font-bold text-xl">FX</span>
+            <span className="text-white font-bold text-xl">VX</span>
           </div>
           <h1 className="text-2xl font-bold">{t('app.name')}</h1>
           <p className="text-primary font-semibold mt-1">{t('client.portal')}</p>

@@ -43,6 +43,10 @@ const GeneralSettings      = lazy(() => import('@/pages/settings/GeneralSettings
 const SymbolSettings       = lazy(() => import('@/pages/settings/SymbolSettings'));
 const GatewaySettings      = lazy(() => import('@/pages/settings/GatewaySettings'));
 const OperationsSettings   = lazy(() => import('@/pages/settings/OperationsSettings'));
+const OpRequestsPage       = lazy(() => import('@/pages/operations/RequestsPage'));
+const OpVerificationPage   = lazy(() => import('@/pages/operations/VerificationPage'));
+const OpExecutionPage      = lazy(() => import('@/pages/operations/ExecutionPage'));
+const OpCompletedPage      = lazy(() => import('@/pages/operations/CompletedPage'));
 const Profile              = lazy(() => import('@/pages/Profile'));
 
 // IB portal pages
@@ -96,6 +100,10 @@ export default function App() {
               <Route path="/clients"        element={<Clients />} />
               <Route path="/ib-mgmt"        element={<IBManagement />} />
               <Route path="/operations"     element={<Operations />} />
+              <Route path="/operations/requests"     element={<OpRequestsPage />} />
+              <Route path="/operations/verification" element={<OpVerificationPage />} />
+              <Route path="/operations/execution"    element={<OpExecutionPage />} />
+              <Route path="/operations/completed"    element={<OpCompletedPage />} />
               <Route path="/reconciliation" element={<Reconciliation />} />
               <Route path="/treasury"       element={<Treasury />} />
               <Route path="/aging"          element={<AgingReport />} />

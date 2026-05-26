@@ -80,7 +80,7 @@ export function ClientLayout() {
         {/* Brand */}
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-3">
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_0_12px_rgb(16_185_129/0.4)]">
-            <span className="text-[13px] font-bold text-white">FX</span>
+            <span className="text-[13px] font-bold text-white">VX</span>
           </div>
           {sidebarOpen && (
             <div className="min-w-0 flex-1">

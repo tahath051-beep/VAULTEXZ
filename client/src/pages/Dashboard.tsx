@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import {
   Wallet, Landmark, Users as UsersIcon, Truck, Handshake, BadgeDollarSign,
   TrendingUp, ReceiptText, ListChecks, Database, ArrowRight, Calendar, Download,
-  ShieldCheck, Activity, ChevronDown, Check,
+  ShieldCheck, Activity, ChevronDown, Check, Inbox, TrendingDown, Scale,
 } from 'lucide-react';
+import { useOpModuleStore } from '@/stores/opModule.store';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { HelpTooltip } from '@/components/shared/HelpTooltip';
 import { SectionCard } from '@/components/shared/SectionCard';
@@ -45,6 +46,65 @@ const fmt0 = (n: number) =>
 
 const fmt2 = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n);
+
+function TodayOpsWidget() {
+  const { getTotalPendingCount, getTodayCompletedDeposits, getTodayCompletedWithdrawals } = useOpModuleStore();
+  const pending = getTotalPendingCount();
+  const deposits = getTodayCompletedDeposits();
+  const withdrawals = getTodayCompletedWithdrawals();
+  const net = deposits - withdrawals;
+
+  return (
+    <SectionCard
+      title="Today's Operations"
+      description="Live ops pipeline — deposits, withdrawals and pending items from the Operations module"
+      action={
+        <Link to="/operations/requests" className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors">
+          Open ops <ArrowRight className="h-3 w-3" />
+        </Link>
+      }
+    >
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="flex items-center gap-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
+            <Inbox className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">Pending</p>
+            <p className="text-2xl font-black tabular-nums text-amber-700 dark:text-amber-300">{pending}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
+            <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Deposits</p>
+            <p className="text-lg font-black tabular-nums text-emerald-700 dark:text-emerald-300">{fmt0(deposits)}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl bg-orange-50 dark:bg-orange-950/20 p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/40">
+            <TrendingDown className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400">Withdrawals</p>
+            <p className="text-lg font-black tabular-nums text-orange-700 dark:text-orange-300">{fmt0(withdrawals)}</p>
+          </div>
+        </div>
+        <div className={`flex items-center gap-3 rounded-xl p-4 ${net >= 0 ? 'bg-sky-50 dark:bg-sky-950/20' : 'bg-red-50 dark:bg-red-950/20'}`}>
+          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${net >= 0 ? 'bg-sky-100 dark:bg-sky-900/40' : 'bg-red-100 dark:bg-red-900/40'}`}>
+            <Scale className={`h-5 w-5 ${net >= 0 ? 'text-sky-600 dark:text-sky-400' : 'text-red-600 dark:text-red-400'}`} />
+          </div>
+          <div>
+            <p className={`text-[11px] font-semibold uppercase tracking-wider ${net >= 0 ? 'text-sky-600 dark:text-sky-400' : 'text-red-600 dark:text-red-400'}`}>Net Today</p>
+            <p className={`text-lg font-black tabular-nums ${net >= 0 ? 'text-sky-700 dark:text-sky-300' : 'text-red-700 dark:text-red-300'}`}>{fmt0(net)}</p>
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
 
 function SubTable({
   title, tone, rows, columns,
@@ -286,6 +346,9 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+
+      {/* Today's Operations Summary */}
+      <TodayOpsWidget />
 
       {/* MT5 Equity */}
       <SectionCard
