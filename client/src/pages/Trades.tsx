@@ -124,7 +124,7 @@ export default function Trades() {
         }
         actions={
           <Button variant="outline" onClick={exportXLSX}>
-            <Download className="h-4 w-4 mr-2" />{t('btn.export.excel')}
+            <Download className="h-4 w-4 me-2" />{t('btn.export.excel')}
           </Button>
         }
       />
@@ -140,7 +140,7 @@ export default function Trades() {
             <Select value={symbol} onValueChange={(v) => { setSymbol(v); reset(); }}>
               <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Symbols</SelectItem>
+                <SelectItem value="ALL">{t('trades.filter.allSymbols')}</SelectItem>
                 {['EURUSD', 'GBPUSD', 'XAUUSD', 'USDJPY', 'USDCHF', 'AUDUSD'].map((s) => (
                   <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}
@@ -149,7 +149,7 @@ export default function Trades() {
             <Select value={bookType} onValueChange={(v) => { setBookType(v); reset(); }}>
               <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Books</SelectItem>
+                <SelectItem value="ALL">{t('trades.filter.allBooks')}</SelectItem>
                 <SelectItem value="A">A-Book</SelectItem>
                 <SelectItem value="B">B-Book</SelectItem>
               </SelectContent>
@@ -157,9 +157,9 @@ export default function Trades() {
             <Select value={posted} onValueChange={(v) => { setPosted(v); reset(); }}>
               <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Journal</SelectItem>
-                <SelectItem value="true">Posted</SelectItem>
-                <SelectItem value="false">Not Posted</SelectItem>
+                <SelectItem value="ALL">{t('trades.filter.allJournal')}</SelectItem>
+                <SelectItem value="true">{t('trades.filter.posted')}</SelectItem>
+                <SelectItem value="false">{t('trades.filter.notPosted')}</SelectItem>
               </SelectContent>
             </Select>
             <Input type="date" className="w-40" value={startDate} onChange={(e) => { setStartDate(e.target.value); reset(); }} />
@@ -172,28 +172,28 @@ export default function Trades() {
           <Table>
             <TableHeader>
               <TableRow>
-                <SortHead label="Ticket"     field="ticket"       className="w-24" />
-                <SortHead label="Client"     field="client_name" />
-                <SortHead label="Symbol"     field="symbol"       className="w-24" />
-                <SortHead label="Dir"        field="direction"    className="w-20" />
+                <SortHead label={t('trades.col.ticket')}    field="ticket"       className="w-24" />
+                <SortHead label={t('trades.col.client')}    field="client_name" />
+                <SortHead label={t('trades.col.symbol')}    field="symbol"       className="w-24" />
+                <SortHead label={t('trades.col.dir')}       field="direction"    className="w-20" />
                 <TableHead className="w-20">
                   <span className="inline-flex items-center gap-1">
-                    Volume
+                    {t('trades.col.volume')}
                     <HelpTooltip text="How much was traded — 1 lot = 100,000 units of the base currency" side="bottom" />
                   </span>
                 </TableHead>
-                <TableHead className="w-28">Open</TableHead>
-                <TableHead className="w-28">Close</TableHead>
+                <TableHead className="w-28">{t('trades.col.openPrice')}</TableHead>
+                <TableHead className="w-28">{t('trades.col.closePrice')}</TableHead>
                 <TableHead className="w-28">
                   <span className="inline-flex items-center gap-1">
-                    MT5 P&L
+                    {t('trades.col.profit')}
                     <HelpTooltip text="Net gain or loss on this trade in USD" side="bottom" />
                   </span>
                 </TableHead>
-                <SortHead label="Spread Inc." field="spread_income" className="w-28" />
-                <SortHead label="Book"       field="book_type"    className="w-20" />
-                <TableHead className="w-24">Journal</TableHead>
-                <SortHead label="Close Time" field="close_time"   className="w-28" />
+                <SortHead label={t('trades.col.spreadInc')} field="spread_income" className="w-28" />
+                <SortHead label={t('trades.col.book')}      field="book_type"    className="w-20" />
+                <TableHead className="w-24">{t('trades.col.journal')}</TableHead>
+                <SortHead label={t('trades.col.closeTime')} field="close_time"   className="w-28" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -252,21 +252,21 @@ export default function Trades() {
           {!isLoading && totals && (
             <div className="border-t bg-muted/30 px-4 py-3 flex flex-wrap gap-6 text-sm">
               <div>
-                <span className="text-muted-foreground">Total Volume: </span>
+                <span className="text-muted-foreground">{t('trades.totals.volume')}: </span>
                 <span className="font-semibold">{fmt(totals.volume)} lots</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Spread Income: </span>
+                <span className="text-muted-foreground">{t('trades.totals.spreadIncome')}: </span>
                 <span className="font-semibold text-success dark:text-green-400">${fmt(totals.spread_income)}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">B-Book P&amp;L: </span>
+                <span className="text-muted-foreground">{t('trades.totals.bbookPl')}: </span>
                 <span className={`font-semibold ${totals.b_book_pl >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400'}`}>
                   ${fmt(totals.b_book_pl)}
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Net Broker P&amp;L: </span>
+                <span className="text-muted-foreground">{t('trades.totals.netBrokerPl')}: </span>
                 <span className={`font-semibold ${totals.net_broker_pl >= 0 ? 'text-success dark:text-green-400' : 'text-destructive dark:text-red-400'}`}>
                   ${fmt(totals.net_broker_pl)}
                 </span>
@@ -287,34 +287,34 @@ export default function Trades() {
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Trade Detail {detail ? `— #${detail.ticket}` : ''}
+              {t('trades.detail.title')} {detail ? `— #${detail.ticket}` : ''}
             </DialogTitle>
           </DialogHeader>
 
           {detailLoading || !detail ? (
-            <div className="py-8 text-center text-muted-foreground">Loading...</div>
+            <div className="py-8 text-center text-muted-foreground">{t('trades.detail.loading')}</div>
           ) : (
             <div className="space-y-5">
               {/* Trade info grid */}
               <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                <Row label="Client"    value={`${detail.client_name} (${detail.client_code})`} />
-                <Row label="MT5 Login" value={String(detail.mt5_login ?? '—')} mono />
-                <Row label="Symbol"    value={detail.symbol} />
-                <Row label="Direction" value={detail.direction}
+                <Row label={t('trades.detail.client')}      value={`${detail.client_name} (${detail.client_code})`} />
+                <Row label={t('trades.detail.mt5Login')}    value={String(detail.mt5_login ?? '—')} mono />
+                <Row label={t('trades.col.symbol')}         value={detail.symbol} />
+                <Row label={t('trades.detail.direction')}   value={detail.direction}
                   valueClass={detail.direction === 'BUY' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'} />
-                <Row label="Volume"    value={detail.volume.toFixed(2) + ' lots'} />
-                <Row label="Book Type" value={detail.book_type + '-Book'} />
-                <Row label="Open Price"  value={String(detail.open_price)} mono />
-                <Row label="Close Price" value={String(detail.close_price)} mono />
-                <Row label="MT5 Profit"
+                <Row label={t('trades.col.volume')}         value={detail.volume.toFixed(2) + ' lots'} />
+                <Row label={t('trades.detail.bookType')}    value={detail.book_type + '-Book'} />
+                <Row label={t('trades.detail.openPrice')}   value={String(detail.open_price)} mono />
+                <Row label={t('trades.detail.closePrice')}  value={String(detail.close_price)} mono />
+                <Row label={t('trades.detail.mt5Profit')}
                   value={'$' + fmt(detail.profit)}
                   valueClass={detail.profit >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'} />
-                <Row label="Spread Income" value={'$' + fmt(detail.spread_income)}
+                <Row label={t('trades.detail.spreadIncome')} value={'$' + fmt(detail.spread_income)}
                   valueClass="text-green-700 dark:text-green-400 font-semibold" />
-                <Row label="Swap"       value={'$' + fmt(detail.swap)} />
-                <Row label="Commission" value={'$' + fmt(detail.commission)} />
-                <Row label="Close Time" value={fmtDateTime(detail.close_time)} />
-                <Row label="Journal"    value={detail.journal_posted ? 'Posted' : 'Pending'}
+                <Row label={t('trades.detail.swap')}        value={'$' + fmt(detail.swap)} />
+                <Row label={t('trades.detail.commission')}  value={'$' + fmt(detail.commission)} />
+                <Row label={t('trades.detail.closeTime')}   value={fmtDateTime(detail.close_time)} />
+                <Row label={t('trades.detail.journal')}     value={detail.journal_posted ? t('trades.detail.posted') : t('trades.detail.pending')}
                   valueClass={detail.journal_posted ? 'text-green-600' : 'text-muted-foreground'} />
               </div>
 
@@ -323,13 +323,13 @@ export default function Trades() {
                 <>
                   <Separator />
                   <div>
-                    <p className="font-semibold text-sm mb-3">Linked Journal Entries</p>
+                    <p className="font-semibold text-sm mb-3">{t('trades.detail.linkedJournals')}</p>
                     <div className="space-y-3">
                       {detail.journals.map((j) => (
                         <div key={j.id} className="border rounded-md p-3 text-sm">
                           <div className="flex items-center justify-between mb-2">
                             <span className="font-mono text-xs text-muted-foreground">{j.id}</span>
-                            <Badge variant="success" className="text-xs">Posted</Badge>
+                            <Badge variant="success" className="text-xs">{t('trades.detail.posted')}</Badge>
                           </div>
                           <p className="text-muted-foreground text-xs mb-2">{j.narration}</p>
                           <table className="w-full text-xs">
@@ -362,7 +362,7 @@ export default function Trades() {
                 <>
                   <Separator />
                   <div>
-                    <p className="font-semibold text-sm mb-3">IB Commissions Generated</p>
+                    <p className="font-semibold text-sm mb-3">{t('trades.detail.ibCommissions')}</p>
                     <div className="space-y-2">
                       {detail.commissions.map((c) => (
                         <div key={c.id} className="flex items-center justify-between text-sm border rounded-md px-3 py-2">

@@ -24,6 +24,15 @@ import { Plus, Trash2 } from 'lucide-react';
 
 const LIMIT = 20;
 
+const REF_TYPE_LABELS: Record<string, { en: string; ar: string }> = {
+  DEPOSIT:     { en: 'Deposit',    ar: 'إيداع' },
+  WITHDRAWAL:  { en: 'Withdrawal', ar: 'سحب' },
+  TRADE_CLOSE: { en: 'Trade',      ar: 'صفقة' },
+  MANUAL:      { en: 'Manual',     ar: 'يدوي' },
+  TRANSFER:    { en: 'Transfer',   ar: 'تحويل' },
+  FEE:         { en: 'Fee',        ar: 'رسوم' },
+};
+
 interface FormData {
   narration: string;
   entry_date: string;
@@ -31,7 +40,7 @@ interface FormData {
 }
 
 export default function Journals() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const qc = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [open, setOpen] = useState(false);
@@ -68,7 +77,7 @@ export default function Journals() {
   const { mutate: create, isPending } = useMutation({
     mutationFn: createJournal,
     onSuccess: () => {
-      toast({ title: 'Journal posted' });
+      toast({ title: t('journals.toast.posted') });
       qc.invalidateQueries({ queryKey: ['journals'] });
       reset({
         entry_date: new Date().toISOString().slice(0, 10),
@@ -80,7 +89,7 @@ export default function Journals() {
       setOpen(false);
     },
     onError: (e: { response?: { data?: { error?: string } } }) =>
-      toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
+      toast({ title: t('journals.toast.error'), description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
 
@@ -97,7 +106,7 @@ export default function Journals() {
         actions={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />{t('journals.new')}</Button>
+            <Button><Plus className="h-4 w-4 me-2" />{t('journals.new')}</Button>
           </DialogTrigger>
 
           <DialogContent className="max-w-2xl">
@@ -121,7 +130,7 @@ export default function Journals() {
                     type="button" variant="outline" size="sm"
                     onClick={() => append({ account_id: '', debit: '0', credit: '0' })}
                   >
-                    <Plus className="h-3 w-3 mr-1" />{t('journals.form.addLine')}
+                    <Plus className="h-3 w-3 me-1" />{t('journals.form.addLine')}
                   </Button>
                 </div>
 
@@ -141,7 +150,7 @@ export default function Journals() {
                       onValueChange={(v) => setValue(`lines.${i}.account_id`, v)}
                     >
                       <SelectTrigger className="text-sm h-9">
-                        <SelectValue placeholder="Select account…" />
+                        <SelectValue placeholder={t('journals.form.selectAcct')} />
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
                         {coaAccounts.map((a) => (
@@ -152,7 +161,7 @@ export default function Journals() {
                         ))}
                         {coaAccounts.length === 0 && (
                           <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-                            Loading accounts…
+                            {t('journals.form.loadingAccts')}
                           </div>
                         )}
                       </SelectContent>
@@ -187,7 +196,7 @@ export default function Journals() {
 
                 {/* Totals row */}
                 <div className="grid grid-cols-[1fr_110px_110px_32px] gap-2 pt-1 border-t text-sm font-semibold">
-                  <span className="text-right pr-2 text-muted-foreground">Totals</span>
+                  <span className="text-right pr-2 text-muted-foreground">{t('journals.form.totals')}</span>
                   <span className={`font-mono ${!balanced ? 'text-destructive' : 'text-green-600'}`}>
                     {fmt(totalDebit)}
                   </span>
@@ -198,16 +207,16 @@ export default function Journals() {
                 </div>
                 {!balanced && (
                   <p className="text-xs text-destructive font-medium">
-                    ⚠ Debits must equal credits (difference: {fmt(Math.abs(totalDebit - totalCredit))})
+                    {t('journals.form.unbalanced')} ({fmt(Math.abs(totalDebit - totalCredit))})
                   </p>
                 )}
                 {balanced && totalDebit > 0 && (
-                  <p className="text-xs text-success dark:text-green-400 font-medium">✓ Journal is balanced</p>
+                  <p className="text-xs text-success dark:text-green-400 font-medium">{t('journals.form.balanced.ok')}</p>
                 )}
               </div>
 
               <Button type="submit" className="w-full" disabled={isPending || !balanced || totalDebit === 0}>
-                {isPending ? <LoadingSpinner className="h-4 w-4 mr-2" /> : null}
+                {isPending ? <LoadingSpinner className="h-4 w-4 me-2" /> : null}
                 {t('journals.form.submit')}
               </Button>
             </form>
@@ -245,7 +254,9 @@ export default function Journals() {
                 <TableRow key={j.id}>
                   <TableCell className="text-sm tabular-nums">{fmtDate(j.entry_date)}</TableCell>
                   <TableCell>
-                    <span className="text-xs bg-muted px-2 py-0.5 rounded font-mono">{j.reference_type}</span>
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded font-mono">
+                      {REF_TYPE_LABELS[j.reference_type]?.[lang] ?? j.reference_type}
+                    </span>
                   </TableCell>
                   <TableCell className="max-w-xs truncate text-sm">{j.narration}</TableCell>
                   <TableCell className="text-right font-mono text-sm">{j.lines?.length ?? '—'}</TableCell>

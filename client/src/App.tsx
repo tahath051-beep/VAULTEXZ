@@ -19,7 +19,6 @@ const Login            = lazy(() => import('@/pages/Login'));
 const Dashboard        = lazy(() => import('@/pages/Dashboard'));
 const Entries          = lazy(() => import('@/pages/Entries'));
 const Report           = lazy(() => import('@/pages/Report'));
-const Data             = lazy(() => import('@/pages/Data'));
 const Opening          = lazy(() => import('@/pages/Opening'));
 const Vouchers         = lazy(() => import('@/pages/Vouchers'));
 const Currency         = lazy(() => import('@/pages/Currency'));
@@ -93,7 +92,7 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/entries" element={<Entries />} />
               <Route path="/report" element={<Report />} />
-              <Route path="/data" element={<Data />} />
+              <Route path="/data" element={<Navigate to="/chart-of-accounts" replace />} />
               <Route path="/opening" element={<Opening />} />
               <Route path="/vouchers" element={<Vouchers />} />
               <Route path="/currency" element={<Currency />} />

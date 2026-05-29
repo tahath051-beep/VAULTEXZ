@@ -63,42 +63,42 @@ export default function EOD() {
       />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <SectionCard title="Trigger EOD" bodyClassName="space-y-4 p-6">
+        <SectionCard title={t('eod.triggerCard')} bodyClassName="space-y-4 p-6">
             <div className="space-y-1">
-              <Label>EOD Date</Label>
+              <Label>{t('eod.date')}</Label>
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} max={today} />
             </div>
             <Button className="w-full" onClick={() => trigger()} disabled={isPending || status?.status === 'LOCKED' || status?.status === 'RUNNING'}>
-              {isPending ? <LoadingSpinner className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
-              {status?.status === 'LOCKED' ? 'Already Locked' : status?.status === 'RUNNING' ? 'Running...' : 'Trigger EOD'}
+              {isPending ? <LoadingSpinner className="h-4 w-4 me-2" /> : <Play className="h-4 w-4 me-2" />}
+              {status?.status === 'LOCKED' ? t('eod.alreadyLocked') : status?.status === 'RUNNING' ? t('eod.runningBtn') : t('eod.triggerBtn')}
             </Button>
             {status?.status === 'LOCKED' && (
-              <p className="text-sm text-muted-foreground">This date has been locked and cannot be re-processed.</p>
+              <p className="text-sm text-muted-foreground">{t('eod.lockedMsg')}</p>
             )}
         </SectionCard>
 
-        <SectionCard title="Current Status" bodyClassName="p-6">
+        <SectionCard title={t('eod.currentStatus')} bodyClassName="p-6">
             {status ? (
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Status</span>
+                  <span className="text-sm text-muted-foreground">{t('eod.col.status')}</span>
                   <StatusBadge status={status.status} />
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Records Processed</span>
+                  <span className="text-sm text-muted-foreground">{t('eod.col.records')}</span>
                   <span className="font-semibold">{status.records_processed ?? '-'}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Locked By</span>
+                  <span className="text-sm text-muted-foreground">{t('eod.col.lockedBy')}</span>
                   <span>{status.locked_by_name ?? '-'}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Started</span>
+                  <span className="text-sm text-muted-foreground">{t('eod.col.started')}</span>
                   <span className="text-sm">{fmtDateTime(status.created_at)}</span>
                 </div>
                 {status.completed_at && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Completed</span>
+                    <span className="text-sm text-muted-foreground">{t('eod.col.completed')}</span>
                     <span className="text-sm">{fmtDateTime(status.completed_at)}</span>
                   </div>
                 )}
@@ -109,12 +109,12 @@ export default function EOD() {
                 )}
                 {status.status === 'RUNNING' && (
                   <div className={`text-center font-medium animate-pulse ${statusColors['RUNNING']}`}>
-                    Processing...
+                    {t('eod.processing')}
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No EOD record for {date}.</p>
+              <p className="text-sm text-muted-foreground">{t('eod.noRecord', { date })}</p>
             )}
         </SectionCard>
       </div>

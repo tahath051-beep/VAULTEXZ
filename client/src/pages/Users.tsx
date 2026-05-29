@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { PageLoader, LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 import { toast } from '@/hooks/use-toast';
 import { fmtDate } from '@/lib/utils';
 import { api } from '@/api/client';
@@ -26,6 +27,7 @@ const createUser = (d: { email: string; password: string; full_name: string; rol
 const deactivateUser = (id: string) => api.patch(`/users/${id}/deactivate`);
 
 export default function Users() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<{
@@ -37,14 +39,14 @@ export default function Users() {
 
   const { mutate: create, isPending } = useMutation({
     mutationFn: createUser,
-    onSuccess: () => { toast({ title: 'User created' }); qc.invalidateQueries({ queryKey: ['users'] }); reset(); setOpen(false); },
-    onError: (e: { response?: { data?: { error?: string } } }) => toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
+    onSuccess: () => { toast({ title: t('users.created') }); qc.invalidateQueries({ queryKey: ['users'] }); reset(); setOpen(false); },
+    onError: (e: { response?: { data?: { error?: string } } }) => toast({ title: t('users.error'), description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
   const { mutate: deactivate } = useMutation({
     mutationFn: deactivateUser,
-    onSuccess: () => { toast({ title: 'User deactivated' }); qc.invalidateQueries({ queryKey: ['users'] }); },
-    onError: (e: { response?: { data?: { error?: string } } }) => toast({ title: 'Error', description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
+    onSuccess: () => { toast({ title: t('users.deactivated') }); qc.invalidateQueries({ queryKey: ['users'] }); },
+    onError: (e: { response?: { data?: { error?: string } } }) => toast({ title: t('users.error'), description: e?.response?.data?.error ?? 'Failed', variant: 'destructive' }),
   });
 
   if (isLoading) return <PageLoader />;
@@ -52,35 +54,35 @@ export default function Users() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Users"
-        subtitle="Manage system users and roles"
+        title={t('users.title')}
+        subtitle={t('users.subtitle')}
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Add User</Button>
+              <Button><Plus className="h-4 w-4 me-2" />{t('users.addUser')}</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>New User</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{t('users.newUser')}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit((d) => create(d))} className="space-y-4">
               <div className="space-y-1">
-                <Label>Full Name</Label>
+                <Label>{t('users.field.name')}</Label>
                 <Input {...register('full_name', { required: true })} />
-                {errors.full_name && <p className="text-xs text-destructive">Required</p>}
+                {errors.full_name && <p className="text-xs text-destructive">{t('action.save')}</p>}
               </div>
               <div className="space-y-1">
-                <Label>Email</Label>
+                <Label>{t('field.email')}</Label>
                 <Input type="email" {...register('email', { required: true })} />
-                {errors.email && <p className="text-xs text-destructive">Required</p>}
+                {errors.email && <p className="text-xs text-destructive">{t('action.save')}</p>}
               </div>
               <div className="space-y-1">
-                <Label>Password</Label>
+                <Label>{t('field.password')}</Label>
                 <Input type="password" {...register('password', { required: true, minLength: 8 })} />
-                {errors.password && <p className="text-xs text-destructive">Min 8 characters</p>}
+                {errors.password && <p className="text-xs text-destructive">{t('users.field.minPassword')}</p>}
               </div>
               <div className="space-y-1">
-                <Label>Role</Label>
+                <Label>{t('users.field.role')}</Label>
                 <Select onValueChange={(v) => setValue('role_id', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select role" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('users.field.selectRole')} /></SelectTrigger>
                   <SelectContent>
                     {rolesData?.roles?.map((r) => (
                       <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
@@ -89,7 +91,7 @@ export default function Users() {
                 </Select>
               </div>
               <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending ? <LoadingSpinner className="h-4 w-4" /> : 'Create User'}
+                {isPending ? <LoadingSpinner className="h-4 w-4" /> : t('users.createUser')}
               </Button>
             </form>
             </DialogContent>
@@ -101,12 +103,12 @@ export default function Users() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>{t('users.col.name')}</TableHead>
+                <TableHead>{t('users.col.email')}</TableHead>
+                <TableHead>{t('users.col.role')}</TableHead>
+                <TableHead>{t('users.col.status')}</TableHead>
+                <TableHead>{t('users.col.lastLogin')}</TableHead>
+                <TableHead>{t('users.col.created')}</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -114,23 +116,23 @@ export default function Users() {
               {usersData?.users?.length ? usersData.users.map((u) => (
                 <TableRow key={u.id}>
                   <TableCell className="font-medium">{u.full_name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
+                  <TableCell className="text-muted-foreground">{u.email}</TableCell>
                   <TableCell>
-                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">{u.role_name}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">{u.role_name}</span>
                   </TableCell>
                   <TableCell><StatusBadge status={u.is_active ? 'ACTIVE' : 'INACTIVE'} /></TableCell>
-                  <TableCell>{fmtDate(u.last_login)}</TableCell>
-                  <TableCell>{fmtDate(u.created_at)}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{fmtDate(u.last_login)}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{fmtDate(u.created_at)}</TableCell>
                   <TableCell>
                     {u.is_active && (
-                      <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deactivate(u.id)}>
+                      <Button variant="ghost" size="sm" className="text-destructive" title={t('users.deactivate')} onClick={() => deactivate(u.id)}>
                         <UserX className="h-3 w-3" />
                       </Button>
                     )}
                   </TableCell>
                 </TableRow>
               )) : (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No users</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">{t('users.noUsers')}</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

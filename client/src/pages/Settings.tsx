@@ -1,25 +1,28 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-
-const tabs = [
-  { to: '/settings/general',  label: 'General' },
-  { to: '/settings/symbols',  label: 'Symbols' },
-  { to: '/settings/gateways', label: 'Gateways' },
-];
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 export default function Settings() {
+  const { t } = useTranslation();
+
+  const tabs = [
+    { to: '/settings/general',  label: t('sidebar.general') },
+    { to: '/settings/symbols',  label: t('sidebar.symbols') },
+    { to: '/settings/gateways', label: t('sidebar.gateways') },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage broker configuration and system preferences</p>
+        <h1 className="text-2xl font-bold">{t('settings.title')}</h1>
+        <p className="text-muted-foreground">{t('settings.subtitle')}</p>
       </div>
 
       <div className="border-b flex gap-0">
-        {tabs.map((t) => (
+        {tabs.map((tab) => (
           <NavLink
-            key={t.to}
-            to={t.to}
+            key={tab.to}
+            to={tab.to}
             className={({ isActive }) =>
               cn(
                 'px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
@@ -29,7 +32,7 @@ export default function Settings() {
               )
             }
           >
-            {t.label}
+            {tab.label}
           </NavLink>
         ))}
       </div>

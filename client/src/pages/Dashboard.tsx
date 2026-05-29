@@ -489,7 +489,7 @@ export default function Dashboard() {
           {[
             { to: '/entries',  labelKey: 'sheet.entries',  descKey: 'equity.doubleEntryLog' },
             { to: '/report',   labelKey: 'sheet.report',   descKey: 'equity.balancesSummary' },
-            { to: '/data',     labelKey: 'sheet.data',     descKey: 'equity.chartOfAccounts' },
+            { to: '/chart-of-accounts', labelKey: 'ops.coa', descKey: 'equity.chartOfAccounts' },
             { to: '/opening',  labelKey: 'sheet.opening',  descKey: 'equity.startingBalances' },
             { to: '/vouchers', labelKey: 'sheet.vouchers', descKey: 'equity.receiptTracking' },
             { to: '/currency', labelKey: 'sheet.currency', descKey: 'equity.fxRateHistory' },

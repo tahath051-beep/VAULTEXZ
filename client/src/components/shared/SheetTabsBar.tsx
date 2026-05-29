@@ -18,7 +18,7 @@ const sheets: { to: string; labelKey: TranslationKey; icon: typeof LayoutGrid; t
   { to: '/',         labelKey: 'sheet.equity',   icon: LayoutGrid, tone: 'border-t-orange-400' },
   { to: '/entries',  labelKey: 'sheet.entries',  icon: ListTree,   tone: 'border-t-pink-400' },
   { to: '/report',   labelKey: 'sheet.report',   icon: BookOpen,   tone: 'border-t-sky-400' },
-  { to: '/data',     labelKey: 'sheet.data',     icon: Database,   tone: 'border-t-emerald-400' },
+  { to: '/chart-of-accounts', labelKey: 'ops.coa', icon: Database, tone: 'border-t-emerald-400' },
   { to: '/opening',  labelKey: 'sheet.opening',  icon: Wallet,     tone: 'border-t-violet-400' },
   { to: '/vouchers', labelKey: 'sheet.vouchers', icon: Receipt,    tone: 'border-t-amber-400' },
   { to: '/currency', labelKey: 'sheet.currency', icon: Coins,      tone: 'border-t-teal-400' },
