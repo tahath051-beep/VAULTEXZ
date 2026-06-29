@@ -1271,6 +1271,17 @@ export const translations = {
   'trades.detail.commission':   { en: 'Commission',                  ar: 'العمولة' },
   'trades.detail.closeTime':    { en: 'Close Time',                  ar: 'وقت الإغلاق' },
   'trades.detail.journal':      { en: 'Journal',                     ar: 'القيد' },
+
+  // New modules
+  'sidebar.platform':           { en: 'Platform',                    ar: 'المنصة' },
+  'sidebar.crm':                { en: 'CRM',                         ar: 'إدارة العملاء' },
+  'sidebar.hr':                 { en: 'Human Resources',             ar: 'الموارد البشرية' },
+  'sidebar.fixedAssets':        { en: 'Fixed Assets',                ar: 'الأصول الثابتة' },
+  'sidebar.ownership':          { en: 'Ownership',                   ar: 'الملكية' },
+  'sidebar.risk':               { en: 'Risk Management',             ar: 'إدارة المخاطر' },
+  'sidebar.workflows':          { en: 'Workflows',                   ar: 'سير العمل' },
+  'sidebar.branches':           { en: 'Branches',                    ar: 'الفروع' },
+  'sidebar.wallets':            { en: 'Wallets',                     ar: 'المحافظ' },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

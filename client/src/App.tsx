@@ -47,6 +47,14 @@ const OpVerificationPage   = lazy(() => import('@/pages/operations/VerificationP
 const OpExecutionPage      = lazy(() => import('@/pages/operations/ExecutionPage'));
 const OpCompletedPage      = lazy(() => import('@/pages/operations/CompletedPage'));
 const Profile              = lazy(() => import('@/pages/Profile'));
+const CRM                  = lazy(() => import('@/pages/CRM'));
+const HR                   = lazy(() => import('@/pages/HR'));
+const FixedAssets          = lazy(() => import('@/pages/FixedAssets'));
+const Ownership            = lazy(() => import('@/pages/Ownership'));
+const RiskManagement       = lazy(() => import('@/pages/RiskManagement'));
+const Workflows            = lazy(() => import('@/pages/Workflows'));
+const Branches             = lazy(() => import('@/pages/Branches'));
+const Wallets              = lazy(() => import('@/pages/Wallets'));
 
 // IB portal pages
 const IBLogin           = lazy(() => import('@/pages/ib/Login'));
@@ -116,6 +124,14 @@ export default function App() {
               <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
               <Route path="/users"          element={<AdminOnly><Users /></AdminOnly>} />
               <Route path="/profile"        element={<Profile />} />
+              <Route path="/crm"            element={<CRM />} />
+              <Route path="/hr"             element={<HR />} />
+              <Route path="/fixed-assets"   element={<FixedAssets />} />
+              <Route path="/ownership"      element={<Ownership />} />
+              <Route path="/risk"           element={<RiskManagement />} />
+              <Route path="/workflows"      element={<Workflows />} />
+              <Route path="/branches"       element={<Branches />} />
+              <Route path="/wallets"        element={<Wallets />} />
               <Route path="/settings"       element={<AdminOnly><Settings /></AdminOnly>}>
                 <Route index element={<Navigate to="/settings/general" replace />} />
                 <Route path="general"    element={<GeneralSettings />} />

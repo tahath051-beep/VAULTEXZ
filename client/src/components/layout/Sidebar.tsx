@@ -29,6 +29,10 @@ import {
   Scale,
   Building2,
   AlertOctagon,
+  User,
+  Package,
+  PieChart,
+  ShieldAlert,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
@@ -137,6 +141,19 @@ function useNavigation(pendingBadge: number, verifyBadge: number, execBadge: num
           { to: '/eod',               labelKey: 'ops.eod',                icon: AlertOctagon },
         ],
       },
+    ],
+  },
+  {
+    titleKey: 'sidebar.platform',
+    entries: [
+      { to: '/crm',          labelKey: 'sidebar.crm',          icon: User },
+      { to: '/hr',           labelKey: 'sidebar.hr',           icon: Users },
+      { to: '/fixed-assets', labelKey: 'sidebar.fixedAssets',  icon: Package },
+      { to: '/ownership',    labelKey: 'sidebar.ownership',    icon: PieChart },
+      { to: '/risk',         labelKey: 'sidebar.risk',         icon: ShieldAlert },
+      { to: '/workflows',    labelKey: 'sidebar.workflows',    icon: GitBranch },
+      { to: '/branches',     labelKey: 'sidebar.branches',     icon: Building2 },
+      { to: '/wallets',      labelKey: 'sidebar.wallets',      icon: Wallet },
     ],
   },
   {
