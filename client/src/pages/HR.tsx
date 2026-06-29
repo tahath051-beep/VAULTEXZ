@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hrApi } from '@/api/hr.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -44,7 +44,7 @@ function EmployeesTab() {
                 <td className="px-4 py-2.5 font-medium">{e.full_name}</td>
                 <td className="px-4 py-2.5 text-muted-foreground">{e.email}</td>
                 <td className="px-4 py-2.5">{e.job_title}</td>
-                <td className="px-4 py-2.5 text-muted-foreground">{e.department_name ?? '—'}</td>
+                <td className="px-4 py-2.5 text-muted-foreground">{e.department_name ?? 'â€”'}</td>
                 <td className="px-4 py-2.5 text-muted-foreground">{e.hire_date?.slice(0,10)}</td>
                 <td className="px-4 py-2.5"><StatusBadge status={e.status} /></td>
               </tr>
@@ -64,7 +64,7 @@ function EmployeesTab() {
                 value={form[f]} onChange={e => setForm(p => ({ ...p, [f]: e.target.value }))} />
             ))}
             <Button className="w-full" onClick={() => create.mutate()} disabled={create.isPending}>
-              {create.isPending ? 'Saving…' : 'Create Employee'}
+              {create.isPending ? 'Savingâ€¦' : 'Create Employee'}
             </Button>
           </div>
         </DialogContent>
@@ -144,7 +144,7 @@ function LeaveTab() {
 export default function HRPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Human Resources" subtitle="Employees, payroll, and leave management" icon={<Users className="h-5 w-5" />} />
+      <PageHeader title="Human Resources" subtitle="Employees, payroll, and leave management" />
       <Tabs defaultValue="employees">
         <TabsList>
           <TabsTrigger value="employees"><Users className="h-3.5 w-3.5 me-1.5" />Employees</TabsTrigger>
@@ -158,3 +158,4 @@ export default function HRPage() {
     </div>
   );
 }
+

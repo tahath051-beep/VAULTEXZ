@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { walletsApi } from '@/api/wallets.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -37,7 +37,7 @@ export default function WalletsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Wallets" subtitle="Internal cash wallets and transaction history" icon={<Wallet className="h-5 w-5" />} />
+      <PageHeader title="Wallets" subtitle="Internal cash wallets and transaction history" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {wallets.map((w) => {
@@ -68,7 +68,7 @@ export default function WalletsPage() {
       {selected && selectedWallet && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-sm">{selectedWallet.name} — Transactions</h2>
+            <h2 className="font-semibold text-sm">{selectedWallet.name} â€” Transactions</h2>
             <Button size="sm" onClick={() => setAdjustOpen(true)}>Adjust Balance</Button>
           </div>
           <div className="overflow-x-auto rounded-xl border border-border">
@@ -93,7 +93,7 @@ export default function WalletsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-2.5">{t.description}</td>
-                    <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">{t.reference ?? '—'}</td>
+                    <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">{t.reference ?? 'â€”'}</td>
                     <td className={`px-4 py-2.5 font-semibold ${t.transaction_type === 'CREDIT' ? 'text-green-400' : 'text-red-400'}`}>
                       {t.transaction_type === 'CREDIT' ? '+' : '-'}{parseFloat(t.amount||'0').toLocaleString()}
                     </td>
@@ -125,7 +125,7 @@ export default function WalletsPage() {
             <Input placeholder="Currency (e.g. USD)" value={adjustForm.currency} onChange={e => setAdjustForm(p => ({ ...p, currency: e.target.value }))} />
             <Input placeholder="Description" value={adjustForm.description} onChange={e => setAdjustForm(p => ({ ...p, description: e.target.value }))} />
             <Button className="w-full" onClick={() => adjust.mutate()} disabled={adjust.isPending}>
-              {adjust.isPending ? 'Saving…' : 'Record Adjustment'}
+              {adjust.isPending ? 'Savingâ€¦' : 'Record Adjustment'}
             </Button>
           </div>
         </DialogContent>
@@ -133,3 +133,4 @@ export default function WalletsPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+﻿import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { workflowsApi } from '@/api/workflows.api';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -26,7 +26,7 @@ function MyTasksTab() {
           <div>
             <p className="font-semibold text-sm">{t.template_name}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {t.process_type?.replace(/_/g,' ')} · Stage {t.stage_order}
+              {t.process_type?.replace(/_/g,' ')} Â· Stage {t.stage_order}
             </p>
             {t.due_at && (
               <p className="text-xs text-amber-400 mt-0.5 flex items-center gap-1">
@@ -50,7 +50,7 @@ function MyTasksTab() {
       {tasks.length === 0 && (
         <div className="py-12 text-center text-muted-foreground">
           <CheckCircle className="h-8 w-8 mx-auto mb-2 opacity-30" />
-          <p>No pending tasks — you're all caught up</p>
+          <p>No pending tasks â€” you're all caught up</p>
         </div>
       )}
     </div>
@@ -78,9 +78,9 @@ function InstancesTab() {
               <td className="px-4 py-2.5 text-muted-foreground">{i.process_type?.replace(/_/g,' ')}</td>
               <td className="px-4 py-2.5">Stage {i.current_stage}</td>
               <td className="px-4 py-2.5"><StatusBadge status={i.status} /></td>
-              <td className="px-4 py-2.5 text-muted-foreground">{i.initiated_by_name ?? '—'}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{i.initiated_by_name ?? 'â€”'}</td>
               <td className="px-4 py-2.5 text-muted-foreground">{new Date(i.created_at).toLocaleDateString()}</td>
-              <td className="px-4 py-2.5 text-muted-foreground">{i.due_at ? new Date(i.due_at).toLocaleDateString() : '—'}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{i.due_at ? new Date(i.due_at).toLocaleDateString() : 'â€”'}</td>
             </tr>
           ))}
           {instances.length === 0 && (
@@ -131,7 +131,7 @@ export default function WorkflowsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Workflows" subtitle="Tasks, approvals, and process instances" icon={<GitBranch className="h-5 w-5" />} />
+      <PageHeader title="Workflows" subtitle="Tasks, approvals, and process instances" />
       <Tabs defaultValue="my-tasks">
         <TabsList>
           <TabsTrigger value="my-tasks">
@@ -150,3 +150,4 @@ export default function WorkflowsPage() {
     </div>
   );
 }
+

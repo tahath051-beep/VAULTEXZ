@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crmApi } from '@/api/crm.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -64,7 +64,7 @@ function LeadsTab() {
                 onChange={e => setForm(p => ({ ...p, [f]: e.target.value }))} />
             ))}
             <Button className="w-full" onClick={() => create.mutate()} disabled={create.isPending}>
-              {create.isPending ? 'Creating…' : 'Create Lead'}
+              {create.isPending ? 'Creatingâ€¦' : 'Create Lead'}
             </Button>
           </div>
         </DialogContent>
@@ -108,7 +108,7 @@ function TicketsTab() {
                 <td className="px-4 py-2.5 text-muted-foreground">{t.category}</td>
                 <td className="px-4 py-2.5"><StatusBadge status={t.priority} /></td>
                 <td className="px-4 py-2.5"><StatusBadge status={t.status} /></td>
-                <td className="px-4 py-2.5 text-muted-foreground">{t.assigned_to_name ?? '—'}</td>
+                <td className="px-4 py-2.5 text-muted-foreground">{t.assigned_to_name ?? 'â€”'}</td>
               </tr>
             ))}
             {tickets.length === 0 && (
@@ -126,7 +126,7 @@ function TicketsTab() {
             <Input placeholder="Category" value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} />
             <Input placeholder="Description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
             <Button className="w-full" onClick={() => create.mutate()} disabled={create.isPending}>
-              {create.isPending ? 'Creating…' : 'Create Ticket'}
+              {create.isPending ? 'Creatingâ€¦' : 'Create Ticket'}
             </Button>
           </div>
         </DialogContent>
@@ -138,7 +138,7 @@ function TicketsTab() {
 export default function CRMPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="CRM" subtitle="Leads, activities, and support tickets" icon={<User className="h-5 w-5" />} />
+      <PageHeader title="CRM" subtitle="Leads, activities, and support tickets" />
       <Tabs defaultValue="leads">
         <TabsList>
           <TabsTrigger value="leads"><User className="h-3.5 w-3.5 me-1.5" />Leads</TabsTrigger>
@@ -154,3 +154,4 @@ export default function CRMPage() {
     </div>
   );
 }
+

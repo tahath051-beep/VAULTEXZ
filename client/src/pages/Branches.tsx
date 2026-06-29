@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { branchesApi } from '@/api/branches.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -25,7 +25,7 @@ export default function BranchesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Branches" subtitle="Manage offices and departments across all locations" icon={<Building2 className="h-5 w-5" />} />
+      <PageHeader title="Branches" subtitle="Manage offices and departments across all locations" />
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="rounded-xl border border-border bg-card p-4">
@@ -66,7 +66,7 @@ export default function BranchesPage() {
         {branches.length === 0 && (
           <div className="col-span-3 py-12 text-center text-muted-foreground">
             <Building2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
-            <p>No branches yet — add your first office</p>
+            <p>No branches yet â€” add your first office</p>
           </div>
         )}
       </div>
@@ -81,10 +81,11 @@ export default function BranchesPage() {
             ))}
           </div>
           <Button className="w-full mt-2" onClick={() => create.mutate()} disabled={create.isPending}>
-            {create.isPending ? 'Creating…' : 'Create Branch'}
+            {create.isPending ? 'Creatingâ€¦' : 'Create Branch'}
           </Button>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+

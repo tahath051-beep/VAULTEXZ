@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+﻿import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { riskApi } from '@/api/risk.api';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -40,7 +40,7 @@ function ExposureTab() {
             );
           })}
           {snapshots.length === 0 && (
-            <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">No exposure data — run EOD to generate snapshots</td></tr>
+            <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">No exposure data â€” run EOD to generate snapshots</td></tr>
           )}
         </tbody>
       </table>
@@ -125,7 +125,7 @@ function CoverageTab() {
               <td className={`px-4 py-2.5 font-semibold ${r.direction === 'BUY' ? 'text-green-400' : 'text-red-400'}`}>{r.direction}</td>
               <td className="px-4 py-2.5">{r.lots}</td>
               <td className="px-4 py-2.5 font-mono">{r.open_price}</td>
-              <td className="px-4 py-2.5 text-muted-foreground">{r.lp_name ?? '—'}</td>
+              <td className="px-4 py-2.5 text-muted-foreground">{r.lp_name ?? 'â€”'}</td>
               <td className="px-4 py-2.5 text-green-400">{r.status}</td>
             </tr>
           ))}
@@ -141,7 +141,7 @@ function CoverageTab() {
 export default function RiskManagementPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Risk Management" subtitle="Exposure monitoring, coverage, and alerts" icon={<ShieldAlert className="h-5 w-5" />} />
+      <PageHeader title="Risk Management" subtitle="Exposure monitoring, coverage, and alerts" />
       <Tabs defaultValue="exposure">
         <TabsList>
           <TabsTrigger value="exposure"><TrendingUp className="h-3.5 w-3.5 me-1.5" />Exposure</TabsTrigger>
@@ -155,3 +155,4 @@ export default function RiskManagementPage() {
     </div>
   );
 }
+

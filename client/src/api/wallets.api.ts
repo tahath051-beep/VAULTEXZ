@@ -1,4 +1,4 @@
-import api from './axios';
+﻿import { api } from './client';
 
 export const walletsApi = {
   getWallets: (params?: Record<string, string>) =>
@@ -10,3 +10,4 @@ export const walletsApi = {
   adjust: (walletId: string, body: { type: 'CREDIT' | 'DEBIT'; amount: number; currency: string; description: string; reference?: string }) =>
     api.post(`/wallets/${walletId}/adjust`, body),
 };
+

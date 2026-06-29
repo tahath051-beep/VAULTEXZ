@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ownershipApi } from '@/api/ownership.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -67,7 +67,7 @@ function ShareholdersTab() {
             <Input placeholder="Nationality (2-letter)" value={form.nationality} onChange={e => setForm(p=>({...p,nationality:e.target.value}))} />
             <Input placeholder="Ownership %" type="number" value={form.ownership_pct} onChange={e => setForm(p=>({...p,ownership_pct:e.target.value}))} />
             <Button className="w-full" onClick={() => create.mutate()} disabled={create.isPending}>
-              {create.isPending ? 'Saving…' : 'Add Shareholder'}
+              {create.isPending ? 'Savingâ€¦' : 'Add Shareholder'}
             </Button>
           </div>
         </DialogContent>
@@ -138,7 +138,7 @@ function DistributionsTab() {
               <Input key={f} placeholder={label} type={type} value={form[f]} onChange={e=>setForm(p=>({...p,[f]:e.target.value}))} />
             ))}
             <Button className="w-full" onClick={() => create.mutate()} disabled={create.isPending}>
-              {create.isPending ? 'Creating…' : 'Create Distribution'}
+              {create.isPending ? 'Creatingâ€¦' : 'Create Distribution'}
             </Button>
           </div>
         </DialogContent>
@@ -150,7 +150,7 @@ function DistributionsTab() {
 export default function OwnershipPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Ownership Management" subtitle="Shareholders, contributions, and profit distribution" icon={<PieChart className="h-5 w-5" />} />
+      <PageHeader title="Ownership Management" subtitle="Shareholders, contributions, and profit distribution" />
       <Tabs defaultValue="shareholders">
         <TabsList>
           <TabsTrigger value="shareholders"><PieChart className="h-3.5 w-3.5 me-1.5" />Shareholders</TabsTrigger>
@@ -162,3 +162,4 @@ export default function OwnershipPage() {
     </div>
   );
 }
+

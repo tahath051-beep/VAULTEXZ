@@ -1,4 +1,4 @@
-import api from './axios';
+﻿import { api } from './client';
 
 export const notificationsApi = {
   getNotifications: (params?: { is_read?: boolean; limit?: number; offset?: number }) =>
@@ -13,3 +13,4 @@ export const notificationsApi = {
   markAllRead: () =>
     api.post('/notifications/read-all'),
 };
+

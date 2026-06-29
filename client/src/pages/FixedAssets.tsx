@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fixedAssetsApi } from '@/api/fixedAssets.api';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function FixedAssetsPage() {
   const qc = useQueryClient();
@@ -31,7 +31,7 @@ export default function FixedAssetsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Fixed Assets" subtitle="Asset register, depreciation, and maintenance" icon={<Package className="h-5 w-5" />} />
+      <PageHeader title="Fixed Assets" subtitle="Asset register, depreciation, and maintenance" />
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -66,11 +66,11 @@ export default function FixedAssetsPage() {
               <tr key={a.id} className="border-t border-border hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-2.5 font-mono text-xs">{a.asset_code}</td>
                 <td className="px-4 py-2.5 font-medium">{a.name}</td>
-                <td className="px-4 py-2.5 text-muted-foreground">{a.category_name ?? '—'}</td>
+                <td className="px-4 py-2.5 text-muted-foreground">{a.category_name ?? 'â€”'}</td>
                 <td className="px-4 py-2.5 text-muted-foreground">{a.purchase_date?.slice(0,10)}</td>
                 <td className="px-4 py-2.5">{parseFloat(a.purchase_cost||'0').toLocaleString()}</td>
                 <td className="px-4 py-2.5 font-semibold">{parseFloat(a.current_book_value||'0').toLocaleString()}</td>
-                <td className="px-4 py-2.5 text-muted-foreground">{a.location ?? '—'}</td>
+                <td className="px-4 py-2.5 text-muted-foreground">{a.location ?? 'â€”'}</td>
                 <td className="px-4 py-2.5"><StatusBadge status={a.status} /></td>
               </tr>
             ))}
@@ -96,10 +96,11 @@ export default function FixedAssetsPage() {
             ))}
           </div>
           <Button className="w-full mt-2" onClick={() => create.mutate()} disabled={create.isPending}>
-            {create.isPending ? 'Saving…' : 'Register Asset'}
+            {create.isPending ? 'Savingâ€¦' : 'Register Asset'}
           </Button>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
