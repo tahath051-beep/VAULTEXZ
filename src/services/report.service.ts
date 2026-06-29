@@ -129,6 +129,6 @@ export async function generateExcelReport(
     ['B-Book', exp.bBookVolume, exp.bBookSpreadIncome, exp.bBookPnl],
   ]);
 
-  const buffer = await wb.xlsx.writeBuffer() as Buffer;
+  const buffer = await wb.xlsx.writeBuffer() as unknown as Buffer;
   return uploadReport(tenantId, date, 'daily_reports', 'xlsx', buffer);
 }
